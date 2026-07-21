@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 
-<meta charset="UTF-8">
-<title>Robot Runner</title>
+<title>Robot Runner 4 Variant</title>
 
 <style>
-
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap');
 
 html,body{
     margin:0;
     padding:0;
     overflow:hidden;
-    background:black;
+	background-color:#bcc8cc;
+	text-align: center;
+	color: #0007E6;
+	font-family: Arial, sans-serif;
 }
+
+
+img.sizing {
+	max-width: 100%;
+	max-height: 600px;
+	height: auto;
+	display: block;
+	margin: auto;
+	}
+
 
 canvas{
     display:block;
@@ -24,14 +34,11 @@ canvas{
 
 #explosion{
     position:absolute;
+    display:none;
     left:0;
     top:0;
-    width:900px;
-    height:450px;
-    display:none;
     z-index:10;
     pointer-events:none;
-    image-rendering:pixelated;
 }
 
 </style>
@@ -42,8 +49,10 @@ canvas{
 
 <img id="explosion" src="explode.gif">
 
-<canvas id="game" width="900" height="450"></canvas>
+<h1>Eraserbot Run!</h1>
 
+<canvas id="game" width="900" height="600"></canvas>
+<p> How to Play: Space to jump, and to doublejump. Avoid the Eraserbots!</p>
 
 <script>
 
@@ -55,32 +64,63 @@ ctx.imageSmoothingEnabled=false;
 
 
 
+
 // IMAGES
 
 const run1=new Image();
-run1.src="run1.png";
-
 const run2=new Image();
-run2.src="run2.png";
-
-const jumpImg=new Image();
-jumpImg.src="jump.png";
+const jump=new Image();
 
 
 const robot1=new Image();
-robot1.src="robot1.png";
-
-
 const robot2=new Image();
-robot2.src="robot2.png";
+
+
+const robotb1=new Image();
+const robotb2=new Image();
+
+
+const robotc1=new Image();
+const robotc2=new Image();
+
+
+const robotd1=new Image();
+const robotd2=new Image();
+
 
 
 const sky=new Image();
+const ground=new Image();
+
+
+
+
+
+run1.src="run1.png";
+run2.src="run2.png";
+jump.src="jump.png";
+
+
+robot1.src="robot1.png";
+robot2.src="robot2.png";
+
+
+robotb1.src="robotb1.png";
+robotb2.src="robotb2.png";
+
+
+robotc1.src="robotc1.png";
+robotc2.src="robotc2.png";
+
+
+robotd1.src="robotd1.png";
+robotd2.src="robotd2.png";
+
+
+
 sky.src="sky.png";
+ground.src="ground.png";
 
-
-const groundImg=new Image();
-groundImg.src="ground.png";
 
 
 const explosion=document.getElementById("explosion");
@@ -88,11 +128,25 @@ const explosion=document.getElementById("explosion");
 
 
 
-// GAME VARIABLES
+
+// LANES
+
+
+const GROUND=420;
+
+const MIDDLE=270;
+
+const TOP=120;
+
+
 
 const gravity=0.8;
 
-const ground=310;
+const HITBOX_SCALE=0.78;
+
+
+
+
 
 
 let score=0;
@@ -102,131 +156,189 @@ let speed=7;
 
 let gameOver=false;
 
-let explosionPlaying=false;
+let exploding=false;
 
+let laneRobotCounter = [0,0,0];
 
 let obstacles=[];
 
+
+
+
+
+
+
+// SPAWN
+
+
 let spawnTimer=0;
 
+let spawnTarget=80;
 
-let gameRunning=false;
+
+
+let robotsSpawned=0;
+
+
+
+let slowLane=
+Math.floor(Math.random()*3);
+
+
+
+let nextLaneChange=
+Math.floor(Math.random()*21)+20;
+
+
+
+
+
+
+// ROBOT D RANDOM SYSTEM
+
+
+let laneRobotCount=[0,0,0];
+
+
+let laneDThreshold=[
+
+Math.floor(Math.random()*11)+20,
+
+Math.floor(Math.random()*11)+20,
+
+Math.floor(Math.random()*11)+20
+
+];
+
+
+let laneDCheckCount=[
+
+Math.floor(Math.random()*3)+5,
+
+Math.floor(Math.random()*3)+5,
+
+Math.floor(Math.random()*3)+5
+
+];
+
+
+
+let laneDChance=[
+
+false,
+
+false,
+
+false
+
+];
+
+
+
+
 
 
 
 // ANIMATION
 
+
+let playerFrame=0;
+let playerTimer=0;
+
+
 let robotFrame=0;
-
-let robotFrameTimer=0;
-
+let robotTimer=0;
 
 
-// ALPHA HITBOX STORAGE
+let robotBFrame=0;
+let robotBTimer=0;
 
-let playerHitboxes={
 
-    run1:null,
+let robotCFrame=0;
+let robotCTimer=0;
 
-    run2:null,
 
-    jump:null
+let robotDFrame=0;
+let robotDTimer=0;
+
+
+
+
+
+
+// HITBOX STORAGE
+
+
+const playerCircles={
+
+run1:null,
+run2:null,
+jump:null
 
 };
 
 
-let robotHitboxes={
 
-    robot1:null,
+const robotCircles={
 
-    robot2:null
+robot1:null,
+robot2:null
+
+};
+
+
+
+const robotBCircles={
+
+robotb1:null,
+robotb2:null
+
+};
+
+
+
+const robotCCircles={
+
+robotc1:null,
+robotc2:null
+
+};
+
+
+
+const robotDCircles={
+
+robotd1:null,
+robotd2:null
 
 };
 
 
 
 
-// FIND ALPHA BOUNDS
-
-function getAlphaBounds(img){
-
-
-    let temp=document.createElement("canvas");
-
-    temp.width=img.width;
-
-    temp.height=img.height;
-
-
-    let tctx=temp.getContext("2d");
-
-
-    tctx.drawImage(img,0,0);
 
 
 
-    let pixels=tctx.getImageData(
-        0,
-        0,
-        img.width,
-        img.height
-    ).data;
+function makeCircle(image){
 
 
+return {
 
-    let minX=img.width;
-    let minY=img.height;
+radius:
+Math.min(
+image.width,
+image.height
+)
+*
+HITBOX_SCALE
+/
+2
 
-    let maxX=0;
-    let maxY=0;
-
-
-
-    for(let y=0;y<img.height;y++){
-
-        for(let x=0;x<img.width;x++){
-
-
-            let alpha=pixels[
-                (y*img.width+x)*4+3
-            ];
-
-
-            if(alpha>10){
-
-
-                if(x<minX)minX=x;
-
-                if(x>maxX)maxX=x;
-
-                if(y<minY)minY=y;
-
-                if(y>maxY)maxY=y;
-
-
-            }
-
-
-        }
-
-    }
-
-
-
-    return {
-
-        x:minX,
-
-        y:minY,
-
-        width:maxX-minX,
-
-        height:maxY-minY
-
-    };
+};
 
 
 }
+
 
 
 
@@ -234,178 +346,192 @@ function getAlphaBounds(img){
 
 // PLAYER
 
+
 const player={
 
 
-    x:120,
+x:120,
 
-    y:ground,
+y:GROUND,
 
 
-    width:120,
+width:120,
 
-    height:120,
+height:120,
 
 
-    velY:0,
+velocity:0,
 
-    jumping:false,
 
+jumps:0,
 
-    frame:0,
 
-    frameTimer:0,
 
+jump(){
 
 
-    draw(){
+if(this.jumps<2){
 
 
-        let img;
+this.velocity=-18;
 
 
-        if(this.jumping){
+this.jumps++;
 
-            img=jumpImg;
 
-        }
-        else{
+}
 
-            img=this.frame===0 ? run1 : run2;
 
-        }
+},
 
 
 
-        ctx.save();
 
+update(){
 
 
-        ctx.translate(
+this.velocity+=gravity;
 
-            this.x+this.width,
 
-            this.y
+this.y+=this.velocity;
 
-        );
 
 
-        ctx.scale(-1,1);
+if(this.y>=GROUND){
 
 
+this.y=GROUND;
 
-        ctx.drawImage(
 
-            img,
+this.velocity=0;
 
-            0,
 
-            0,
+this.jumps=0;
 
-            this.width,
 
-            this.height
+}
 
-        );
 
 
+playerTimer++;
 
-        ctx.restore();
 
 
-    },
+if(playerTimer>8){
 
 
+playerTimer=0;
 
-    update(){
 
+playerFrame++;
 
-        if(this.jumping){
 
+if(playerFrame>1)
 
-            this.velY+=gravity;
+playerFrame=0;
 
 
-            this.y+=this.velY;
+}
 
 
 
-            if(this.y>=ground){
+},
 
 
-                this.y=ground;
 
-                this.velY=0;
 
-                this.jumping=false;
+draw(){
 
 
-            }
+let image;
 
 
-        }
+if(this.jumps>0)
 
-        else{
+image=jump;
 
+else
 
-            this.frameTimer++;
+image=
+playerFrame===0?
+run1:
+run2;
 
 
-            if(this.frameTimer>8){
 
+ctx.save();
 
-                this.frameTimer=0;
 
+ctx.translate(
+this.x+this.width,
+this.y
+);
 
-                this.frame=this.frame===0?1:0;
 
+ctx.scale(-1,1);
 
-            }
 
 
-        }
+ctx.drawImage(
 
+image,
 
-    },
+0,
 
+0,
 
+this.width,
 
-    jump(){
+this.height
 
+);
 
-        if(!this.jumping){
 
 
-            this.jumping=true;
+ctx.restore();
 
 
-            this.velY=-18;
 
-
-        }
-
-
-    }
+}
 
 
 };
 
-// LOAD ALPHA HITBOXES AFTER IMAGES LOAD
 
-function loadHitboxes(){
-
-
-    playerHitboxes.run1=getAlphaBounds(run1);
-
-    playerHitboxes.run2=getAlphaBounds(run2);
-
-    playerHitboxes.jump=getAlphaBounds(jumpImg);
+function setupCircles(){
 
 
+playerCircles.run1=makeCircle(run1);
 
-    robotHitboxes.robot1=getAlphaBounds(robot1);
+playerCircles.run2=makeCircle(run2);
 
-    robotHitboxes.robot2=getAlphaBounds(robot2);
+playerCircles.jump=makeCircle(jump);
+
+
+
+
+robotCircles.robot1=makeCircle(robot1);
+
+robotCircles.robot2=makeCircle(robot2);
+
+
+
+robotBCircles.robotb1=makeCircle(robotb1);
+
+robotBCircles.robotb2=makeCircle(robotb2);
+
+
+
+robotCCircles.robotc1=makeCircle(robotc1);
+
+robotCCircles.robotc2=makeCircle(robotc2);
+
+
+
+robotDCircles.robotd1=makeCircle(robotd1);
+
+robotDCircles.robotd2=makeCircle(robotd2);
+
 
 
 }
@@ -414,51 +540,423 @@ function loadHitboxes(){
 
 
 
-// GET CURRENT PLAYER HITBOX
-
-function getPlayerHitbox(){
 
 
-    let box;
+
+function getPlayerCircle(){
 
 
-    if(player.jumping){
+let circle;
 
-        box=playerHitboxes.jump;
+
+if(player.jumps>0)
+
+circle=playerCircles.jump;
+
+
+else if(playerFrame===0)
+
+circle=playerCircles.run1;
+
+
+else
+
+circle=playerCircles.run2;
+
+
+
+
+return {
+
+x:player.x+(player.width/2),
+
+y:player.y+(player.height/2),
+
+radius:
+circle.radius*
+(player.width/run1.width)
+
+};
+
+
+}
+
+
+
+
+
+
+
+function getRobotCircle(robot){
+
+
+let circle=
+robotFrame===0?
+robotCircles.robot1:
+robotCircles.robot2;
+
+
+
+return {
+
+x:robot.x+(robot.width/2),
+
+y:robot.y+(robot.height/2),
+
+radius:
+circle.radius*
+(robot.width/robot1.width)
+
+};
+
+
+}
+
+
+
+
+
+
+
+function getRobotBCircle(robot){
+
+
+let circle=
+robotBFrame===0?
+robotBCircles.robotb1:
+robotBCircles.robotb2;
+
+
+
+return {
+
+x:robot.x+(robot.width/2),
+
+y:robot.y+(robot.height/2),
+
+radius:
+circle.radius*
+(robot.width/robotb1.width)
+
+};
+
+
+}
+
+
+
+
+
+
+
+function getRobotCCircle(robot){
+
+
+let circle=
+robotCFrame===0?
+robotCCircles.robotc1:
+robotCCircles.robotc2;
+
+
+
+return {
+
+x:robot.x+(robot.width/2),
+
+y:robot.y+(robot.height/2),
+
+radius:
+circle.radius*
+(robot.width/robotc1.width)
+
+};
+
+
+}
+
+
+
+
+
+
+
+function getRobotDCircle(robot){
+
+
+let circle=
+robotDFrame===0?
+robotDCircles.robotd1:
+robotDCircles.robotd2;
+
+
+
+return {
+
+x:robot.x+(robot.width/2),
+
+y:robot.y+(robot.height/2),
+
+radius:
+circle.radius*
+(robot.width/robotd1.width)
+
+};
+
+
+}
+
+
+
+
+
+
+
+function circleCollision(a,b){
+
+
+let dx=a.x-b.x;
+
+let dy=a.y-b.y;
+
+
+
+return Math.sqrt(
+dx*dx+dy*dy
+)
+<
+a.radius+b.radius;
+
+
+}
+
+
+
+
+
+
+
+
+
+function laneOccupied(lane){
+
+
+for(let robot of obstacles){
+
+
+if(
+robot.lane===lane &&
+robot.x>canvas.width-140
+)
+
+return true;
+
+
+}
+
+
+return false;
+
+
+}
+
+
+
+
+
+
+
+
+function chooseRobotType(lane){
+
+
+
+laneRobotCount[lane]++;
+
+
+
+
+if(
+laneRobotCount[lane]>=laneDThreshold[lane]
+){
+
+
+
+laneRobotCount[lane]=0;
+
+
+
+laneDThreshold[lane]=
+Math.floor(Math.random()*11)+20;
+
+
+
+laneDCheckCount[lane]=
+Math.floor(Math.random()*3)+5;
+
+
+
+laneDChance[lane]=
+true;
+
+
+}
+
+
+
+
+
+
+if(laneDChance[lane]){
+
+
+
+laneDCheckCount[lane]--;
+
+
+
+if(laneDCheckCount[lane]<=0){
+
+
+laneDChance[lane]=false;
+
+
+
+if(Math.random()<10)
+
+
+return "d";
+
+
+
+}
+
+
+}
+
+
+
+
+return "normal";
+
+
+}
+
+
+
+
+
+
+
+
+function spawnColumn(){
+
+
+
+let lanes=[0,1,2];
+
+
+
+let amount =
+Math.random()<0.7 ?
+1 :
+2;
+
+
+
+while(lanes.length>amount){
+
+
+let remove=
+Math.floor(Math.random()*lanes.length);
+
+
+lanes.splice(remove,1);
+
+
+}
+
+
+
+
+
+
+for(let lane of lanes){
+
+
+
+if(laneOccupied(lane))
+
+continue;
+
+
+
+
+laneRobotCounter[lane]++;
+
+let type="normal";
+
+
+if(laneRobotCounter[lane] >= 2){
+
+    laneRobotCounter[lane]=0;
+
+
+    if(Math.random() < 0.6){
+
+        type="d";
 
     }
 
-    else{
-
-        box=
-        player.frame===0 ?
-        playerHitboxes.run1 :
-        playerHitboxes.run2;
-
-    }
+}
 
 
 
-    let scaleX=player.width /
-    (player.jumping ? jumpImg.width : run1.width);
-
-
-    let scaleY=player.height /
-    (player.jumping ? jumpImg.height : run1.height);
+let y;
 
 
 
-    return {
+if(lane===0)
 
-        x:player.x+(box.x*scaleX),
+y=GROUND+20;
 
-        y:player.y+(box.y*scaleY),
 
-        width:box.width*scaleX,
+if(lane===1)
 
-        height:box.height*scaleY
+y=MIDDLE;
 
-    };
+
+if(lane===2)
+
+y=TOP;
+
+
+
+
+
+
+obstacles.push({
+
+
+type:type,
+
+
+lane:lane,
+
+
+x:canvas.width,
+
+
+y:y,
+
+
+width:90,
+
+
+height:90
+
+
+});
+
 
 
 }
@@ -467,38 +965,26 @@ function getPlayerHitbox(){
 
 
 
-// ROBOT HITBOX
-
-function getRobotHitbox(obstacle){
-
-
-    let box =
-    robotFrame===0 ?
-    robotHitboxes.robot1 :
-    robotHitboxes.robot2;
+robotsSpawned++;
 
 
 
-    let scaleX=obstacle.width / robot1.width;
 
-    let scaleY=obstacle.height / robot1.height;
-
+if(robotsSpawned>=nextLaneChange){
 
 
-    return {
+
+robotsSpawned=0;
 
 
-        x:obstacle.x+(box.x*scaleX),
 
-        y:obstacle.y+(box.y*scaleY),
-
-
-        width:box.width*scaleX,
-
-        height:box.height*scaleY
+slowLane=
+Math.floor(Math.random()*3);
 
 
-    };
+
+nextLaneChange=
+Math.floor(Math.random()*21)+20;
 
 
 }
@@ -507,38 +993,9 @@ function getRobotHitbox(obstacle){
 
 
 
-// COLLISION
+spawnTarget=
+Math.floor(Math.random()*50)+70;
 
-function checkCollision(player,obstacle){
-
-    if(
-        !playerHitboxes.run1 ||
-        !playerHitboxes.run2 ||
-        !playerHitboxes.jump ||
-        !robotHitboxes.robot1 ||
-        !robotHitboxes.robot2
-    ){
-        return false;
-    }
-
-
-    let p=getPlayerHitbox();
-
-    let r=getRobotHitbox(obstacle);
-
-
-
-    return (
-
-        p.x < r.x+r.width &&
-
-        p.x+p.width > r.x &&
-
-        p.y < r.y+r.height &&
-
-        p.y+p.height > r.y
-
-    );
 
 
 }
@@ -548,69 +1005,48 @@ function checkCollision(player,obstacle){
 
 
 
-// SPAWN ROBOT
-
-function spawnObstacle(){
 
 
-    obstacles.push({
-
-
-        x:canvas.width,
-
-        y:ground+40,
-
-
-        width:80,
-
-        height:80
-
-
-    });
-
-
-}
-
-
-
-
-
-// EXPLOSION
 
 function startExplosion(){
 
 
-    if(explosionPlaying)return;
+if(exploding)
+
+return;
 
 
 
-    explosionPlaying=true;
-
-
-    explosion.style.display="block";
+exploding=true;
 
 
 
-    explosion.src="";
-
-    explosion.src="explode.gif";
+explosion.style.display="block";
 
 
-
-    setTimeout(()=>{
-
-
-        explosion.style.display="none";
+explosion.style.width=
+canvas.width+"px";
 
 
-        gameOver=true;
-
-
-        explosionPlaying=false;
+explosion.style.height=
+canvas.height+"px";
 
 
 
-    },1000);
+
+setTimeout(()=>{
+
+
+explosion.style.display="none";
+
+
+exploding=false;
+
+
+gameOver=true;
+
+
+},1000);
 
 
 
@@ -620,41 +1056,42 @@ function startExplosion(){
 
 
 
-// RESTART
+
 
 function restart(){
 
 
-    score=0;
-
-    speed=7;
+score=0;
 
 
-    obstacles=[];
-
-    spawnTimer=0;
+speed=7;
 
 
-
-    player.y=ground;
-
-    player.velY=0;
-
-    player.jumping=false;
+obstacles=[];
 
 
 
-    gameOver=false;
-
-    explosionPlaying=false;
+spawnTimer=0;
 
 
+robotsSpawned=0;
 
-    if(!gameRunning){
 
-        gameLoop();
 
-    }
+laneRobotCount=[0,0,0];
+
+
+
+player.y=GROUND;
+
+player.velocity=0;
+
+player.jumps=0;
+
+
+
+gameOver=false;
+
 
 
 }
@@ -663,26 +1100,27 @@ function restart(){
 
 
 
-// CONTROLS
+
 
 document.addEventListener("keydown",(e)=>{
 
 
-    if(gameOver){
+if(gameOver){
 
-        restart();
+restart();
 
-        return;
+return;
 
-    }
+}
 
 
+if(
+e.code==="Space" ||
+e.code==="ArrowUp"
+)
 
-    if(e.code==="Space" || e.code==="ArrowUp"){
+player.jump();
 
-        player.jump();
-
-    }
 
 
 });
@@ -694,390 +1132,584 @@ document.addEventListener("keydown",(e)=>{
 document.addEventListener("mousedown",()=>{
 
 
-    if(gameOver){
+if(gameOver)
 
-        restart();
+restart();
 
-    }
+else
 
-    else{
-
-        player.jump();
-
-    }
+player.jump();
 
 
 });
-
-
-
-
-
-document.addEventListener("touchstart",()=>{
-
-
-    if(gameOver){
-
-        restart();
-
-    }
-
-    else{
-
-        player.jump();
-
-    }
-
-
-});
-
-
-
-
-
-
-// GAME LOOP
-
-function gameLoop(){
-
-
-    if(gameRunning)return;
-
-
-    gameRunning=true;
-
-
-    update();
-
-
-}
-
-
-
 
 
 function update(){
 
 
-    requestAnimationFrame(update);
+requestAnimationFrame(update);
 
 
 
-    ctx.clearRect(
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
 
-        0,
 
-        0,
 
-        canvas.width,
+ctx.drawImage(
+sky,
+0,
+0,
+canvas.width,
+canvas.height
+);
 
-        canvas.height
 
-    );
 
+ctx.drawImage(
+ground,
+0,
+540,
+canvas.width,
+60
+);
 
 
-    ctx.drawImage(
 
-        sky,
 
-        0,
 
-        0,
 
-        canvas.width,
+if(exploding)
 
-        canvas.height
+return;
 
-    );
 
 
 
-    ctx.drawImage(
 
-        groundImg,
 
-        0,
 
-        390,
+if(!gameOver){
 
-        canvas.width,
 
-        60
 
-    );
+score+=0.05;
 
 
+speed=10+(score/80);
 
-    if(explosionPlaying){
 
-        return;
 
-    }
 
+spawnTimer++;
 
 
-    if(!gameOver){
 
+if(spawnTimer>spawnTarget){
 
-        score+=0.05;
 
+spawnTimer=0;
 
-        speed=7+score/100;
 
+spawnColumn();
 
 
-        spawnTimer++;
+}
 
 
 
-        if(spawnTimer>80){
 
 
-            spawnTimer=0;
 
+player.update();
 
-            spawnObstacle();
 
+player.draw();
 
-        }
 
 
 
 
-        player.update();
 
 
-        player.draw();
+robotTimer++;
 
 
+if(robotTimer>8){
 
-        robotFrameTimer++;
 
+robotTimer=0;
 
-        if(robotFrameTimer>8){
 
+robotFrame++;
 
-            robotFrameTimer=0;
 
+if(robotFrame>1)
 
-            robotFrame=robotFrame===0?1:0;
+robotFrame=0;
 
 
-        }
+}
 
 
 
 
 
-        for(let i=obstacles.length-1;i>=0;i--){
 
+robotBTimer++;
 
-            let o=obstacles[i];
 
+if(robotBTimer>8){
 
 
-            o.x-=speed;
+robotBTimer=0;
 
 
+robotBFrame++;
 
-            ctx.drawImage(
 
-                robotFrame===0 ?
-                robot1 :
-                robot2,
+if(robotBFrame>1)
 
-                o.x,
+robotBFrame=0;
 
-                o.y,
 
-                o.width,
+}
 
-                o.height
 
-            );
 
 
 
-            if(checkCollision(player,o)){
 
+robotCTimer++;
 
-                startExplosion();
 
+if(robotCTimer>8){
 
-                return;
 
+robotCTimer=0;
 
-            }
 
+robotCFrame++;
 
 
+if(robotCFrame>1)
 
-            if(o.x<-100){
+robotCFrame=0;
 
 
-                obstacles.splice(i,1);
+}
 
 
-            }
 
 
-        }
 
 
-    }
+robotDTimer++;
 
-// SCORE DISPLAY
+
+if(robotDTimer>6){
+
+
+robotDTimer=0;
+
+
+robotDFrame++;
+
+
+if(robotDFrame>1)
+
+robotDFrame=0;
+
+
+}
+
+
+
+
+
+
+
+
+
+for(
+let i=obstacles.length-1;
+i>=0;
+i--
+){
+
+
+
+let robot=obstacles[i];
+
+
+
+
+
+let robotSpeed=speed;
+
+
+
+if(robot.type==="d")
+
+
+robotSpeed=speed+4;
+
+
+
+robot.x-=robotSpeed;
+
+
+
+
+
+
+
+
+if(robot.type==="normal" && robot.lane===0){
+
+
+ctx.drawImage(
+
+robotFrame===0?
+robot1:
+robot2,
+
+robot.x,
+
+robot.y,
+
+robot.width,
+
+robot.height
+
+);
+
+
+
+if(circleCollision(
+getPlayerCircle(),
+getRobotCircle(robot)
+)){
+
+
+startExplosion();
+
+return;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+if(robot.type==="normal" && robot.lane===1){
+
+
+ctx.drawImage(
+
+robotBFrame===0?
+robotb1:
+robotb2,
+
+robot.x,
+
+robot.y,
+
+robot.width,
+
+robot.height
+
+);
+
+
+
+if(circleCollision(
+getPlayerCircle(),
+getRobotBCircle(robot)
+)){
+
+
+startExplosion();
+
+return;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+if(robot.type==="normal" && robot.lane===2){
+
+
+ctx.drawImage(
+
+robotCFrame===0?
+robotc1:
+robotc2,
+
+robot.x,
+
+robot.y,
+
+robot.width,
+
+robot.height
+
+);
+
+
+
+if(circleCollision(
+getPlayerCircle(),
+getRobotCCircle(robot)
+)){
+
+
+startExplosion();
+
+return;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+if(robot.type==="d"){
+
+
+
+let image;
+
+
+if(robot.lane===0)
+
+image=
+robotDFrame===0?
+robotd1:
+robotd2;
+
+
+
+if(robot.lane===1)
+
+image=
+robotDFrame===0?
+robotd1:
+robotd2;
+
+
+
+if(robot.lane===2)
+
+image=
+robotDFrame===0?
+robotd1:
+robotd2;
+
+
+
+
+
+ctx.drawImage(
+
+image,
+
+robot.x,
+
+robot.y,
+
+robot.width,
+
+robot.height
+
+);
+
+
+
+
+
+if(circleCollision(
+getPlayerCircle(),
+getRobotDCircle(robot)
+)){
+
+
+startExplosion();
+
+return;
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+if(robot.x<-120)
+
+
+obstacles.splice(i,1);
+
+
+
+}
+
+
+
+}
+
+
+
+
+drawUI();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function drawUI(){
+
+
+ctx.font=
+"32px Arial Rounded MT Bold, Arial";
+
 
 ctx.fillStyle="#3b8cff";
 
-ctx.strokeStyle="white";
-
-ctx.lineWidth=4;
-
-ctx.font="28px 'Baloo 2', Arial";
-
-
-ctx.strokeText(
-    "Score: " + Math.floor(score),
-    20,
-    40
-);
 
 
 ctx.fillText(
-    "Score: " + Math.floor(score),
-    20,
-    40
+
+"Score: "+Math.floor(score),
+
+20,
+
+40
+
 );
 
 
 
 
 
-// GAME OVER SCREEN
+
 
 if(gameOver){
 
 
-    ctx.fillStyle="rgba(0,0,0,0.6)";
 
+ctx.fillStyle=
+"rgba(0,0,0,0.6)";
 
-    ctx.fillRect(
 
-        0,
 
-        0,
+ctx.fillRect(
 
-        canvas.width,
+0,
 
-        canvas.height
+0,
 
-    );
+canvas.width,
 
+canvas.height
 
+);
 
-    ctx.textAlign="center";
 
 
 
-    ctx.fillStyle="#3b8cff";
 
-    ctx.strokeStyle="white";
+ctx.textAlign="center";
 
-    ctx.lineWidth=5;
 
 
+ctx.font=
+"60px Arial Rounded MT Bold, Arial";
 
-    ctx.font="50px 'Baloo 2', Arial";
 
+ctx.fillStyle="#3b8cff";
 
 
-    ctx.strokeText(
 
-        "GAME OVER",
+ctx.fillText(
 
-        canvas.width/2,
+"GAME OVER",
 
-        180
+canvas.width/2,
 
-    );
+200
 
+);
 
 
-    ctx.fillText(
 
-        "GAME OVER",
 
-        canvas.width/2,
 
-        180
+ctx.font=
+"24px Arial Rounded MT Bold, Arial";
 
-    );
 
 
+ctx.fillText(
 
+"Press SPACE or click to restart",
 
+canvas.width/2,
 
-    ctx.font="30px 'Baloo 2', Arial";
+300
 
+);
 
 
-    ctx.strokeText(
 
-        "Score: " + Math.floor(score),
+ctx.textAlign="left";
 
-        canvas.width/2,
 
-        240
 
-    );
-
-
-
-    ctx.fillText(
-
-        "Score: " + Math.floor(score),
-
-        canvas.width/2,
-
-        240
-
-    );
-
-
-
-
-
-    ctx.font="24px 'Baloo 2', Arial";
-
-
-
-    ctx.strokeText(
-
-        "Press SPACE or click to restart",
-
-        canvas.width/2,
-
-        300
-
-    );
-
-
-
-    ctx.fillText(
-
-        "Press SPACE or click to restart",
-
-        canvas.width/2,
-
-        300
-
-    );
-
-
-
-    ctx.textAlign="left";
+}
 
 
 }
@@ -1086,44 +1718,70 @@ if(gameOver){
 
 
 
+
+
+
+let loaded=0;
+
+
+
+function imageLoaded(){
+
+
+loaded++;
+
+
+
+if(loaded===13){
+
+
+setupCircles();
+
+
+update();
+
+
 }
 
 
 
-// START GAME AFTER ALL IMAGES LOAD
-
-Promise.all([
+}
 
 
-    new Promise(resolve=>run1.onload=resolve),
-
-    new Promise(resolve=>run2.onload=resolve),
-
-    new Promise(resolve=>jumpImg.onload=resolve),
-
-    new Promise(resolve=>robot1.onload=resolve),
-
-    new Promise(resolve=>robot2.onload=resolve),
-
-    new Promise(resolve=>sky.onload=resolve),
-
-    new Promise(resolve=>groundImg.onload=resolve)
 
 
-])
-
-.then(()=>{
-
-    loadHitboxes();
-
-    gameRunning = false;
-
-    gameLoop();
-
-});
 
 
-});
+run1.onload=imageLoaded;
+
+run2.onload=imageLoaded;
+
+jump.onload=imageLoaded;
+
+
+robot1.onload=imageLoaded;
+
+robot2.onload=imageLoaded;
+
+
+robotb1.onload=imageLoaded;
+
+robotb2.onload=imageLoaded;
+
+
+robotc1.onload=imageLoaded;
+
+robotc2.onload=imageLoaded;
+
+
+robotd1.onload=imageLoaded;
+
+robotd2.onload=imageLoaded;
+
+
+sky.onload=imageLoaded;
+
+ground.onload=imageLoaded;
 
 
 
