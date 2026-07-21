@@ -6,6 +6,8 @@
 
 <style>
 
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap');
+
 html, body {
     margin:0;
     padding:0;
@@ -44,90 +46,97 @@ canvas {
 
 <body>
 
-
 <img id="explosion" src="explode.gif">
 
-
 <canvas id="game" width="900" height="450"></canvas>
-
 
 
 <script>
 
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const canvas=document.getElementById("game");
+const ctx=canvas.getContext("2d");
 
-ctx.imageSmoothingEnabled = false;
+ctx.imageSmoothingEnabled=false;
+
+
+// FONT
+
+ctx.font="28px 'Baloo 2', Arial";
 
 
 // IMAGES
 
-const run1 = new Image();
+const run1=new Image();
 run1.src="run1.png";
 
 
-const run2 = new Image();
+const run2=new Image();
 run2.src="run2.png";
 
 
-const jumpImg = new Image();
+const jumpImg=new Image();
 jumpImg.src="jump.png";
 
 
-const robot = new Image();
+const robot=new Image();
 robot.src="robot.png";
 
 
-const sky = new Image();
+const sky=new Image();
 sky.src="sky.png";
 
 
-const groundImg = new Image();
+const groundImg=new Image();
 groundImg.src="ground.png";
 
 
 
-// EXPLOSION
-
-const explosion = document.getElementById("explosion");
+const explosion=document.getElementById("explosion");
 
 
 
-// GAME VARIABLES
+// VARIABLES
 
-const gravity = 0.8;
+const gravity=0.8;
 
-const ground = 310;
-
-
-let score = 0;
-
-let speed = 7;
-
-let gameOver = false;
-
-let explosionPlaying = false;
+const ground=310;
 
 
-let obstacles = [];
+let score=0;
 
-let spawnTimer = 0;
+let speed=7;
 
 
-// prevents multiple game loops
+let gameOver=false;
 
-let gameRunning = false;
+let explosionPlaying=false;
+
+
+let obstacles=[];
+
+let spawnTimer=0;
+
+
+let gameRunning=false;
+
+
+
+// ROBOT ALPHA DATA
+
+let robotPixels=[];
 
 
 
 // PLAYER
 
-const player = {
+const player={
+
 
     x:120,
 
     y:ground,
+
 
     width:120,
 
@@ -156,7 +165,6 @@ const player = {
             img=jumpImg;
 
         }
-
         else{
 
             img=this.frame===0 ? run1 : run2;
@@ -172,10 +180,8 @@ const player = {
 
 
 
-        // flip image
-
         ctx.translate(
-            this.x + this.width,
+            this.x+this.width,
             this.y
         );
 
@@ -185,19 +191,12 @@ const player = {
 
 
         ctx.drawImage(
-
             img,
-
             0,
-
             0,
-
             this.width,
-
             this.height
-
         );
-
 
 
         ctx.restore();
@@ -213,48 +212,43 @@ const player = {
         if(this.jumping){
 
 
-            this.velY += gravity;
+            this.velY+=gravity;
 
 
-            this.y += this.velY;
+            this.y+=this.velY;
 
 
 
-            if(this.y >= ground){
+            if(this.y>=ground){
 
 
-                this.y = ground;
+                this.y=ground;
 
-                this.velY = 0;
+                this.velY=0;
 
-                this.jumping = false;
+                this.jumping=false;
 
 
             }
 
 
         }
-
-
         else{
 
 
             this.frameTimer++;
 
 
-
-            if(this.frameTimer > 8){
+            if(this.frameTimer>8){
 
 
                 this.frameTimer=0;
 
 
-                this.frame =
-                this.frame===0 ? 1 : 0;
+                this.frame=this.frame===0?1:0;
 
 
             }
-
 
         }
 
@@ -271,7 +265,10 @@ const player = {
 
             this.jumping=true;
 
-            this.velY=-16;
+
+            // slightly higher jump
+
+            this.velY=-18;
 
 
         }
@@ -282,43 +279,168 @@ const player = {
 
 };
 
+// CREATE ROBOT ALPHA HITBOX
+
+robot.onload=function(){
+
+
+    const temp=document.createElement("canvas");
+
+    temp.width=robot.width;
+
+    temp.height=robot.height;
+
+
+    const tctx=temp.getContext("2d");
+
+
+    tctx.drawImage(robot,0,0);
+
+
+
+    const data=tctx.getImageData(
+        0,
+        0,
+        robot.width,
+        robot.height
+    ).data;
+
+
+
+    robotPixels=[];
+
+
+
+    for(let y=0;y<robot.height;y++){
+
+
+        for(let x=0;x<robot.width;x++){
+
+
+            let alpha=data[
+                (y*robot.width+x)*4+3
+            ];
+
+
+
+            if(alpha>10){
+
+
+                robotPixels.push({
+                    x:x,
+                    y:y
+                });
+
+
+            }
+
+
+        }
+
+
+    }
+
+
+};
+
+
+
+
+// ALPHA COLLISION
+
+function robotCollision(player, obstacle){
+
+
+
+    for(let p of robotPixels){
+
+
+
+        // shrink hitbox 2%
+
+        let shrink=0.02;
+
+
+        let rx =
+        obstacle.x +
+        (p.x * obstacle.width / robot.width);
+
+
+        let ry =
+        obstacle.y +
+        (p.y * obstacle.height / robot.height);
+
+
+
+        let rw =
+        obstacle.width / robot.width;
+
+
+
+        let rh =
+        obstacle.height / robot.height;
+
+
+
+        rx += rw * shrink;
+
+        ry += rh * shrink;
+
+
+
+        if(
+
+            rx < player.x + player.width &&
+
+            rx+rw > player.x &&
+
+            ry < player.y + player.height &&
+
+            ry+rh > player.y
+
+        ){
+
+            return true;
+
+        }
+
+
+    }
+
+
+    return false;
+
+
+}
+
+
+
+
 // SPAWN ROBOTS
 
 function spawnObstacle(){
 
+
     obstacles.push({
+
 
         x:canvas.width,
 
-        y:ground + 40,
+
+        y:ground+40,
+
 
         width:80,
 
+
         height:80
+
 
     });
 
-}
-
-
-
-// COLLISION
-
-function checkCollision(player, obstacle){
-
-    return (
-
-        player.x < obstacle.x + obstacle.width &&
-
-        player.x + player.width > obstacle.x &&
-
-        player.y < obstacle.y + obstacle.height &&
-
-        player.y + player.height > obstacle.y
-
-    );
 
 }
+
 
 
 
@@ -327,7 +449,7 @@ function checkCollision(player, obstacle){
 function startExplosion(){
 
 
-    if(explosionPlaying) return;
+    if(explosionPlaying)return;
 
 
 
@@ -338,8 +460,6 @@ function startExplosion(){
     explosion.style.display="block";
 
 
-
-    // restart gif animation
 
     explosion.src="";
 
@@ -359,7 +479,6 @@ function startExplosion(){
         explosionPlaying=false;
 
 
-
     },1000);
 
 
@@ -376,6 +495,7 @@ function restart(){
 
     score=0;
 
+
     speed=7;
 
 
@@ -388,7 +508,9 @@ function restart(){
 
     player.y=ground;
 
+
     player.velY=0;
+
 
     player.jumping=false;
 
@@ -396,10 +518,10 @@ function restart(){
 
     gameOver=false;
 
+
     explosionPlaying=false;
 
 
-    // restart without creating extra loops
 
     if(!gameRunning){
 
@@ -409,6 +531,7 @@ function restart(){
 
 
 }
+
 
 
 
@@ -443,7 +566,6 @@ document.addEventListener("keydown",(e)=>{
 
 
 
-
 document.addEventListener("mousedown",()=>{
 
 
@@ -465,7 +587,6 @@ document.addEventListener("mousedown",()=>{
 
 
 });
-
 
 
 
@@ -495,25 +616,22 @@ document.addEventListener("touchstart",()=>{
 
 
 
-
-// MAIN LOOP
-
+// GAME LOOP
 
 function gameLoop(){
 
 
-    if(gameRunning) return;
-
+    if(gameRunning)return;
 
 
     gameRunning=true;
-
 
 
     update();
 
 
 }
+
 
 
 
@@ -525,64 +643,38 @@ function update(){
 
 
     ctx.clearRect(
-
         0,
-
         0,
-
         canvas.width,
-
         canvas.height
-
     );
 
 
 
-
-
-    // SKY IMAGE
+    // SKY
 
 
     ctx.drawImage(
-
         sky,
-
         0,
-
         0,
-
         canvas.width,
-
         canvas.height
-
     );
 
 
 
-
-
-    // GROUND IMAGE
+    // GROUND
 
 
     ctx.drawImage(
-
         groundImg,
-
         0,
-
         390,
-
         canvas.width,
-
         60
-
     );
 
-
-
-
-
-    // freeze everything during explosion
 
 
     if(explosionPlaying){
@@ -593,19 +685,13 @@ function update(){
 
 
 
-
-
     if(!gameOver){
 
 
-
-        score += .05;
-
+        score+=0.05;
 
 
-        speed = 7 + score / 100;
-
-
+        speed=7+score/100;
 
 
 
@@ -613,8 +699,7 @@ function update(){
 
 
 
-
-        if(spawnTimer > 80){
+        if(spawnTimer>80){
 
 
             spawnTimer=0;
@@ -627,14 +712,10 @@ function update(){
 
 
 
-
-
         player.update();
 
 
         player.draw();
-
-
 
 
 
@@ -645,10 +726,7 @@ function update(){
             let o=obstacles[i];
 
 
-
-            o.x -= speed;
-
-
+            o.x-=speed;
 
 
 
@@ -668,10 +746,7 @@ function update(){
 
 
 
-
-
-            if(checkCollision(player,o)){
-
+            if(robotCollision(player,o)){
 
 
                 startExplosion();
@@ -684,9 +759,7 @@ function update(){
 
 
 
-
-
-            if(o.x < -100){
+            if(o.x<-100){
 
 
                 obstacles.splice(i,1);
@@ -698,20 +771,42 @@ function update(){
         }
 
 
-
     }
 
-// SCORE
+// SCORE TEXT
 
-ctx.fillStyle="black";
+ctx.fillStyle="#3b8cff";
 
-ctx.font="28px Arial";
+ctx.font="28px 'Baloo 2', Arial";
+
+ctx.strokeStyle="white";
+
+ctx.lineWidth=4;
+
+
+
+ctx.strokeText(
+
+    "Score: " + Math.floor(score),
+
+    20,
+
+    40
+
+);
+
+
 
 ctx.fillText(
+
     "Score: " + Math.floor(score),
+
     20,
+
     40
+
 );
+
 
 
 
@@ -721,50 +816,122 @@ ctx.fillText(
 if(gameOver){
 
 
+
     ctx.fillStyle="rgba(0,0,0,0.6)";
 
+
     ctx.fillRect(
+
         0,
+
         0,
+
         canvas.width,
+
         canvas.height
+
     );
 
 
-
-    ctx.fillStyle="white";
 
     ctx.textAlign="center";
 
 
 
-    ctx.font="50px Arial";
+    ctx.fillStyle="#3b8cff";
 
-    ctx.fillText(
+    ctx.strokeStyle="white";
+
+    ctx.lineWidth=5;
+
+
+
+    ctx.font="50px 'Baloo 2', Arial";
+
+
+
+    ctx.strokeText(
+
         "GAME OVER",
+
         canvas.width/2,
+
         180
+
     );
 
 
 
-    ctx.font="30px Arial";
-
     ctx.fillText(
+
+        "GAME OVER",
+
+        canvas.width/2,
+
+        180
+
+    );
+
+
+
+
+
+    ctx.font="30px 'Baloo 2', Arial";
+
+
+
+    ctx.strokeText(
+
         "Score: " + Math.floor(score),
+
         canvas.width/2,
+
         240
+
     );
 
 
-
-    ctx.font="24px Arial";
 
     ctx.fillText(
-        "Press SPACE or click to restart",
+
+        "Score: " + Math.floor(score),
+
         canvas.width/2,
-        300
+
+        240
+
     );
+
+
+
+
+
+    ctx.font="24px 'Baloo 2', Arial";
+
+
+
+    ctx.strokeText(
+
+        "Press SPACE or click to restart",
+
+        canvas.width/2,
+
+        300
+
+    );
+
+
+
+    ctx.fillText(
+
+        "Press SPACE or click to restart",
+
+        canvas.width/2,
+
+        300
+
+    );
+
 
 
     ctx.textAlign="left";
@@ -774,11 +941,13 @@ if(gameOver){
 
 
 
+
+
 }
 
 
 
-// START GAME AFTER IMAGES LOAD
+// START WHEN ASSETS LOAD
 
 Promise.all([
 
@@ -789,11 +958,10 @@ Promise.all([
 
     new Promise(resolve=>jumpImg.onload=resolve),
 
-    new Promise(resolve=>robot.onload=resolve),
-
     new Promise(resolve=>sky.onload=resolve),
 
     new Promise(resolve=>groundImg.onload=resolve)
+
 
 
 ])
