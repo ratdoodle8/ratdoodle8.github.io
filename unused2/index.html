@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Runner Game</title>
+
+<style>
+html,body{
+    margin:0;
+    overflow:hidden;
+    background:#87ceeb;
+}
+
+canvas{
+    display:block;
+    margin:auto;
+    background:linear-gradient(#87CEEB,#CFF7FF);
+}
+</style>
+
+</head>
+<body>
+
+<canvas id="game" width="900" height="450"></canvas>
+
+<img id="explosion"
+src="explode.gif"
+style="
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+display:none;
+pointer-events:none;
+object-fit:cover;
+z-index:9999;
+">
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+//------------------------
+// Load Images
+//------------------------
+
+const run1 = new Image();
+run1.src="run1.png";
+
+const run2 = new Image();
+run2.src="run2.png";
+
+const jumpImg = new Image();
+jumpImg.src="jump.png";
+
+const robot = new Image();
+robot.src = "robot.png";
+
+//------------------------
+
+const gravity = 0.8;
+const ground = 360;
+
+let score = 0;
+let speed = 7;
+let gameOver = false;
+
+let explosionPlaying = false;
+let showGameOver = false;
+
+
+//------------------------
+// Player
+//------------------------
+
+
+
+const player={
+    x:120,
+    y:ground,
+    width:120,
+    height:120,
+    velY:0,
+    jumping:false,
+    frame:0,
+    frameTimer:0,
+
+    draw(){
+
+    let img;
+
+    if(this.jumping){
+        img = jumpImg;
+    }else{
+        img = this.frame==0 ? run1 : run2;
+    }
+
+    ctx.save();
+
+    ctx.imageSmoothingEnabled = false;
+
+    ctx.translate(this.x + this.width, this.y);
+    ctx.scale(-1,1);
+
+    ctx.drawImage(img,0,0,this.width,this.height);
+
+    ctx.restore();
+
+}
+
+    update(){
+
+        if(this.jumping){
+
+            this.velY+=gravity;
+            this.y+=this.velY;
+
+            if(this.y>=ground){
+                this.y=ground;
+                this.velY=0;
+                this.jumping=false;
+            }
+
+        }else{
+
+            this.frameTimer++;
+
+            if(this.frameTimer>8){
+                this.frameTimer=0;
+                this.frame=this.frame==0?1:0;
+            }
+
+        }
+
+    },
+
+    jump(){
+
+        if(!this.jumping){
+            this.jumping=true;
+            this.velY=-16;
+        }
+
+    }
+
+};
+
+//------------------------
+// Obstacles
+//------------------------
+
+let obstacles=[];
+
+function spawnObstacle(){
+
+    obstacles.push({
+
+        x:canvas.width,
+        y:ground,
+        width:70,
+        height:70
+
+    });
+
+}
+
+let spawnTimer=0;
+
+//------------------------
+
+document.addEventListener("keydown",(e)=>{
+
+    if(gameOver){
+        restart();
+        return;
+    }
+
+    if(e.code==="Space" || e.code==="ArrowUp"){
+        player.jump();
+    }
+
+});
+
+document.addEventListener("mousedown",()=>{
+
+    if(gameOver){
+        restart();
+    }else{
+        player.jump();
+    }
+
+});
+
+document.addEventListener("touchstart",()=>{
+
+    if(gameOver){
+        restart();
+    }else{
+        player.jump();
+    }
+
+});
+
+//------------------------
+
+
+function restart(){
+
+    score = 0;
+    speed = 7;
+
+    obstacles = [];
+
+    player.y = ground;
+    player.velY = 0;
+    player.jumping = false;
+
+    gameOver = false;
+    explosionPlaying = false;
+    showGameOver = false;
+
+    update();
+
+}
+
+
+function update(){
+
+
+	if(explosionPlaying){
+    		requestAnimationFrame(update);
+    		return;
+	}
+
+    if(gameOver)return;
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // Ground
+    ctx.fillStyle="#5cb85c";
+    ctx.fillRect(0,430,canvas.width,20);
+
+    // Score
+
+    score+=0.05;
+
+    speed=7+score/100;
+
+    spawnTimer++;
+
+    if(spawnTimer>70){
+        spawnTimer=0;
+        spawnObstacle();
+    }
+
+    player.update();
+    player.draw();
+
+    // Obstacles
+
+    ctx.fillStyle="#333";
+
+    for(let i=obstacles.length-1;i>=0;i--){
+
+        let o=obstacles[i];
+
+        o.x-=speed;
+
+        ctx.imageSmoothingEnabled = false;
+	ctx.drawImage(robot,o.x,o.y,o.width,o.height);
+
+        // Collision
+
+        if(
+            player.x<o.x+o.width &&
+            player.x+player.width>o.x &&
+            player.y<o.y+o.height &&
+            player.y+player.height>o.y
+        ){
+            explosionPlaying = true;
+
+const boom = document.getElementById("explosion");
+boom.style.display = "block";
+
+// restart gif
+boom.src = "";
+boom.src = "explode.gif";
+
+setTimeout(()=>{
+    boom.style.display = "none";
+    showGameOver = true;
+    gameOver = true;
+},2000);
+        }
+
+        if(o.x<-50){
+            obstacles.splice(i,1);
+        }
+
+    }
+
+    ctx.fillStyle="black";
+    ctx.font="28px Arial";
+    ctx.fillText("Score: "+Math.floor(score),20,40);
+
+    if(gameOver){
+
+        ctx.fillStyle="rgba(0,0,0,.6)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        ctx.fillStyle="white";
+        ctx.font="48px Arial";
+        ctx.textAlign="center";
+        ctx.fillText("GAME OVER",canvas.width/2,180);
+
+        ctx.font="30px Arial";
+        ctx.fillText("Score: "+Math.floor(score),canvas.width/2,240);
+
+        ctx.font="24px Arial";
+        ctx.fillText("Press SPACE or CLICK to restart",canvas.width/2,300);
+
+    }else{
+        requestAnimationFrame(update);
+    }
+
+}
+
+Promise.all([
+    new Promise(r=>run1.onload=r),
+    new Promise(r=>run2.onload=r),
+    new Promise(r=>jumpImg.onload=r)
+]).then(()=>{
+    update();
+});
+
+</script>
+
+</body>
+</html>
