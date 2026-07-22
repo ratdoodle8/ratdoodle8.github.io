@@ -1,0 +1,24 @@
+{
+  "A1": {
+    "number": "A1",
+    "name": "Aether",
+    "subname": "The Wanderer",
+    "description": "A mysterious traveler capable of manipulating time.",
+
+    "coreLore": {
+      "Fire": "Fire represents passion.",
+      "Spirit": "Spirit represents memory."
+    }
+  },
+
+  "A2": {
+    "number": "A2",
+    "name": "Nova",
+    "subname": "Starborn",
+    "description": "A guardian empowered by fragments of dying stars.",
+
+    "coreLore": {
+      "Light": "Light represents hope."
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "A1": {
+    "number": "A1",
+    "name": "Aether",
+    "subname": "The Wanderer",
+
+    "cardType": "Champion",
+    "coreType": "Fire",
+
+    "cost": 3,
+    "power": 7,
+    "endurance": 5,
+    "health": 18,
+    "initiative": 4,
+
+    "abilities": [
+      "Ignite",
+      "Ashen Step"
+    ],
+
+    "spells": [
+      "Inferno",
+      "Flare Burst"
+    ]
+  },
+
+  "A2": {
+    "number": "A2",
+    "name": "Nova",
+    "subname": "Starborn",
+
+    "cardType": "Champion",
+    "coreType": "Light",
+
+    "cost": 2,
+    "power": 5,
+    "endurance": 7,
+    "health": 16,
+    "initiative": 6,
+
+    "abilities": [
+      "Radiance"
+    ],
+
+    "spells": [
+      "Nova Beam"
+    ]
+  }
+}
