@@ -88,6 +88,7 @@ function addStyles() {
 
 
 
+
     .extra-images .character-image {
 
         height:400px;
@@ -186,7 +187,7 @@ async function loadCharacter() {
     if (!character || !card) {
 
         document.body.innerHTML =
-        "<h1>Character not found.</h1>";
+            "<h1>Character not found.</h1>";
 
         return;
 
@@ -296,7 +297,7 @@ function buildPage(character, card) {
 
 
     document.title =
-    `${character.number} - ${character.name}`;
+        `${character.number} - ${character.name}`;
 
 
 
@@ -326,13 +327,16 @@ ${character.name}
 
 
 
-${character.subname ? 
-`
+${character.subname ? `
+
 <h3>
+
 ${character.subname}
+
 </h3>
-`
-: ""}
+
+` : ""}
+
 
 
 </header>
@@ -409,13 +413,17 @@ ${character.name}
 <p>
 
 <strong>
+
 ${card.cardType}
+
 </strong>
 
 &nbsp; | &nbsp;
 
 <strong>
+
 Cost:
+
 </strong>
 
 ${card.cost}
@@ -431,13 +439,17 @@ ${card.cost}
 <p>
 
 <strong>
+
 ${card.coreType}
+
 </strong>
 
 &nbsp; | &nbsp;
 
 <strong>
+
 Power:
+
 </strong>
 
 ${card.power}
@@ -445,7 +457,9 @@ ${card.power}
 &nbsp; | &nbsp;
 
 <strong>
+
 Endurance:
+
 </strong>
 
 ${card.endurance}
@@ -461,7 +475,9 @@ ${card.endurance}
 <p>
 
 <strong>
+
 Health:
+
 </strong>
 
 ${card.health}
@@ -469,7 +485,9 @@ ${card.health}
 &nbsp; | &nbsp;
 
 <strong>
+
 Initiative:
+
 </strong>
 
 ${card.initiative}
