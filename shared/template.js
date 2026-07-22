@@ -326,11 +326,13 @@ ${character.name}
 
 
 
+${character.subname ? 
+`
 <h3>
-
 ${character.subname}
-
 </h3>
+`
+: ""}
 
 
 </header>

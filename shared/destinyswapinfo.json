@@ -1,21 +1,21 @@
 {
   "A1": {
     "number": "A1",
-    "name": "Aether",
-    "subname": "The Wanderer",
+    "name": "Doodle",
+    "subname": "The Rat",
 
-    "cardType": "Champion",
-    "coreType": "Fire",
+    "cardType": "Spirit",
+    "coreType": "Glitter",
 
-    "cost": 3,
-    "power": 7,
-    "endurance": 5,
-    "health": 18,
-    "initiative": 4,
+    "cost": 2,
+    "power": 2,
+    "endurance": 3,
+    "health": ,
+    "initiative": ,
 
     "abilities": [
-      "Ignite",
-      "Ashen Step"
+      "Glitter Burst"
+      
     ],
 
     "spells": [
