@@ -135,23 +135,21 @@ function addStyles() {
 
 
 
-    .character-image {
+.sizing {
 
-        width:95%;
+    width:95%;
 
-        max-width:600px;
+    max-width:600px;
 
-        height:auto;
+    max-height:600px;
 
-        display:block;
+    height:auto;
 
-        margin:15px auto;
+    display:block;
 
-        object-fit:cover;
+    margin:15px auto;
 
-        clip-path: inset(20% 0 20% 0);
-
-    }
+}
 
 
 
