@@ -1,8 +1,5 @@
 // ======================================================
 // Find current character folder
-// Example:
-// website.com/A1/
-// returns "A1"
 // ======================================================
 
 const characterID =
@@ -13,10 +10,65 @@ const characterID =
 
 
 // ======================================================
+// Add page styling
+// ======================================================
+
+function addStyles() {
+
+    const style = document.createElement("style");
+
+    style.innerHTML = `
+
+    body {
+        background-color: #bcc8cc;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+
+
+    .sizing {
+        max-width: 100%;
+        max-height: 600px;
+        height: auto;
+        display: block;
+        margin: auto;
+    }
+
+
+    .icon {
+        max-width: 150px;
+        max-height: 150px;
+        height: auto;
+        display: block;
+        margin: auto;
+    }
+
+
+    .extra-images img {
+        margin: 10px auto;
+    }
+
+
+    section {
+        margin: 30px auto;
+    }
+
+    `;
+
+    document.head.appendChild(style);
+
+}
+
+
+addStyles();
+
+
+// ======================================================
 // Load JSON data
 // ======================================================
 
 async function loadCharacter() {
+
 
     const rdw =
         await fetch("../shared/rdwinfo.json")
@@ -29,6 +81,7 @@ async function loadCharacter() {
 
 
     const character = rdw[characterID];
+
     const card = game[characterID];
 
 
@@ -51,19 +104,20 @@ loadCharacter();
 
 
 // ======================================================
-// Image section
+// Character Images
 // ======================================================
 
 function createImageSection() {
 
     return `
 
+
     <section id="images">
 
 
         <img
             src="./CHARIMAGE/1.png"
-            class="main-image">
+            class="sizing">
 
 
         <details>
@@ -78,15 +132,18 @@ function createImageSection() {
 
 
                 <img
-                    src="./CHARIMAGE/2.png">
+                    src="./CHARIMAGE/2.png"
+                    class="sizing">
 
 
                 <img
-                    src="./CHARIMAGE/3.png">
+                    src="./CHARIMAGE/3.png"
+                    class="sizing">
 
 
                 <img
-                    src="./CHARIMAGE/4.png">
+                    src="./CHARIMAGE/4.png"
+                    class="sizing">
 
 
             </div>
@@ -97,6 +154,7 @@ function createImageSection() {
 
     </section>
 
+
     `;
 
 }
@@ -104,7 +162,7 @@ function createImageSection() {
 
 
 // ======================================================
-// Build entire page
+// Build Page
 // ======================================================
 
 function buildPage(character, card) {
@@ -114,8 +172,8 @@ function buildPage(character, card) {
         `${character.number} - ${character.name}`;
 
 
-    document.body.innerHTML = `
 
+    document.body.innerHTML = `
 
 
 <header>
@@ -125,8 +183,10 @@ function buildPage(character, card) {
 
         src="./CHARICON/icon.png"
 
-        class="icon">
-	onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
+        class="icon"
+
+        onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
+
 
     <h1>
         ${character.name}
@@ -151,19 +211,12 @@ function buildPage(character, card) {
 
 
     <h2>
-
-        ${character.number}
-        -
-        ${character.name}
-
+        ${character.number} - ${character.name}
     </h2>
 
 
-
     <p>
-
         ${character.description}
-
     </p>
 
 
@@ -178,93 +231,57 @@ function buildPage(character, card) {
 
 
 <h2>
-    Destiny Swap
+Destiny Swap
 </h2>
 
 
 
-
 <p>
-<strong>
-Card Type:
-</strong>
-
+<strong>Card Type:</strong>
 ${card.cardType}
-
 </p>
 
 
 
-
 <p>
-<strong>
-Core Type:
-</strong>
-
+<strong>Core Type:</strong>
 ${card.coreType}
-
 </p>
 
 
 
-
 <p>
-<strong>
-Cost:
-</strong>
-
+<strong>Cost:</strong>
 ${card.cost}
-
 </p>
 
 
 
-
 <p>
-<strong>
-Power:
-</strong>
-
+<strong>Power:</strong>
 ${card.power}
-
 </p>
 
 
 
-
 <p>
-<strong>
-Endurance:
-</strong>
-
+<strong>Endurance:</strong>
 ${card.endurance}
-
 </p>
 
 
 
-
 <p>
-<strong>
-Health:
-</strong>
-
+<strong>Health:</strong>
 ${card.health}
-
 </p>
-
 
 
 
 <p>
-<strong>
-Initiative:
-</strong>
-
+<strong>Initiative:</strong>
 ${card.initiative}
-
 </p>
-
 
 
 
@@ -274,19 +291,15 @@ Abilities
 </h3>
 
 
-
 <ul>
 
 ${card.abilities
     .map(
-        ability =>
-        `<li>${ability}</li>`
+        ability => `<li>${ability}</li>`
     )
     .join("")}
 
 </ul>
-
-
 
 
 
@@ -296,14 +309,11 @@ Spells
 </h3>
 
 
-
-
 <ul>
 
 ${card.spells
     .map(
-        spell =>
-        `<li>${spell}</li>`
+        spell => `<li>${spell}</li>`
     )
     .join("")}
 
@@ -313,17 +323,14 @@ ${card.spells
 
 
 
-
-
 <img
 
 src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
 
-class="charsheet">
+class="sizing">
 
 
 </section>
-
 
 
 `;
