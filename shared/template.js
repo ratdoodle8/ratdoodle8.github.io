@@ -23,12 +23,14 @@ body {
 }
 
 
-.sizing {
+.character-image {
+
     max-width:100%;
     max-height:600px;
     height:auto;
     display:block;
     margin:auto;
+
 }
 
 */
@@ -64,18 +66,35 @@ function addStyles() {
 
 
 
-    .sizing {
+
+    .character-image {
 
         width:95%;
+
         max-width:600px;
 
-        height:auto;
+        height:600px;
 
         display:block;
 
         margin:15px auto;
 
+        object-fit:cover;
+
+        object-position:center;
+
     }
+
+
+
+
+    .extra-images .character-image {
+
+        height:400px;
+
+    }
+
+
 
 
 
@@ -94,6 +113,7 @@ function addStyles() {
 
 
 
+
     section {
 
         width:95%;
@@ -101,6 +121,7 @@ function addStyles() {
         margin:25px auto;
 
     }
+
 
 
 
@@ -116,41 +137,13 @@ function addStyles() {
 
 
 
+    summary {
 
-    .extra-images img {
+        cursor:pointer;
 
-        width:95%;
-
-        max-width:600px;
-
-        height:auto;
-
-        display:block;
-
-        margin:15px auto;
+        margin:15px;
 
     }
-
-
-
-
-
-.sizing {
-
-    width:95%;
-
-    max-width:600px;
-
-    max-height:600px;
-
-    height:auto;
-
-    display:block;
-
-    margin:15px auto;
-
-}
-
 
 
     `;
@@ -226,9 +219,9 @@ function createImageSection() {
 
         <img
 
-            src="./CHARIMAGE/1.png"
+        src="./CHARIMAGE/1.png"
 
-            class="character-image">
+        class="character-image">
 
 
 
@@ -238,7 +231,9 @@ function createImageSection() {
 
 
             <summary>
+
                 Show More Images
+
             </summary>
 
 
@@ -293,7 +288,6 @@ function createImageSection() {
 
 
 
-
 // ======================================================
 // Build Page
 // ======================================================
@@ -310,6 +304,7 @@ function buildPage(character, card) {
 
 
 
+
 <header>
 
 
@@ -322,11 +317,13 @@ class="icon"
 onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
 
 
+
 <h1>
 
 ${character.name}
 
 </h1>
+
 
 
 <h3>
@@ -344,12 +341,10 @@ ${character.subname}
 
 
 
-
 <section id="rdw">
 
 
 ${createImageSection()}
-
 
 
 
@@ -363,6 +358,7 @@ ${character.number} - ${character.name}
 </strong>
 
 </p>
+
 
 
 
@@ -389,8 +385,21 @@ ${character.description}
 
 
 <h2>
-Destiny Swap
+
+Destiny Swap Rules
+
 </h2>
+
+
+
+
+<h3>
+
+${character.name}
+
+</h3>
+
+
 
 
 
@@ -410,6 +419,8 @@ Cost:
 ${card.cost}
 
 </p>
+
+
 
 
 
@@ -444,6 +455,7 @@ ${card.endurance}
 
 
 
+
 <p>
 
 <strong>
@@ -467,9 +479,14 @@ ${card.initiative}
 
 
 
+
+
 <h3>
+
 Abilities
+
 </h3>
+
 
 
 
@@ -489,9 +506,14 @@ ability => `<li>${ability}</li>`
 
 
 
+
 <h3>
+
 Spells
+
 </h3>
+
+
 
 
 
@@ -510,11 +532,13 @@ spell => `<li>${spell}</li>`
 
 
 
+
+
 <img
 
 src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
 
-class="sizing">
+class="character-image">
 
 
 
