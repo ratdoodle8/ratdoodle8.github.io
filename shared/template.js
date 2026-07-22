@@ -10,7 +10,31 @@ const characterID =
 
 
 // ======================================================
-// Add page styling
+// Styling block (saved for later CSS conversion)
+// ======================================================
+
+/*
+
+body {
+    background-color:#bcc8cc;
+    text-align:center;
+    font-family:Arial,sans-serif;
+}
+
+
+.sizing {
+    max-width:100%;
+    max-height:600px;
+    height:auto;
+    display:block;
+    margin:auto;
+}
+
+*/
+
+
+// ======================================================
+// Apply temporary styling with JavaScript
 // ======================================================
 
 function addStyles() {
@@ -19,41 +43,74 @@ function addStyles() {
 
     style.innerHTML = `
 
+
     body {
-        background-color: #bcc8cc;
-        text-align: center;
-        font-family: Arial, sans-serif;
+
+        background-color:#bcc8cc;
+        text-align:center;
+        font-family:Arial,sans-serif;
+
     }
+
 
 
     .sizing {
-        max-width: 100%;
-        max-height: 600px;
-        height: auto;
-        display: block;
-        margin: auto;
+
+        width:95%;
+        max-width:600px;
+        height:auto;
+
+        display:block;
+        margin:15px auto;
+
     }
+
 
 
     .icon {
-        max-width: 150px;
-        max-height: 150px;
-        height: auto;
-        display: block;
-        margin: auto;
+
+        width:120px;
+        height:auto;
+
+        display:block;
+        margin:15px auto;
+
     }
 
-
-    .extra-images img {
-        margin: 10px auto;
-    }
 
 
     section {
-        margin: 30px auto;
+
+        width:95%;
+        margin:25px auto;
+
     }
 
+
+
+    details {
+
+        width:95%;
+        margin:auto;
+
+    }
+
+
+
+    .extra-images img {
+
+        width:95%;
+        max-width:600px;
+        height:auto;
+
+        display:block;
+        margin:15px auto;
+
+    }
+
+
     `;
+
 
     document.head.appendChild(style);
 
@@ -61,6 +118,7 @@ function addStyles() {
 
 
 addStyles();
+
 
 
 // ======================================================
@@ -80,19 +138,22 @@ async function loadCharacter() {
             .then(response => response.json());
 
 
+
     const character = rdw[characterID];
 
     const card = game[characterID];
 
 
+
     if (!character || !card) {
 
         document.body.innerHTML =
-            "<h1>Character not found.</h1>";
+        "<h1>Character not found.</h1>";
 
         return;
 
     }
+
 
 
     buildPage(character, card);
@@ -103,11 +164,14 @@ async function loadCharacter() {
 loadCharacter();
 
 
+
+
 // ======================================================
 // Character Images
 // ======================================================
 
 function createImageSection() {
+
 
     return `
 
@@ -116,8 +180,11 @@ function createImageSection() {
 
 
         <img
+
             src="./CHARIMAGE/1.png"
+
             class="sizing">
+
 
 
         <details>
@@ -128,22 +195,23 @@ function createImageSection() {
             </summary>
 
 
+
             <div class="extra-images">
 
 
                 <img
-                    src="./CHARIMAGE/2.png"
-                    class="sizing">
+                src="./CHARIMAGE/2.png"
+                class="sizing">
 
 
                 <img
-                    src="./CHARIMAGE/3.png"
-                    class="sizing">
+                src="./CHARIMAGE/3.png"
+                class="sizing">
 
 
                 <img
-                    src="./CHARIMAGE/4.png"
-                    class="sizing">
+                src="./CHARIMAGE/4.png"
+                class="sizing">
 
 
             </div>
@@ -161,6 +229,7 @@ function createImageSection() {
 
 
 
+
 // ======================================================
 // Build Page
 // ======================================================
@@ -169,33 +238,38 @@ function buildPage(character, card) {
 
 
     document.title =
-        `${character.number} - ${character.name}`;
+    `${character.number} - ${character.name}`;
 
 
 
     document.body.innerHTML = `
 
 
+
 <header>
 
 
-    <img
+<img
 
-        src="./CHARICON/icon.png"
+src="./CHARICON/icon.png"
 
-        class="icon"
+class="icon"
 
-        onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
-
-
-    <h1>
-        ${character.name}
-    </h1>
+onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
 
 
-    <h3>
-        ${character.subname}
-    </h3>
+<h1>
+
+${character.name}
+
+</h1>
+
+
+<h3>
+
+${character.subname}
+
+</h3>
 
 
 </header>
@@ -204,23 +278,33 @@ function buildPage(character, card) {
 
 
 
+
 <section id="rdw">
 
 
-    ${createImageSection()}
+${createImageSection()}
 
 
-    <h2>
-        ${character.number} - ${character.name}
-    </h2>
 
 
-    <p>
-        ${character.description}
-    </p>
+<h2>
+
+${character.number} + ${character.name}
+
+</h2>
+
+
+
+<p>
+
+${character.description}
+
+</p>
 
 
 </section>
+
+
 
 
 
@@ -242,12 +326,10 @@ ${card.cardType}
 </p>
 
 
-
 <p>
 <strong>Core Type:</strong>
 ${card.coreType}
 </p>
-
 
 
 <p>
@@ -256,12 +338,10 @@ ${card.cost}
 </p>
 
 
-
 <p>
 <strong>Power:</strong>
 ${card.power}
 </p>
-
 
 
 <p>
@@ -270,18 +350,17 @@ ${card.endurance}
 </p>
 
 
-
 <p>
 <strong>Health:</strong>
 ${card.health}
 </p>
 
 
-
 <p>
 <strong>Initiative:</strong>
 ${card.initiative}
 </p>
+
 
 
 
@@ -294,12 +373,13 @@ Abilities
 <ul>
 
 ${card.abilities
-    .map(
-        ability => `<li>${ability}</li>`
-    )
-    .join("")}
+.map(
+ability => `<li>${ability}</li>`
+)
+.join("")}
 
 </ul>
+
 
 
 
@@ -312,10 +392,10 @@ Spells
 <ul>
 
 ${card.spells
-    .map(
-        spell => `<li>${spell}</li>`
-    )
-    .join("")}
+.map(
+spell => `<li>${spell}</li>`
+)
+.join("")}
 
 </ul>
 
@@ -331,6 +411,7 @@ class="sizing">
 
 
 </section>
+
 
 
 `;
