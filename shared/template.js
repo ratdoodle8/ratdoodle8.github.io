@@ -19,6 +19,7 @@ body {
     background-color:#bcc8cc;
     text-align:center;
     font-family:Arial,sans-serif;
+    color:#0007E6;
 }
 
 
@@ -49,6 +50,15 @@ function addStyles() {
         background-color:#bcc8cc;
         text-align:center;
         font-family:Arial,sans-serif;
+        color:#0007E6;
+
+    }
+
+
+
+    h1, h2, h3, p, li {
+
+        color:#0007E6;
 
     }
 
@@ -58,9 +68,11 @@ function addStyles() {
 
         width:95%;
         max-width:600px;
+
         height:auto;
 
         display:block;
+
         margin:15px auto;
 
     }
@@ -70,43 +82,77 @@ function addStyles() {
     .icon {
 
         width:120px;
+
         height:auto;
 
         display:block;
+
         margin:15px auto;
 
     }
+
 
 
 
     section {
 
         width:95%;
+
         margin:25px auto;
 
     }
 
 
 
+
     details {
 
         width:95%;
+
         margin:auto;
 
     }
 
 
 
+
+
     .extra-images img {
 
         width:95%;
+
         max-width:600px;
+
         height:auto;
 
         display:block;
+
         margin:15px auto;
 
     }
+
+
+
+
+
+    .character-image {
+
+        width:95%;
+
+        max-width:600px;
+
+        height:auto;
+
+        display:block;
+
+        margin:15px auto;
+
+        object-fit:cover;
+
+        clip-path: inset(20% 0 20% 0);
+
+    }
+
 
 
     `;
@@ -118,6 +164,7 @@ function addStyles() {
 
 
 addStyles();
+
 
 
 
@@ -183,7 +230,9 @@ function createImageSection() {
 
             src="./CHARIMAGE/1.png"
 
-            class="sizing">
+            class="character-image">
+
+
 
 
 
@@ -196,22 +245,38 @@ function createImageSection() {
 
 
 
+
+
             <div class="extra-images">
 
 
+
                 <img
+
                 src="./CHARIMAGE/2.png"
-                class="sizing">
+
+                class="character-image">
+
+
+
 
 
                 <img
+
                 src="./CHARIMAGE/3.png"
-                class="sizing">
+
+                class="character-image">
+
+
+
 
 
                 <img
+
                 src="./CHARIMAGE/4.png"
-                class="sizing">
+
+                class="character-image">
+
 
 
             </div>
@@ -226,6 +291,7 @@ function createImageSection() {
     `;
 
 }
+
 
 
 
@@ -279,6 +345,8 @@ ${character.subname}
 
 
 
+
+
 <section id="rdw">
 
 
@@ -287,11 +355,17 @@ ${createImageSection()}
 
 
 
-<h2>
 
-${character.number} + ${character.name}
+<p>
 
-</h2>
+<strong>
+
+${character.number} - ${character.name}
+
+</strong>
+
+</p>
+
 
 
 
@@ -302,7 +376,9 @@ ${character.description}
 </p>
 
 
+
 </section>
+
 
 
 
@@ -320,46 +396,74 @@ Destiny Swap
 
 
 
+
 <p>
-<strong>Card Type:</strong>
+
+<strong>
 ${card.cardType}
-</p>
+</strong>
 
+&nbsp; | &nbsp;
 
-<p>
-<strong>Core Type:</strong>
-${card.coreType}
-</p>
+<strong>
+Cost:
+</strong>
 
-
-<p>
-<strong>Cost:</strong>
 ${card.cost}
+
 </p>
 
 
+
+
+
 <p>
-<strong>Power:</strong>
+
+<strong>
+${card.coreType}
+</strong>
+
+&nbsp; | &nbsp;
+
+<strong>
+Power:
+</strong>
+
 ${card.power}
-</p>
 
+&nbsp; | &nbsp;
 
-<p>
-<strong>Endurance:</strong>
+<strong>
+Endurance:
+</strong>
+
 ${card.endurance}
+
 </p>
 
 
+
+
+
+
 <p>
-<strong>Health:</strong>
+
+<strong>
+Health:
+</strong>
+
 ${card.health}
-</p>
 
+&nbsp; | &nbsp;
 
-<p>
-<strong>Initiative:</strong>
+<strong>
+Initiative:
+</strong>
+
 ${card.initiative}
+
 </p>
+
 
 
 
@@ -368,6 +472,7 @@ ${card.initiative}
 <h3>
 Abilities
 </h3>
+
 
 
 <ul>
@@ -384,9 +489,12 @@ ability => `<li>${ability}</li>`
 
 
 
+
+
 <h3>
 Spells
 </h3>
+
 
 
 <ul>
@@ -403,11 +511,15 @@ spell => `<li>${spell}</li>`
 
 
 
+
 <img
 
 src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
 
 class="sizing">
+
+
+
 
 
 </section>
