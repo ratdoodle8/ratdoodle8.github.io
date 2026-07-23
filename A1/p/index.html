@@ -1,35 +1,223 @@
-{
-  "A1": {
-    "title": "Doodle's Arc",
-    "description": "This is Doodle's character arc.",
+<!DOCTYPE html>
+<html lang="en">
 
-    "images": {
-      "1": {
-        "title": "The Beginning",
-        "paragraph": "Doodle begins his journey."
-      },
+<head>
+    <meta charset="UTF-8">
 
-      "2": {
-        "title": "",
-        "paragraph": "This paragraph appears above image 2."
-      },
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-      "3": {
-        "title": "A New Discovery",
-        "paragraph": ""
-      }
-    }
-  },
+    <title>Character Arc</title>
 
-  "A2": {
-    "title": "Rupert's Arc",
-    "description": "This is Rupert's character arc.",
+    <style>
+        body {
+            background-color: #bcc8cc;
+            color: #0007E6;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 30px 15px;
+        }
 
-    "images": {
-      "1": {
-        "title": "Rupert Arrives",
-        "paragraph": "Rupert begins cooking up some grub."
-      }
-    }
-  }
-}
+        h1,
+        h2,
+        p {
+            color: #0007E6;
+        }
+
+        .arc-description {
+            width: 90%;
+            max-width: 700px;
+            margin: 10px auto 30px;
+        }
+
+        .image-title {
+            margin: 35px auto 8px;
+        }
+
+        .image-paragraph {
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto 12px;
+        }
+
+        .arc-image {
+            width: 70%;
+            max-width: 420px;
+            height: auto;
+            display: block;
+            margin: 10px auto 30px;
+        }
+
+        .back-button {
+            display: inline-block;
+            background-color: white;
+            color: #0007E6;
+            text-decoration: none;
+            padding: 14px 24px;
+            margin: 30px auto;
+            border-radius: 25px;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <main id="page">
+        <p>Loading...</p>
+    </main>
+
+    <script>
+        const pathParts = window.location.pathname
+            .split("/")
+            .filter(Boolean);
+
+        const characterID = pathParts[pathParts.length - 2];
+
+        function exists(value) {
+            return (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            );
+        }
+
+        function testImage(source) {
+            return new Promise((resolve) => {
+                const image = new Image();
+
+                image.onload = () => resolve(true);
+                image.onerror = () => resolve(false);
+
+                image.src = source;
+            });
+        }
+
+        async function loadArc() {
+            const page = document.getElementById("page");
+
+            try {
+                const response = await fetch(
+                    "../../shared/arcinfo.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load arcinfo.json");
+                }
+
+                const allArcData = await response.json();
+                const arc = allArcData[characterID] || {};
+
+                document.title = exists(arc.title)
+                    ? arc.title
+                    : characterID + " Arc";
+
+                page.innerHTML = `
+                    ${
+                        exists(arc.title)
+                            ? `<h1>${arc.title}</h1>`
+                            : ""
+                    }
+
+                    ${
+                        exists(arc.description)
+                            ? `
+                                <p class="arc-description">
+                                    ${arc.description}
+                                </p>
+                            `
+                            : ""
+                    }
+
+                    <section id="arc-images"></section>
+
+                    <a class="back-button" href="../">
+                        Back to Character
+                    </a>
+                `;
+
+                await loadImages(arc);
+            } catch (error) {
+                console.error(error);
+
+                page.innerHTML = `
+                    <h1>Arc page unavailable</h1>
+
+                    <p>
+                        The arc information could not be loaded.
+                    </p>
+
+                    <a class="back-button" href="../">
+                        Back to Character
+                    </a>
+                `;
+            }
+        }
+
+        async function loadImages(arc) {
+            const imageContainer =
+                document.getElementById("arc-images");
+
+            let imageNumber = 1;
+
+            while (true) {
+                const imageSource =
+                    `./ARCIMAGE/${imageNumber}.png`;
+
+                const imageFound =
+                    await testImage(imageSource);
+
+                if (!imageFound) {
+                    break;
+                }
+
+                const imageInformation =
+                    arc.images?.[String(imageNumber)] || {};
+
+                imageContainer.insertAdjacentHTML(
+                    "beforeend",
+                    `
+                        ${
+                            exists(imageInformation.title)
+                                ? `
+                                    <h2 class="image-title">
+                                        ${imageInformation.title}
+                                    </h2>
+                                `
+                                : ""
+                        }
+
+                        ${
+                            exists(imageInformation.paragraph)
+                                ? `
+                                    <p class="image-paragraph">
+                                        ${imageInformation.paragraph}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                        <img
+                            class="arc-image"
+                            src="${imageSource}"
+                            alt="${characterID} image ${imageNumber}"
+                        >
+                    `
+                );
+
+                imageNumber++;
+            }
+        }
+
+        loadArc();
+    </script>
+
+</body>
+
+</html>
