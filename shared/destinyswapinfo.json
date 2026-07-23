@@ -1,47 +1,34 @@
 {
   "A1": {
-    "number": "A1",
-    "name": "Doodle",
-    "subname": "The Rat",
+  "cardType": "Spirit",
+  "coreType": "Glitter",
 
-    "cardType": "Spirit",
-    "coreType": "Glitter",
+  "cost": "2",
+  "costType": "Glitter",
 
-    "cost": 2,
-    "power": 2,
-    "endurance": 3,
-    "health": ,
-    "initiative": ,
+  "power": "2",
+  "endurance": "3",
+  "health": "2",
+  "initiative": "2",
 
-    "abilities": [
-      "Glitter Burst"
-      
-    ],
+  "abilities": [
+    "Glitter Burst"
+  ],
 
-    "spells": [
-      "Inferno",
-      "Flare Burst"
-    ]
+    "spells": []
   },
 
   "A2": {
-    "number": "A2",
-    "name": "Nova",
-    "subname": "Starborn",
-
     "cardType": "Champion",
     "coreType": "Light",
-
-    "cost": 2,
-    "power": 5,
-    "endurance": 7,
-    "health": 16,
-    "initiative": 6,
-
+    "cost": "2",
+    "power": "5",
+    "endurance": "7",
+    "health": "16",
+    "initiative": "6",
     "abilities": [
       "Radiance"
     ],
-
     "spells": [
       "Nova Beam"
     ]

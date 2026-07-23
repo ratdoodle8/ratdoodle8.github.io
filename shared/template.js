@@ -37,14 +37,31 @@ body {
 
 
 // ======================================================
+// Optional value checker
+// ======================================================
+
+function exists(value) {
+
+    return value !== undefined &&
+           value !== null &&
+           value !== "";
+
+}
+
+
+
+// ======================================================
 // Apply styling
 // ======================================================
 
 function addStyles() {
 
+
     const style = document.createElement("style");
 
+
     style.innerHTML = `
+
 
     body {
 
@@ -56,6 +73,7 @@ function addStyles() {
     }
 
 
+
     h1, h2, h3, p, li {
 
         color:#0007E6;
@@ -63,10 +81,13 @@ function addStyles() {
     }
 
 
+
+
     .character-image {
 
         width:95%;
         max-width:600px;
+
         height:600px;
 
         display:block;
@@ -80,11 +101,15 @@ function addStyles() {
     }
 
 
+
+
     .extra-images .character-image {
 
         height:400px;
 
     }
+
+
 
 
     .icon {
@@ -100,6 +125,8 @@ function addStyles() {
     }
 
 
+
+
     section {
 
         width:95%;
@@ -109,6 +136,8 @@ function addStyles() {
     }
 
 
+
+
     details {
 
         width:95%;
@@ -116,6 +145,8 @@ function addStyles() {
         margin:auto;
 
     }
+
+
 
 
     summary {
@@ -129,6 +160,7 @@ function addStyles() {
 
     `;
 
+
     document.head.appendChild(style);
 
 }
@@ -140,7 +172,7 @@ addStyles();
 
 
 // ======================================================
-// Load JSON
+// Load Data
 // ======================================================
 
 async function loadCharacter() {
@@ -148,18 +180,23 @@ async function loadCharacter() {
 
     const rdw =
         await fetch("../shared/rdwinfo.json")
-            .then(response => response.json());
+        .then(response => response.json());
+
 
 
     const game =
         await fetch("../shared/destinyswapinfo.json")
-            .then(response => response.json());
+        .then(response => response.json());
 
 
 
-    const character = rdw[characterID] || {};
+    const character =
+        rdw[characterID] || {};
 
-    const card = game[characterID] || {};
+
+
+    const card =
+        game[characterID] || {};
 
 
 
@@ -169,19 +206,20 @@ async function loadCharacter() {
 }
 
 
+
 loadCharacter();
 
 
 
 
 // ======================================================
-// Image Section
+// Images
 // ======================================================
 
 function createImageSection() {
 
 
-    return `
+return `
 
 
 <section id="images">
@@ -192,8 +230,6 @@ function createImageSection() {
 src="./CHARIMAGE/1.png"
 
 class="character-image">
-
-
 
 
 
@@ -209,7 +245,6 @@ Show More Images
 
 
 
-
 <div class="extra-images">
 
 
@@ -220,13 +255,11 @@ src="./CHARIMAGE/2.png"
 class="character-image">
 
 
-
 <img
 
 src="./CHARIMAGE/3.png"
 
 class="character-image">
-
 
 
 <img
@@ -236,11 +269,11 @@ src="./CHARIMAGE/4.png"
 class="character-image">
 
 
-
 </div>
 
 
 </details>
+
 
 
 </section>
@@ -260,8 +293,12 @@ class="character-image">
 function buildPage(character, card) {
 
 
+
 document.title =
-character.name || "Character";
+exists(character.name)
+? character.name
+: "Character";
+
 
 
 
@@ -270,7 +307,6 @@ document.body.innerHTML = `
 
 
 <header>
-
 
 
 <img
@@ -286,7 +322,7 @@ onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
 
 
 
-${character.name ? `
+${exists(character.name) ? `
 
 <h1>
 
@@ -302,7 +338,7 @@ ${character.name}
 
 
 
-${character.subname ? `
+${exists(character.subname) ? `
 
 <h3>
 
@@ -333,19 +369,17 @@ ${createImageSection()}
 
 
 
-
-
-${character.number || character.name ? `
+${exists(character.number) || exists(character.name) ? `
 
 <p>
 
 <strong>
 
-${character.number || ""}
+${exists(character.number) ? character.number : ""}
 
-${character.number && character.name ? " - " : ""}
+${exists(character.number) && exists(character.name) ? " - " : ""}
 
-${character.name || ""}
+${exists(character.name) ? character.name : ""}
 
 </strong>
 
@@ -359,8 +393,7 @@ ${character.name || ""}
 
 
 
-
-${character.description ? `
+${exists(character.description) ? `
 
 <p>
 
@@ -369,7 +402,6 @@ ${character.description}
 </p>
 
 ` : ""}
-
 
 
 
@@ -387,7 +419,6 @@ ${character.description}
 <section id="destinyswap">
 
 
-
 <h2>
 
 Destiny Swap Rules
@@ -399,7 +430,9 @@ Destiny Swap Rules
 
 
 
-${character.name ? `
+
+
+${exists(character.name) ? `
 
 <h3>
 
@@ -417,15 +450,29 @@ ${character.name}
 
 
 
-${card.cardType || card.cost ? `
+${exists(card.cardType) || exists(card.cost) ? `
 
 <p>
 
-${card.cardType ? `<strong>${card.cardType}</strong>` : ""}
 
-${card.cardType && card.cost ? " | " : ""}
+${exists(card.cardType)
+? `<strong>${card.cardType}</strong>`
+: ""}
 
-${card.cost ? `<strong>Cost:</strong> ${card.cost}` : ""}
+
+
+${exists(card.cardType) && exists(card.cost)
+? " | "
+: ""}
+
+
+
+
+${exists(card.cost)
+? `<strong>Cost:</strong> ${card.cost} ${exists(card.costType) ? card.costType : ""}`
+: ""}
+
+
 
 </p>
 
@@ -439,21 +486,46 @@ ${card.cost ? `<strong>Cost:</strong> ${card.cost}` : ""}
 
 
 
-${card.coreType || card.power || card.endurance ? `
+${exists(card.coreType) ||
+exists(card.power) ||
+exists(card.endurance) ? `
+
 
 <p>
 
-${card.coreType ? `<strong>${card.coreType}</strong>` : ""}
 
-${card.coreType && card.power ? " | " : ""}
+${exists(card.coreType)
+? `<strong>${card.coreType}</strong>`
+: ""}
 
-${card.power ? `<strong>Power:</strong> ${card.power}` : ""}
 
-${card.power && card.endurance ? " | " : ""}
 
-${card.endurance ? `<strong>Endurance:</strong> ${card.endurance}` : ""}
+${exists(card.coreType) && exists(card.power)
+? " | "
+: ""}
+
+
+
+${exists(card.power)
+? `<strong>Power:</strong> ${card.power}`
+: ""}
+
+
+
+${exists(card.power) && exists(card.endurance)
+? " | "
+: ""}
+
+
+
+${exists(card.endurance)
+? `<strong>Endurance:</strong> ${card.endurance}`
+: ""}
+
+
 
 </p>
+
 
 ` : ""}
 
@@ -465,20 +537,35 @@ ${card.endurance ? `<strong>Endurance:</strong> ${card.endurance}` : ""}
 
 
 
-${card.health || card.initiative ? `
+${exists(card.health) ||
+exists(card.initiative) ? `
+
 
 <p>
 
-${card.health ? `<strong>Health:</strong> ${card.health}` : ""}
 
-${card.health && card.initiative ? " | " : ""}
+${exists(card.health)
+? `<strong>Health:</strong> ${card.health}`
+: ""}
 
-${card.initiative ? `<strong>Initiative:</strong> ${card.initiative}` : ""}
+
+
+${exists(card.health) && exists(card.initiative)
+? " | "
+: ""}
+
+
+
+${exists(card.initiative)
+? `<strong>Initiative:</strong> ${card.initiative}`
+: ""}
+
+
 
 </p>
 
-` : ""}
 
+` : ""}
 
 
 
@@ -490,6 +577,7 @@ ${card.initiative ? `<strong>Initiative:</strong> ${card.initiative}` : ""}
 
 ${card.abilities && card.abilities.length ? `
 
+
 <h3>
 
 Abilities
@@ -497,7 +585,9 @@ Abilities
 </h3>
 
 
+
 <ul>
+
 
 ${card.abilities
 .map(
@@ -505,7 +595,10 @@ ability => `<li>${ability}</li>`
 )
 .join("")}
 
+
 </ul>
+
+
 
 ` : ""}
 
@@ -519,6 +612,7 @@ ability => `<li>${ability}</li>`
 
 ${card.spells && card.spells.length ? `
 
+
 <h3>
 
 Spells
@@ -526,7 +620,10 @@ Spells
 </h3>
 
 
+
+
 <ul>
+
 
 ${card.spells
 .map(
@@ -534,7 +631,10 @@ spell => `<li>${spell}</li>`
 )
 .join("")}
 
+
 </ul>
+
+
 
 ` : ""}
 
@@ -546,8 +646,8 @@ spell => `<li>${spell}</li>`
 
 
 
+${exists(card.coreType) ? `
 
-${card.coreType ? `
 
 <img
 
@@ -555,11 +655,12 @@ src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
 
 class="character-image"
 
+
+
 >
 
+
 ` : ""}
-
-
 
 
 
