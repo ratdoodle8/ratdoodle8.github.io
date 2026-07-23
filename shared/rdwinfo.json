@@ -4,7 +4,6 @@
     "name": "Doodle",
     "subname": "the Rat",
     "description": "Doodle dis",
-
     "coreLore": {
       "Fire": "Fire represents passion.",
       "Spirit": "Spirit represents memory."
@@ -16,91 +15,78 @@
     "name": "Rupert",
     "subname": "the Anteater",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A3": {
     "number": "A3",
     "name": "Durodemon",
     "subname": "Grubble the Demon",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A4": {
     "number": "A4",
     "name": "Pastel",
     "subname": "the Mouse",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A5": {
     "number": "A5",
     "name": "Jot",
     "subname": "the Chameleon",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A6": {
     "number": "A6",
     "name": "Snel",
     "subname": "the Anteater",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A7": {
     "number": "A7",
     "name": "Stump",
     "subname": "the Anteater",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A8": {
     "number": "A8",
     "name": "Pebble",
     "subname": "the Weebie",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
+  },
 
   "A9": {
     "number": "A9",
     "name": "Skribble",
     "subname": "the ???",
     "description": "He loves to cook up some grub!",
-
     "coreLore": {
       "Light": "swag"
     }
-
-
-
-
-
-
-
-
-
-
-
-
   }
 }
