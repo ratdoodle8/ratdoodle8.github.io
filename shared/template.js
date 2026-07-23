@@ -10,6 +10,27 @@ const characterID =
 
 
 // ======================================================
+// Set favicon
+// ======================================================
+
+
+function setFavicon() {
+    let favicon = document.querySelector('link[rel="icon"]');
+
+    if (!favicon) {
+        favicon = document.createElement("link");
+        favicon.rel = "icon";
+        document.head.appendChild(favicon);
+    }
+
+    favicon.type = "image/png";
+    favicon.href = "../shared//RDWIMAGE/defaulticon.png";
+}
+
+setFavicon();
+
+
+// ======================================================
 // Styling block (saved for later CSS conversion)
 // ======================================================
 
@@ -315,15 +336,7 @@ document.body.innerHTML = `
 
 
 
-<img
 
-src="./CHARICON/icon.png"
-
-class="icon"
-
-onerror="this.onerror=null; this.src='../shared/RDWIMAGE/defaulticon.png';"
-
->
 
 
 
