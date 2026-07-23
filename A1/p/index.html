@@ -147,10 +147,10 @@
                 console.error(error);
 
                 page.innerHTML = `
-                    <h1>Arc page unavailable</h1>
+                    <h1>Archive broken</h1>
 
                     <p>
-                        The arc information could not be loaded.
+                        Harold will fix this.
                     </p>
 
                     <a class="back-button" href="../">
@@ -168,7 +168,10 @@
 
             while (true) {
 	const imageSource =
- 	   `/${characterID}/p/ARCIMAGE/${imageNumber}.png`;
+		const imageSource = new URL(
+   		 `ARCIMAGE/${imageNumber}.png`,
+   		 document.baseURI
+		).href;
 
                 const imageFound =
                     await testImage(imageSource);
