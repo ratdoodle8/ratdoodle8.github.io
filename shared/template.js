@@ -706,6 +706,9 @@ spell => `<li>${spell}</li>`
 
 </ul>
 
+<a class="back-button" href="./p/">
+    Archive
+</a>
 
 ` : ""}
 
@@ -737,9 +740,7 @@ class="character-image"
 
 </section>
 
-<a class="back-button" href="./p/">
-    Archive
-</a>
+
 
 `;
 
