@@ -8,8 +8,8 @@
 
   "power": "2",
   "endurance": "3",
-  "health": "2",
-  "initiative": "2",
+  "health": "",
+  "initiative": "",
 
   "abilities": [
     "Glitter Burst"
@@ -19,18 +19,20 @@
   },
 
   "A2": {
-    "cardType": "Champion",
-    "coreType": "Light",
-    "cost": "2",
-    "power": "5",
-    "endurance": "7",
-    "health": "16",
-    "initiative": "6",
+    "cardType": "Spirit",
+    "coreType": "Life",
+
+    "cost": "3",
+    "costType": "Life",
+
+    "power": "2",
+    "endurance": "6",
+    "health": "",
+    "initiative": "",
+
     "abilities": [
-      "Radiance"
+      "Order Up"
     ],
-    "spells": [
-      "Nova Beam"
-    ]
+    "spells": []
   }
 }

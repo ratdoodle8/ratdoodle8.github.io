@@ -13,12 +13,12 @@
 
   "A2": {
     "number": "A2",
-    "name": "Nova",
-    "subname": "Starborn",
-    "description": "A guardian empowered by fragments of dying stars.",
+    "name": "Rupert",
+    "subname": "the Anteater",
+    "description": "He loves to cook up some grub!",
 
     "coreLore": {
-      "Light": "Light represents hope."
+      "Light": "swag"
     }
   }
 }
