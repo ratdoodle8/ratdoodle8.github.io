@@ -321,7 +321,7 @@ src="./CHARICON/icon.png"
 
 class="icon"
 
-onerror="this.onerror=null; this.src='../shared/defaulticon.png';"
+onerror="this.onerror=null; this.src='../shared/RDWIMAGE/defaulticon.png';"
 
 >
 
