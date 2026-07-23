@@ -1,35 +1,37 @@
 {
   "A1": {
-    "title": "Archive: Doodle the Rat",
-    "description": "various concept sketches and ideas",
-
-    "images": {
-      "1": {
-        "title": "",
-        "paragraph": ""
-      },
-
-      "2": {
-        "title": "",
-        "paragraph": ""
-      },
-
-      "3": {
-        "title": "",
-        "paragraph": ""
-      }
-    }
+    "title": "Doodle's Archive",
+    "description": "Images featuring Doodle."
   },
 
   "A2": {
-    "title": "",
-    "description": "",
+    "title": "Rupert's Archive",
+    "description": "Images featuring Rupert."
+  },
 
-    "images": {
-      "1": {
-        "title": "",
-        "paragraph": ""
-      }
+  "images": {
+    "1": {
+      "title": "The Beginning",
+      "paragraph": "Doodle begins the journey.",
+      "tags": ["A1"]
+    },
+
+    "2": {
+      "title": "Doodle Meets Rupert",
+      "paragraph": "Their first meeting.",
+      "tags": ["A1", "A2"]
+    },
+
+    "3": {
+      "title": "",
+      "paragraph": "",
+      "tags": ["A2", "A5"]
+    },
+
+    "4": {
+      "title": "Group Photo",
+      "paragraph": "",
+      "tags": ["A1", "A2", "A3", "A4"]
     }
   }
 }

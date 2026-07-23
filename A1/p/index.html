@@ -9,7 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Character Arc</title>
+    <title>Character Archive</title>
 
     <style>
         body {
@@ -27,7 +27,7 @@
             color: #0007E6;
         }
 
-        .arc-description {
+        .archive-description {
             width: 90%;
             max-width: 700px;
             margin: 10px auto 30px;
@@ -49,9 +49,8 @@
             line-height: 1.5;
         }
 
-        .arc-image {
+        .archive-image {
             width: 70%;
-            max-width: 420px;
             height: auto;
             display: block;
             margin: 10px auto 30px;
@@ -105,112 +104,63 @@
             );
         }
 
-        function escapeHTML(value) {
-            const element = document.createElement("div");
-            element.textContent = String(value);
-            return element.innerHTML;
-        }
+        function createImageEntry(imageNumber, imageInformation) {
+            const imageEntry =
+                document.createElement("section");
 
-        function getImageURL(imageNumber) {
-            return new URL(
-                `ARCIMAGE/${imageNumber}.png`,
+            imageEntry.className = "image-entry";
+
+            if (hasValue(imageInformation.title)) {
+                const title =
+                    document.createElement("h2");
+
+                title.className = "image-title";
+                title.textContent =
+                    imageInformation.title;
+
+                imageEntry.appendChild(title);
+            }
+
+            if (hasValue(imageInformation.paragraph)) {
+                const paragraph =
+                    document.createElement("p");
+
+                paragraph.className =
+                    "image-paragraph";
+
+                paragraph.textContent =
+                    imageInformation.paragraph;
+
+                imageEntry.appendChild(paragraph);
+            }
+
+            const image =
+                document.createElement("img");
+
+            image.className = "archive-image";
+
+            image.src = new URL(
+                `../../shared/ARCIMAGE/${imageNumber}.png`,
                 document.baseURI
             ).href;
+
+            image.alt =
+                hasValue(imageInformation.title)
+                    ? imageInformation.title
+                    : `${characterID} archive image ${imageNumber}`;
+
+            imageEntry.appendChild(image);
+
+            return imageEntry;
         }
 
-        function imageExists(imageURL) {
-            return new Promise(function (resolve) {
-                const image = new Image();
-
-                image.onload = function () {
-                    resolve(true);
-                };
-
-                image.onerror = function () {
-                    resolve(false);
-                };
-
-                image.src = imageURL;
-            });
-        }
-
-        async function loadImages(arc) {
-            const imageContainer =
-                document.getElementById("arc-images");
-
-            let imageNumber = 1;
-
-            while (true) {
-                const imageURL = getImageURL(imageNumber);
-
-                const found = await imageExists(imageURL);
-
-                if (!found) {
-                    break;
-                }
-
-                const imageInformation =
-                    arc.images &&
-                    arc.images[String(imageNumber)]
-                        ? arc.images[String(imageNumber)]
-                        : {};
-
-                const imageEntry =
-                    document.createElement("section");
-
-                imageEntry.className = "image-entry";
-
-                if (hasValue(imageInformation.title)) {
-                    const title =
-                        document.createElement("h2");
-
-                    title.className = "image-title";
-
-                    title.textContent =
-                        imageInformation.title;
-
-                    imageEntry.appendChild(title);
-                }
-
-                if (hasValue(imageInformation.paragraph)) {
-                    const paragraph =
-                        document.createElement("p");
-
-                    paragraph.className =
-                        "image-paragraph";
-
-                    paragraph.textContent =
-                        imageInformation.paragraph;
-
-                    imageEntry.appendChild(paragraph);
-                }
-
-                const image =
-                    document.createElement("img");
-
-                image.className = "arc-image";
-                image.src = imageURL;
-
-                image.alt =
-                    hasValue(imageInformation.title)
-                        ? imageInformation.title
-                        : `${characterID} image ${imageNumber}`;
-
-                imageEntry.appendChild(image);
-
-                imageContainer.appendChild(imageEntry);
-
-                imageNumber++;
-            }
-        }
-
-        async function loadArcPage() {
+        async function loadArchivePage() {
             const page =
                 document.getElementById("page");
 
             if (!characterID) {
                 page.innerHTML = `
-                    <h1>Arc page unavailable</h1>
+                    <h1>Archive unavailable</h1>
 
                     <p class="error-message">
                         The character folder could not be detected.
@@ -226,7 +176,8 @@
                     document.baseURI
                 ).href;
 
-                const response = await fetch(jsonURL);
+                const response =
+                    await fetch(jsonURL);
 
                 if (!response.ok) {
                     throw new Error(
@@ -234,39 +185,39 @@
                     );
                 }
 
-                const allArcData =
+                const archiveData =
                     await response.json();
 
-                const arc =
-                    allArcData[characterID] || {};
+                const characterArchive =
+                    archiveData[characterID] || {};
 
                 const pageTitle =
-                    hasValue(arc.title)
-                        ? arc.title
-                        : `${characterID} Arc`;
+                    hasValue(characterArchive.title)
+                        ? characterArchive.title
+                        : `${characterID} Archive`;
 
                 document.title = pageTitle;
 
                 page.innerHTML = "";
 
-                if (hasValue(arc.title)) {
-                    const title =
-                        document.createElement("h1");
+                const title =
+                    document.createElement("h1");
 
-                    title.textContent = arc.title;
+                title.textContent = pageTitle;
 
-                    page.appendChild(title);
-                }
+                page.appendChild(title);
 
-                if (hasValue(arc.description)) {
+                if (
+                    hasValue(characterArchive.description)
+                ) {
                     const description =
                         document.createElement("p");
 
                     description.className =
-                        "arc-description";
+                        "archive-description";
 
                     description.textContent =
-                        arc.description;
+                        characterArchive.description;
 
                     page.appendChild(description);
                 }
@@ -274,29 +225,70 @@
                 const imageContainer =
                     document.createElement("section");
 
-                imageContainer.id = "arc-images";
+                imageContainer.id = "archive-images";
 
                 page.appendChild(imageContainer);
+
+                const allImages =
+                    archiveData.images || {};
+
+                const imageNumbers =
+                    Object.keys(allImages).sort(
+                        function (a, b) {
+                            return Number(a) - Number(b);
+                        }
+                    );
+
+                imageNumbers.forEach(
+                    function (imageNumber) {
+                        const imageInformation =
+                            allImages[imageNumber];
+
+                        const tags =
+                            Array.isArray(
+                                imageInformation.tags
+                            )
+                                ? imageInformation.tags
+                                : [];
+
+                        if (
+                            !tags.includes(characterID)
+                        ) {
+                            return;
+                        }
+
+                        const imageEntry =
+                            createImageEntry(
+                                imageNumber,
+                                imageInformation
+                            );
+
+                        imageContainer.appendChild(
+                            imageEntry
+                        );
+                    }
+                );
 
                 const backButton =
                     document.createElement("a");
 
-                backButton.className = "back-button";
+                backButton.className =
+                    "back-button";
+
                 backButton.href = "../";
+
                 backButton.textContent =
                     "Back to Character";
 
                 page.appendChild(backButton);
-
-                await loadImages(arc);
             } catch (error) {
                 console.error(error);
 
                 page.innerHTML = `
-                    <h1>Arc page unavailable</h1>
+                    <h1>Archive unavailable</h1>
 
                     <p class="error-message">
-                        The arc information could not be loaded.
+                        The archive information could not be loaded.
                     </p>
 
                     <a class="back-button" href="../">
@@ -306,7 +298,7 @@
             }
         }
 
-        loadArcPage();
+        loadArchivePage();
     </script>
 
 </body>
