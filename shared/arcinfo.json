@@ -1,34 +1,34 @@
 {
   "A1": {
-    "title": "Doodle's Arc",
-    "description": "This is Doodle's character arc.",
+    "title": "Archive: Doodle the Rat",
+    "description": "various concept sketches and ideas",
 
     "images": {
       "1": {
-        "title": "The Beginning",
-        "paragraph": "Doodle begins his journey."
+        "title": "",
+        "paragraph": ""
       },
 
       "2": {
         "title": "",
-        "paragraph": "This paragraph appears above image 2."
+        "paragraph": ""
       },
 
       "3": {
-        "title": "A New Discovery",
+        "title": "",
         "paragraph": ""
       }
     }
   },
 
   "A2": {
-    "title": "Rupert's Arc",
-    "description": "This is Rupert's character arc.",
+    "title": "",
+    "description": "",
 
     "images": {
       "1": {
-        "title": "Rupert Arrives",
-        "paragraph": "Rupert begins cooking up some grub."
+        "title": "",
+        "paragraph": ""
       }
     }
   }
