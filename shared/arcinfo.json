@@ -1,0 +1,35 @@
+{
+  "A1": {
+    "title": "Doodle's Arc",
+    "description": "This is Doodle's character arc.",
+
+    "images": {
+      "1": {
+        "title": "The Beginning",
+        "paragraph": "Doodle begins his journey."
+      },
+
+      "2": {
+        "title": "",
+        "paragraph": "This paragraph appears above image 2."
+      },
+
+      "3": {
+        "title": "A New Discovery",
+        "paragraph": ""
+      }
+    }
+  },
+
+  "A2": {
+    "title": "Rupert's Arc",
+    "description": "This is Rupert's character arc.",
+
+    "images": {
+      "1": {
+        "title": "Rupert Arrives",
+        "paragraph": "Rupert begins cooking up some grub."
+      }
+    }
+  }
+}
