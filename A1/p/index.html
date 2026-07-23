@@ -9,7 +9,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Archive</title>
+    <title>Character Arc</title>
 
     <style>
         body {
@@ -31,16 +31,22 @@
             width: 90%;
             max-width: 700px;
             margin: 10px auto 30px;
+            line-height: 1.5;
+        }
+
+        .image-entry {
+            margin: 35px auto;
         }
 
         .image-title {
-            margin: 35px auto 8px;
+            margin: 0 auto 10px;
         }
 
         .image-paragraph {
             width: 90%;
             max-width: 700px;
-            margin: 0 auto 12px;
+            margin: 0 auto 15px;
+            line-height: 1.5;
         }
 
         .arc-image {
@@ -64,6 +70,12 @@
         .back-button:hover {
             transform: scale(1.05);
         }
+
+        .error-message {
+            width: 90%;
+            max-width: 700px;
+            margin: 20px auto;
+        }
     </style>
 </head>
 
@@ -78,9 +90,14 @@
             .split("/")
             .filter(Boolean);
 
-        const characterID = pathParts[pathParts.length - 2];
+        const pFolderIndex = pathParts.lastIndexOf("p");
 
-        function exists(value) {
+        const characterID =
+            pFolderIndex > 0
+                ? pathParts[pFolderIndex - 1]
+                : "";
+
+        function hasValue(value) {
             return (
                 value !== undefined &&
                 value !== null &&
@@ -88,76 +105,33 @@
             );
         }
 
-        function testImage(source) {
-            return new Promise((resolve) => {
-                const image = new Image();
-
-                image.onload = () => resolve(true);
-                image.onerror = () => resolve(false);
-
-                image.src = source;
-            });
+        function escapeHTML(value) {
+            const element = document.createElement("div");
+            element.textContent = String(value);
+            return element.innerHTML;
         }
 
-        async function loadArc() {
-            const page = document.getElementById("page");
+        function getImageURL(imageNumber) {
+            return new URL(
+                `ARCIMAGE/${imageNumber}.png`,
+                document.baseURI
+            ).href;
+        }
 
-            try {
-                const response = await fetch(
-                    "../../shared/arcinfo.json"
-                );
+        function imageExists(imageURL) {
+            return new Promise(function (resolve) {
+                const image = new Image();
 
-                if (!response.ok) {
-                    throw new Error("Could not load arcinfo.json");
-                }
+                image.onload = function () {
+                    resolve(true);
+                };
 
-                const allArcData = await response.json();
-                const arc = allArcData[characterID] || {};
+                image.onerror = function () {
+                    resolve(false);
+                };
 
-                document.title = exists(arc.title)
-                    ? arc.title
-                    : characterID + " Arc";
-
-                page.innerHTML = `
-                    ${
-                        exists(arc.title)
-                            ? `<h1>${arc.title}</h1>`
-                            : ""
-                    }
-
-                    ${
-                        exists(arc.description)
-                            ? `
-                                <p class="arc-description">
-                                    ${arc.description}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    <section id="arc-images"></section>
-
-                    <a class="back-button" href="../">
-                        Back to Character
-                    </a>
-                `;
-
-                await loadImages(arc);
-            } catch (error) {
-                console.error(error);
-
-                page.innerHTML = `
-                    <h1>Archive broken</h1>
-
-                    <p>
-                        Harold will fix this.
-                    </p>
-
-                    <a class="back-button" href="../">
-                        Back to Character
-                    </a>
-                `;
-            }
+                image.src = imageURL;
+            });
         }
 
         async function loadImages(arc) {
@@ -167,58 +141,172 @@
             let imageNumber = 1;
 
             while (true) {
-	const imageSource =
-		const imageSource = new URL(
-   		 `ARCIMAGE/${imageNumber}.png`,
-   		 document.baseURI
-		).href;
+                const imageURL = getImageURL(imageNumber);
 
-                const imageFound =
-                    await testImage(imageSource);
+                const found = await imageExists(imageURL);
 
-                if (!imageFound) {
+                if (!found) {
                     break;
                 }
 
                 const imageInformation =
-                    arc.images?.[String(imageNumber)] || {};
+                    arc.images &&
+                    arc.images[String(imageNumber)]
+                        ? arc.images[String(imageNumber)]
+                        : {};
 
-                imageContainer.insertAdjacentHTML(
-                    "beforeend",
-                    `
-                        ${
-                            exists(imageInformation.title)
-                                ? `
-                                    <h2 class="image-title">
-                                        ${imageInformation.title}
-                                    </h2>
-                                `
-                                : ""
-                        }
+                const imageEntry =
+                    document.createElement("section");
 
-                        ${
-                            exists(imageInformation.paragraph)
-                                ? `
-                                    <p class="image-paragraph">
-                                        ${imageInformation.paragraph}
-                                    </p>
-                                `
-                                : ""
-                        }
+                imageEntry.className = "image-entry";
 
-                        <img
-                            class="arc-image"
-                            src="${imageSource}"
-                            alt="${characterID} image ${imageNumber}"
-                        >
-                    `
-                );
+                if (hasValue(imageInformation.title)) {
+                    const title =
+                        document.createElement("h2");
+
+                    title.className = "image-title";
+
+                    title.textContent =
+                        imageInformation.title;
+
+                    imageEntry.appendChild(title);
+                }
+
+                if (hasValue(imageInformation.paragraph)) {
+                    const paragraph =
+                        document.createElement("p");
+
+                    paragraph.className =
+                        "image-paragraph";
+
+                    paragraph.textContent =
+                        imageInformation.paragraph;
+
+                    imageEntry.appendChild(paragraph);
+                }
+
+                const image =
+                    document.createElement("img");
+
+                image.className = "arc-image";
+                image.src = imageURL;
+
+                image.alt =
+                    hasValue(imageInformation.title)
+                        ? imageInformation.title
+                        : `${characterID} image ${imageNumber}`;
+
+                imageEntry.appendChild(image);
+
+                imageContainer.appendChild(imageEntry);
 
                 imageNumber++;
             }
         }
 
-        loadArc();
+        async function loadArcPage() {
+            const page =
+                document.getElementById("page");
+
+            if (!characterID) {
+                page.innerHTML = `
+                    <h1>Arc page unavailable</h1>
+
+                    <p class="error-message">
+                        The character folder could not be detected.
+                    </p>
+                `;
+
+                return;
+            }
+
+            try {
+                const jsonURL = new URL(
+                    "../../shared/arcinfo.json",
+                    document.baseURI
+                ).href;
+
+                const response = await fetch(jsonURL);
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Could not load arcinfo.json: ${response.status}`
+                    );
+                }
+
+                const allArcData =
+                    await response.json();
+
+                const arc =
+                    allArcData[characterID] || {};
+
+                const pageTitle =
+                    hasValue(arc.title)
+                        ? arc.title
+                        : `${characterID} Arc`;
+
+                document.title = pageTitle;
+
+                page.innerHTML = "";
+
+                if (hasValue(arc.title)) {
+                    const title =
+                        document.createElement("h1");
+
+                    title.textContent = arc.title;
+
+                    page.appendChild(title);
+                }
+
+                if (hasValue(arc.description)) {
+                    const description =
+                        document.createElement("p");
+
+                    description.className =
+                        "arc-description";
+
+                    description.textContent =
+                        arc.description;
+
+                    page.appendChild(description);
+                }
+
+                const imageContainer =
+                    document.createElement("section");
+
+                imageContainer.id = "arc-images";
+
+                page.appendChild(imageContainer);
+
+                const backButton =
+                    document.createElement("a");
+
+                backButton.className = "back-button";
+                backButton.href = "../";
+                backButton.textContent =
+                    "Back to Character";
+
+                page.appendChild(backButton);
+
+                await loadImages(arc);
+            } catch (error) {
+                console.error(error);
+
+                page.innerHTML = `
+                    <h1>Arc page unavailable</h1>
+
+                    <p class="error-message">
+                        The arc information could not be loaded.
+                    </p>
+
+                    <a class="back-button" href="../">
+                        Back to Character
+                    </a>
+                `;
+            }
+        }
+
+        loadArcPage();
     </script>
 
 </body>
