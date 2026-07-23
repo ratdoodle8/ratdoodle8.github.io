@@ -37,7 +37,7 @@ body {
 
 
 // ======================================================
-// Apply temporary styling with JavaScript
+// Apply styling
 // ======================================================
 
 function addStyles() {
@@ -45,7 +45,6 @@ function addStyles() {
     const style = document.createElement("style");
 
     style.innerHTML = `
-
 
     body {
 
@@ -57,7 +56,6 @@ function addStyles() {
     }
 
 
-
     h1, h2, h3, p, li {
 
         color:#0007E6;
@@ -65,14 +63,10 @@ function addStyles() {
     }
 
 
-
-
     .character-image {
 
         width:95%;
-
         max-width:600px;
-
         height:600px;
 
         display:block;
@@ -86,17 +80,11 @@ function addStyles() {
     }
 
 
-
-
-
     .extra-images .character-image {
 
         height:400px;
 
     }
-
-
-
 
 
     .icon {
@@ -112,9 +100,6 @@ function addStyles() {
     }
 
 
-
-
-
     section {
 
         width:95%;
@@ -124,9 +109,6 @@ function addStyles() {
     }
 
 
-
-
-
     details {
 
         width:95%;
@@ -134,8 +116,6 @@ function addStyles() {
         margin:auto;
 
     }
-
-
 
 
     summary {
@@ -149,7 +129,6 @@ function addStyles() {
 
     `;
 
-
     document.head.appendChild(style);
 
 }
@@ -161,7 +140,7 @@ addStyles();
 
 
 // ======================================================
-// Load JSON data
+// Load JSON
 // ======================================================
 
 async function loadCharacter() {
@@ -178,24 +157,14 @@ async function loadCharacter() {
 
 
 
-    const character = rdw[characterID];
+    const character = rdw[characterID] || {};
 
-    const card = game[characterID];
-
-
-
-    if (!character || !card) {
-
-        document.body.innerHTML =
-            "<h1>Character not found.</h1>";
-
-        return;
-
-    }
+    const card = game[characterID] || {};
 
 
 
     buildPage(character, card);
+
 
 }
 
@@ -206,7 +175,7 @@ loadCharacter();
 
 
 // ======================================================
-// Character Images
+// Image Section
 // ======================================================
 
 function createImageSection() {
@@ -215,74 +184,69 @@ function createImageSection() {
     return `
 
 
-    <section id="images">
+<section id="images">
 
 
-        <img
+<img
 
-        src="./CHARIMAGE/1.png"
+src="./CHARIMAGE/1.png"
 
-        class="character-image">
-
-
-
-
-
-        <details>
-
-
-            <summary>
-
-                Show More Images
-
-            </summary>
+class="character-image">
 
 
 
 
 
-            <div class="extra-images">
+<details>
 
 
+<summary>
 
-                <img
+Show More Images
 
-                src="./CHARIMAGE/2.png"
-
-                class="character-image">
-
-
-
-
-
-                <img
-
-                src="./CHARIMAGE/3.png"
-
-                class="character-image">
+</summary>
 
 
 
 
 
-                <img
-
-                src="./CHARIMAGE/4.png"
-
-                class="character-image">
+<div class="extra-images">
 
 
+<img
 
-            </div>
+src="./CHARIMAGE/2.png"
 
-
-        </details>
-
-
-    </section>
+class="character-image">
 
 
-    `;
+
+<img
+
+src="./CHARIMAGE/3.png"
+
+class="character-image">
+
+
+
+<img
+
+src="./CHARIMAGE/4.png"
+
+class="character-image">
+
+
+
+</div>
+
+
+</details>
+
+
+</section>
+
+
+`;
 
 }
 
@@ -296,17 +260,17 @@ function createImageSection() {
 function buildPage(character, card) {
 
 
-    document.title =
-        `${character.number} - ${character.name}`;
+document.title =
+character.name || "Character";
 
 
 
-    document.body.innerHTML = `
-
+document.body.innerHTML = `
 
 
 
 <header>
+
 
 
 <img
@@ -319,11 +283,22 @@ onerror="this.onerror=null; this.src='../shared/defaulticon.png';">
 
 
 
+
+
+
+${character.name ? `
+
 <h1>
 
 ${character.name}
 
 </h1>
+
+` : ""}
+
+
+
+
 
 
 
@@ -347,6 +322,7 @@ ${character.subname}
 
 
 
+
 <section id="rdw">
 
 
@@ -355,25 +331,46 @@ ${createImageSection()}
 
 
 
+
+
+
+
+${character.number || character.name ? `
+
 <p>
 
 <strong>
 
-${character.number} - ${character.name}
+${character.number || ""}
+
+${character.number && character.name ? " - " : ""}
+
+${character.name || ""}
 
 </strong>
 
 </p>
 
+` : ""}
 
 
 
+
+
+
+
+
+${character.description ? `
 
 <p>
 
 ${character.description}
 
 </p>
+
+` : ""}
+
+
 
 
 
@@ -390,6 +387,7 @@ ${character.description}
 <section id="destinyswap">
 
 
+
 <h2>
 
 Destiny Swap Rules
@@ -399,115 +397,104 @@ Destiny Swap Rules
 
 
 
+
+
+${character.name ? `
+
 <h3>
 
 ${character.name}
 
 </h3>
 
-
-
-
-
-
-<p>
-
-<strong>
-
-${card.cardType}
-
-</strong>
-
-&nbsp; | &nbsp;
-
-<strong>
-
-Cost:
-
-</strong>
-
-${card.cost}
-
-</p>
+` : ""}
 
 
 
 
 
 
+
+
+
+${card.cardType || card.cost ? `
 
 <p>
 
-<strong>
+${card.cardType ? `<strong>${card.cardType}</strong>` : ""}
 
-${card.coreType}
+${card.cardType && card.cost ? " | " : ""}
 
-</strong>
-
-&nbsp; | &nbsp;
-
-<strong>
-
-Power:
-
-</strong>
-
-${card.power}
-
-&nbsp; | &nbsp;
-
-<strong>
-
-Endurance:
-
-</strong>
-
-${card.endurance}
+${card.cost ? `<strong>Cost:</strong> ${card.cost}` : ""}
 
 </p>
 
+` : ""}
 
 
 
 
 
+
+
+
+
+${card.coreType || card.power || card.endurance ? `
 
 <p>
 
-<strong>
+${card.coreType ? `<strong>${card.coreType}</strong>` : ""}
 
-Health:
+${card.coreType && card.power ? " | " : ""}
 
-</strong>
+${card.power ? `<strong>Power:</strong> ${card.power}` : ""}
 
-${card.health}
+${card.power && card.endurance ? " | " : ""}
 
-&nbsp; | &nbsp;
-
-<strong>
-
-Initiative:
-
-</strong>
-
-${card.initiative}
+${card.endurance ? `<strong>Endurance:</strong> ${card.endurance}` : ""}
 
 </p>
 
+` : ""}
 
 
 
 
 
 
+
+
+
+${card.health || card.initiative ? `
+
+<p>
+
+${card.health ? `<strong>Health:</strong> ${card.health}` : ""}
+
+${card.health && card.initiative ? " | " : ""}
+
+${card.initiative ? `<strong>Initiative:</strong> ${card.initiative}` : ""}
+
+</p>
+
+` : ""}
+
+
+
+
+
+
+
+
+
+
+${card.abilities && card.abilities.length ? `
 
 <h3>
 
 Abilities
 
 </h3>
-
-
 
 
 <ul>
@@ -520,21 +507,23 @@ ability => `<li>${ability}</li>`
 
 </ul>
 
+` : ""}
 
 
 
 
 
 
+
+
+
+${card.spells && card.spells.length ? `
 
 <h3>
 
 Spells
 
 </h3>
-
-
-
 
 
 <ul>
@@ -547,18 +536,29 @@ spell => `<li>${spell}</li>`
 
 </ul>
 
+` : ""}
 
 
 
 
 
 
+
+
+
+
+${card.coreType ? `
 
 <img
 
 src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
 
-class="character-image">
+class="character-image"
+
+>
+
+` : ""}
+
 
 
 
