@@ -706,9 +706,7 @@ spell => `<li>${spell}</li>`
 
 </ul>
 
-<a class="back-button" href="./p/">
-    Archive
-</a>
+
 
 ` : ""}
 
@@ -717,7 +715,9 @@ spell => `<li>${spell}</li>`
 
 
 
-
+<a class="back-button" href="./p/">
+    Archive
+</a>
 
 
 ${exists(card.coreType) ? `
