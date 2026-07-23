@@ -315,9 +315,7 @@ class="character-image"
 
 </details>
 
-<a class="back-button" href="./p/">
-    Archive
-</a>
+
 </section>
 
 
@@ -739,7 +737,9 @@ class="character-image"
 
 </section>
 
-
+<a class="back-button" href="./p/">
+    Archive
+</a>
 
 `;
 
