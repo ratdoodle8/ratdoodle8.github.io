@@ -101,7 +101,19 @@ h1, h2, h3, h4, p, li {
 
 }
 
+.back-button {
+    display: inline-block;
+    background-color: white;
+    color: #0007E6;
+    text-decoration: none;
+    padding: 14px 24px;
+    margin: 30px auto;
+    border-radius: 25px;
+}
 
+.back-button:hover {
+    transform: scale(1.05);
+}
 
 .character-image {
 
