@@ -56,9 +56,7 @@ function exists(value) {
 
 function addStyles() {
 
-
     const style = document.createElement("style");
-
 
     style.innerHTML = `
 
@@ -66,8 +64,11 @@ function addStyles() {
     body {
 
         background-color:#bcc8cc;
+
         text-align:center;
+
         font-family:Arial,sans-serif;
+
         color:#0007E6;
 
     }
@@ -86,6 +87,7 @@ function addStyles() {
     .character-image {
 
         width:95%;
+
         max-width:600px;
 
         height:600px;
@@ -97,6 +99,8 @@ function addStyles() {
         object-fit:cover;
 
         object-position:center;
+
+        clip-path: inset(10% 0 10% 0);
 
     }
 
@@ -172,7 +176,7 @@ addStyles();
 
 
 // ======================================================
-// Load Data
+// Load JSON
 // ======================================================
 
 async function loadCharacter() {
@@ -201,7 +205,6 @@ async function loadCharacter() {
 
 
     buildPage(character, card);
-
 
 }
 
@@ -233,6 +236,8 @@ class="character-image">
 
 
 
+
+
 <details>
 
 
@@ -255,6 +260,7 @@ src="./CHARIMAGE/2.png"
 class="character-image">
 
 
+
 <img
 
 src="./CHARIMAGE/3.png"
@@ -262,11 +268,13 @@ src="./CHARIMAGE/3.png"
 class="character-image">
 
 
+
 <img
 
 src="./CHARIMAGE/4.png"
 
 class="character-image">
+
 
 
 </div>
@@ -293,7 +301,6 @@ class="character-image">
 function buildPage(character, card) {
 
 
-
 document.title =
 exists(character.name)
 ? character.name
@@ -307,6 +314,7 @@ document.body.innerHTML = `
 
 
 <header>
+
 
 
 <img
@@ -331,6 +339,7 @@ ${character.name}
 </h1>
 
 ` : ""}
+
 
 
 
@@ -363,6 +372,7 @@ ${character.subname}
 
 
 ${createImageSection()}
+
 
 
 
@@ -406,6 +416,7 @@ ${character.description}
 
 
 
+
 </section>
 
 
@@ -424,7 +435,6 @@ ${character.description}
 Destiny Swap Rules
 
 </h2>
-
 
 
 
@@ -475,6 +485,7 @@ ${exists(card.cost)
 
 
 </p>
+
 
 ` : ""}
 
@@ -575,7 +586,7 @@ ${exists(card.initiative)
 
 
 
-${card.abilities && card.abilities.length ? `
+${card.abilities?.length ? `
 
 
 <h3>
@@ -610,7 +621,7 @@ ability => `<li>${ability}</li>`
 
 
 
-${card.spells && card.spells.length ? `
+${card.spells?.length ? `
 
 
 <h3>
@@ -656,11 +667,11 @@ src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
 class="character-image"
 
 
-
 >
 
 
 ` : ""}
+
 
 
 
