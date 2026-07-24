@@ -3,35 +3,51 @@
     "title": "Doodle's Archive",
     "description": "Images featuring Doodle."
   },
-
   "A2": {
     "title": "Rupert's Archive",
     "description": "Images featuring Rupert."
   },
-
   "images": {
     "1": {
       "title": "The Beginning",
       "paragraph": "Doodle begins the journey.",
-      "tags": ["A1"]
+      "tags": [
+        "A1"
+      ]
     },
-
     "2": {
       "title": "Doodle Meets Rupert",
       "paragraph": "Their first meeting.",
-      "tags": ["A1", "A2"]
+      "tags": [
+        "A1",
+        "A2"
+      ]
     },
-
     "3": {
       "title": "",
       "paragraph": "",
-      "tags": ["A2", "A5"]
+      "tags": [
+        "A2",
+        "A5"
+      ]
     },
-
     "4": {
       "title": "Group Photo",
       "paragraph": "",
-      "tags": ["A1", "A2", "A3", "A4"]
+      "tags": [
+        "A1",
+        "A2",
+        "A3",
+        "A4"
+      ]
+    },
+    "5": {
+      "title": "",
+      "paragraph": "",
+      "tags": [
+        "A6",
+        "MAGAZINE"
+      ]
     }
   }
 }
