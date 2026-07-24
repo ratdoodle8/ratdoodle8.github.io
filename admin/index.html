@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Archive Upload</title>
+
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="upload-panel">
+            <h1>Archive Upload</h1>
+
+            <form id="upload-form">
+                <label for="image">
+                    Image
+                </label>
+
+                <input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    required
+                >
+
+                <div id="preview-container" hidden>
+                    <img
+                        id="image-preview"
+                        alt="Selected image preview"
+                    >
+                </div>
+
+                <label for="title">
+                    Title
+                </label>
+
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    maxlength="200"
+                    placeholder="Optional title"
+                >
+
+                <label for="paragraph">
+                    Paragraph
+                </label>
+
+                <textarea
+                    id="paragraph"
+                    name="paragraph"
+                    rows="5"
+                    maxlength="3000"
+                    placeholder="Optional description"
+                ></textarea>
+
+                <label for="tags">
+                    Tags
+                </label>
+
+                <input
+                    id="tags"
+                    name="tags"
+                    type="text"
+                    placeholder="A1, A2, LOCATION_FOREST"
+                    required
+                >
+
+                <p class="field-help">
+                    Separate each tag with a comma.
+                </p>
+
+                <button
+                    id="upload-button"
+                    type="submit"
+                >
+                    Upload Image
+                </button>
+
+                <p
+                    id="status-message"
+                    class="status-message"
+                    aria-live="polite"
+                ></p>
+            </form>
+        </section>
+    </main>
+
+    <script src="./app.js"></script>
+</body>
+</html>
