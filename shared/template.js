@@ -67,6 +67,15 @@ header {
     margin-right:auto;
 }
 
+.corner {
+    margin-left:auto;
+    margin-right:15px;
+}
+
+.corner td {
+    padding:5px;
+}
+
 .back-button {
     display:inline-block;
     background-color:white;
@@ -82,7 +91,7 @@ header {
 }
 
 .image-crop {
-    width:500px;
+    width:min(425px, calc(100vw - 30px));
     overflow:hidden;
     margin:15px auto;
     line-height:0;
@@ -92,7 +101,7 @@ header {
 }
 
 .character-image {
-    width:500px;
+    width:100%;
     height:auto;
     display:block;
     margin:0;
@@ -223,11 +232,22 @@ function sizeImageCrops() {
         const image = crop.querySelector(".character-image");
 
         const applyCrop = () => {
+            if (!image.naturalWidth || !image.naturalHeight) {
+                return;
+            }
+
+            const displayedWidth =
+                Math.min(425, window.innerWidth - 30);
+
+            const displayedHeight =
+                image.naturalHeight *
+                (displayedWidth / image.naturalWidth);
+
             image.style.transform =
                 `translateY(-${IMAGE_CROP_PERCENT}%)`;
 
             crop.style.height =
-                (image.getBoundingClientRect().height *
+                (displayedHeight *
                 (visiblePercent / 100)) + "px";
         };
 
@@ -267,7 +287,7 @@ function buildPage(character, card) {
 
 <table class="corner">
     <tr>
-        <td><a href="../">Back</a></td>
+        <td><a href="/characters">All Characters</a></td>
         <td><a href="/">Home</a></td>
     </tr>
 </table>
@@ -459,4 +479,10 @@ ${exists(card.coreType) ? `
 `;
 
     sizeImageCrops();
+
+    document.querySelectorAll("details").forEach(dropdown => {
+        dropdown.addEventListener("toggle", sizeImageCrops);
+    });
+
+    window.addEventListener("resize", sizeImageCrops);
 }
