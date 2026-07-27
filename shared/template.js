@@ -82,4 +82,381 @@ header {
 }
 
 .image-crop {
-   
+    width:500px;
+    overflow:hidden;
+    margin:15px auto;
+    line-height:0;
+    position:relative;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.character-image {
+    width:500px;
+    height:auto;
+    display:block;
+    margin:0;
+}
+
+.icon {
+    width:120px;
+    height:auto;
+    display:block;
+    margin:15px auto;
+}
+
+section {
+    width:95%;
+    max-width:400px;
+    margin:25px auto;
+}
+
+details {
+    width:95%;
+    margin:auto;
+}
+
+summary {
+    cursor:pointer;
+    margin:15px;
+}
+
+`;
+
+    document.head.appendChild(style);
+}
+
+addStyles();
+
+
+// ======================================================
+// Load JSON
+// ======================================================
+
+async function loadCharacter() {
+    const rdw =
+        await fetch("../shared/rdwinfo.json")
+        .then(response => response.json());
+
+    const destiny =
+        await fetch("../shared/destinyswapinfo.json")
+        .then(response => response.json());
+
+    const character =
+        rdw[characterID] || {};
+
+    const card =
+        destiny[characterID] || {};
+
+    buildPage(character, card);
+}
+
+loadCharacter();
+
+
+// ======================================================
+// Images
+// ======================================================
+
+function createImageSection() {
+    return `
+
+<section id="images">
+
+<div class="image-crop">
+    <img
+        src="./CHARIMAGE/1.png"
+        class="character-image"
+    >
+</div>
+
+<details>
+
+<summary>
+    Show More Images
+</summary>
+
+<div class="extra-images">
+
+    <div class="image-crop">
+        <img
+            src="./CHARIMAGE/2.png"
+            class="character-image"
+        >
+    </div>
+
+    <div class="image-crop">
+        <img
+            src="./CHARIMAGE/3.png"
+            class="character-image"
+        >
+    </div>
+
+    <div class="image-crop">
+        <img
+            src="./CHARIMAGE/4.png"
+            class="character-image"
+        >
+    </div>
+
+</div>
+
+</details>
+
+</section>
+
+`;
+}
+
+
+// ======================================================
+// Image cropping
+// ======================================================
+
+// CHANGE THIS NUMBER to crop more or less from BOTH the top and bottom.
+const IMAGE_CROP_PERCENT = 20;
+
+function sizeImageCrops() {
+    const visiblePercent = 100 - (IMAGE_CROP_PERCENT * 2);
+
+    document.querySelectorAll(".image-crop").forEach(crop => {
+        const image = crop.querySelector(".character-image");
+
+        const applyCrop = () => {
+            image.style.transform =
+                `translateY(-${IMAGE_CROP_PERCENT}%)`;
+
+            crop.style.height =
+                (image.getBoundingClientRect().height *
+                (visiblePercent / 100)) + "px";
+        };
+
+        if (image.complete) {
+            applyCrop();
+        } else {
+            image.addEventListener("load", applyCrop, { once:true });
+        }
+    });
+}
+
+
+// ======================================================
+// Special hyperlinks
+// ======================================================
+
+function formatListItem(item) {
+    if (item === "Glitter Burst") {
+        return `<a href="/ds/glitterburst">Glitter Burst</a>`;
+    }
+
+    return item;
+}
+
+
+// ======================================================
+// Build Page
+// ======================================================
+
+function buildPage(character, card) {
+    document.title =
+        exists(character.name)
+        ? character.name
+        : "Character";
+
+    document.body.innerHTML = `
+
+<table class="corner">
+    <tr>
+        <td><a href="../">Back</a></td>
+        <td><a href="/">Home</a></td>
+    </tr>
+</table>
+
+<header>
+
+${exists(character.name) ? `
+
+<h1>
+    ${character.name}
+</h1>
+
+${exists(character.subname) ? `
+
+<h3>
+    ${character.subname}
+</h3>
+
+` : ""}
+
+` : ""}
+
+</header>
+
+<section id="rdw">
+
+${createImageSection()}
+
+${exists(character.number) || exists(character.name) ? `
+
+<p>
+    <strong>
+        ${exists(character.number) ? character.number : ""}
+        ${exists(character.number) && exists(character.name) ? " - " : ""}
+        ${exists(character.name) ? character.name : ""}
+        ${exists(character.subname) ? " - " + character.subname : ""}
+    </strong>
+</p>
+
+` : ""}
+
+${exists(character.description) ? `
+
+<p>
+    ${character.description}
+</p>
+
+` : ""}
+
+</section>
+
+<section id="destinyswap">
+
+<h2>
+    Destiny Swap Rules
+</h2>
+
+${exists(character.name) ? `
+
+<h3>
+    ${character.name}
+</h3>
+
+${exists(character.subname) ? `
+
+<h4>
+    ${character.subname}
+</h4>
+
+` : ""}
+
+` : ""}
+
+${exists(card.cardType) || exists(card.cost) ? `
+
+<p>
+    ${exists(card.cardType)
+        ? card.cardType
+        : ""}
+
+    ${exists(card.cardType) && exists(card.cost)
+        ? " | "
+        : ""}
+
+    ${exists(card.cost)
+        ? "Cost: " + card.cost +
+          (exists(card.costType) ? " " + card.costType : "")
+        : ""}
+</p>
+
+` : ""}
+
+${exists(card.coreType) ||
+exists(card.power) ||
+exists(card.endurance) ? `
+
+<p>
+    ${exists(card.coreType)
+        ? card.coreType
+        : ""}
+
+    ${exists(card.coreType) && exists(card.power)
+        ? " | "
+        : ""}
+
+    ${exists(card.power)
+        ? "Power: " + card.power
+        : ""}
+
+    ${exists(card.power) && exists(card.endurance)
+        ? " | "
+        : ""}
+
+    ${exists(card.endurance)
+        ? "Endurance: " + card.endurance
+        : ""}
+</p>
+
+` : ""}
+
+${exists(card.health) ||
+exists(card.initiative) ? `
+
+<p>
+    ${exists(card.health)
+        ? "Health: " + card.health
+        : ""}
+
+    ${exists(card.health) && exists(card.initiative)
+        ? " | "
+        : ""}
+
+    ${exists(card.initiative)
+        ? "Initiative: " + card.initiative
+        : ""}
+</p>
+
+` : ""}
+
+${card.abilities?.length ? `
+
+<h3>
+    Abilities
+</h3>
+
+<ul>
+    ${card.abilities
+        .map(
+            ability => `<li>${formatListItem(ability)}</li>`
+        )
+        .join("")}
+</ul>
+
+` : ""}
+
+${card.spells?.length ? `
+
+<h3>
+    Spells
+</h3>
+
+<ul>
+    ${card.spells
+        .map(
+            spell => `<li>${formatListItem(spell)}</li>`
+        )
+        .join("")}
+</ul>
+
+` : ""}
+
+<a class="back-button" href="./p/">
+    Archive
+</a>
+
+${exists(card.coreType) ? `
+
+<div class="image-crop">
+    <img
+        src="../shared/RDWIMAGE/CHARSHEET/${card.coreType}.png"
+        class="character-image"
+    >
+</div>
+
+` : ""}
+
+</section>
+
+`;
+
+    sizeImageCrops();
+}
