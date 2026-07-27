@@ -1,0 +1,7 @@
+
+
+7-26-26 10:25pm
+
+artist names in album cover image file titles are typed same as url
+all lowercase for urls with no spaces
+mx -> artist page -> song
