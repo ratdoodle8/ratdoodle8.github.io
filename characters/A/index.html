@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<title>Series A</title>
+
+<style>
+	body {
+		background-color: #bcc8cc;
+		text-align: center;
+		color: #0007E6;
+		font-family: Arial, sans-serif;
+	}
+
+	img.sizing {
+		max-width: 100%;
+		max-height: 600px;
+		height: auto;
+		display: block;
+		margin: auto;
+	}
+
+	tr, th, td {
+		border: none;
+		padding: 10px;
+	}
+
+	body, table {
+		background-color: #bcc8cc;
+		text-align: center;
+		font-family: Arial, sans-serif;
+	}
+
+	table {
+		width: 399px;
+		margin-left: auto;
+		margin-right: auto;
+		table-layout: fixed;
+		border-collapse: collapse;
+	}
+
+	th, td {
+		width: 113px;
+		padding: 10px;
+		text-align: center;
+		vertical-align: middle;
+	}
+</style>
+
+<body>
+
+	<!-- link to click on that goes to A1 subfolder html -->
+	<!-- <a href="/A1">A1 card</a> -->
+	<!-- header is bigger -->
+
+	<h1>Characters Series A</h1>
+
+	<!-- paragraph text -->
+
+	<p>(List with images)</p>
+
+	<!-- loads image from og folder -->
+
+	<img src="/A1/CHARIMAGE/1.png" alt="swag" width="50" height="50">
+
+	<table id="character-table"></table>
+
+	<script>
+		fetch("/shared/rdwinfo.json")
+			.then(response => {
+				if (!response.ok) {
+					throw new Error("Could not load rdwinfo.json");
+				}
+
+				return response.json();
+			})
+			.then(data => {
+				const characters = Object.values(data)
+					.filter(character =>
+						typeof character.number === "string" &&
+						character.number.toUpperCase().startsWith("A")
+					)
+					.sort((first, second) =>
+						first.number.localeCompare(
+							second.number,
+							undefined,
+							{ numeric: true, sensitivity: "base" }
+						)
+					);
+
+				const table = document.getElementById("character-table");
+
+				for (let index = 0; index < characters.length; index += 3) {
+					const group = characters.slice(index, index + 3);
+					const imageRow = document.createElement("tr");
+					const nameRow = document.createElement("tr");
+
+					for (let column = 0; column < 3; column++) {
+						const imageCell = document.createElement("td");
+						const nameCell = document.createElement("td");
+						const character = group[column];
+
+						if (character) {
+							const characterLink = document.createElement("a");
+							characterLink.href = "/" + character.number + "/";
+							characterLink.style.cssText =
+								"display:inline-block; width:113px; height:110px; line-height:0;";
+
+							const characterImage = document.createElement("img");
+							characterImage.src =
+								"/" + character.number + "/CHARIMAGE/1.png";
+							characterImage.alt = character.name;
+							characterImage.style.cssText =
+								"display:block; width:113px; height:140px; object-fit:cover; object-position:center;";
+
+							characterLink.appendChild(characterImage);
+							imageCell.appendChild(characterLink);
+							nameCell.textContent = character.name;
+						}
+
+						imageRow.appendChild(imageCell);
+						nameRow.appendChild(nameCell);
+					}
+
+					table.appendChild(imageRow);
+					table.appendChild(nameRow);
+				}
+			})
+			.catch(error => {
+				console.error(error);
+			});
+	</script>
+
+</body>
+</html>
