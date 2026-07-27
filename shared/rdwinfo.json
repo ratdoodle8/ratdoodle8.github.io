@@ -1,92 +1,44 @@
-{
-  "A1": {
-    "number": "A1",
-    "name": "Doodle",
-    "subname": "the Rat",
-    "description": "Doodle is a horribly energetic rambunctious ball of energy who spends most of her time fishing for seaweed, sitting quietly in meditation, and questioning life's great mysteries. Doodle loves eating seaweed sandwiches which is why he loves fishing for seaweed. When she's not fishing for seaweed, for their seaweed sandwiches, you can find Doodle with her trusty computer friend, Ctrl-Z , making the hottest beats in the wild west. Doodle likes to promote their music by posting online animations of a cartoon Human persona they created. This fictional Human Vocaloid Character is currently available to find under the alias "Ratdoodle" on all Streaming platforms",
-    "coreLore": {
-      "Fire": "Fire represents passion.",
-      "Spirit": "Spirit represents memory."
-    }
-  },
+async function loadCharacter() {
+    try {
+        const rdwResponse =
+            await fetch("/shared/rdwinfo.json");
 
-  "A2": {
-    "number": "A2",
-    "name": "Rupert",
-    "subname": "the Anteater",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+        if (!rdwResponse.ok) {
+            throw new Error("Could not load /shared/rdwinfo.json");
+        }
 
-  "A3": {
-    "number": "A3",
-    "name": "Durodemon",
-    "subname": "Grubble the Demon",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+        const rdw =
+            await rdwResponse.json();
 
-  "A4": {
-    "number": "A4",
-    "name": "Pastel",
-    "subname": "the Mouse",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+        let destiny = {};
 
-  "A5": {
-    "number": "A5",
-    "name": "Jot",
-    "subname": "the Chameleon",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+        try {
+            const destinyResponse =
+                await fetch("/shared/destinyswapinfo.json");
 
-  "A6": {
-    "number": "A6",
-    "name": "Snel",
-    "subname": "the Anteater",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+            if (destinyResponse.ok) {
+                destiny = await destinyResponse.json();
+            }
+        } catch (error) {
+            console.error(error);
+        }
 
-  "A7": {
-    "number": "A7",
-    "name": "Stump",
-    "subname": "the Anteater",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+        const character =
+            rdw[characterID] || {};
 
-  "A8": {
-    "number": "A8",
-    "name": "Pebble",
-    "subname": "the Weebie",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
+        const card =
+            destiny[characterID] || {};
 
-  "A9": {
-    "number": "A9",
-    "name": "Skribble",
-    "subname": "the ???",
-    "description": "He loves to cook up some grub!",
-    "coreLore": {
-      "Light": "swag"
+        buildPage(character, card);
+    } catch (error) {
+        console.error(error);
+
+        document.body.innerHTML = `
+            <p style="max-width:400px; margin:40px auto;">
+                Character information could not be loaded.
+            </p>
+        `;
     }
-  }
 }
+
+loadCharacter();
