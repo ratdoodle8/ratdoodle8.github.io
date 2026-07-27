@@ -23,7 +23,7 @@ function setFavicon() {
     }
 
     favicon.type = "image/png";
-    favicon.href = "../shared//RDWIMAGE/defaulticon.png";
+    favicon.href = "/shared/RDWIMAGE/defaulticon.png";
 }
 
 setFavicon();
@@ -143,21 +143,47 @@ addStyles();
 // ======================================================
 
 async function loadCharacter() {
-    const rdw =
-        await fetch("../shared/rdwinfo.json")
-        .then(response => response.json());
+    try {
+        const rdwResponse =
+            await fetch("/shared/rdwinfo.json");
 
-    const destiny =
-        await fetch("../shared/destinyswapinfo.json")
-        .then(response => response.json());
+        if (!rdwResponse.ok) {
+            throw new Error("Could not load /shared/rdwinfo.json");
+        }
 
-    const character =
-        rdw[characterID] || {};
+        const rdw =
+            await rdwResponse.json();
 
-    const card =
-        destiny[characterID] || {};
+        let destiny = {};
 
-    buildPage(character, card);
+        try {
+            const destinyResponse =
+                await fetch("/shared/destinyswapinfo.json");
+
+            if (destinyResponse.ok) {
+                destiny =
+                    await destinyResponse.json();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+
+        const character =
+            rdw[characterID] || {};
+
+        const card =
+            destiny[characterID] || {};
+
+        buildPage(character, card);
+    } catch (error) {
+        console.error(error);
+
+        document.body.innerHTML = `
+            <p style="max-width:400px; margin:40px auto;">
+                Character information could not be loaded.
+            </p>
+        `;
+    }
 }
 
 loadCharacter();
