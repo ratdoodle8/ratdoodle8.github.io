@@ -50,20 +50,37 @@ function addStyles() {
         .arc-description {
             width:90%;
             max-width:700px;
-            margin:0 auto 30px;
+            margin:0 auto 40px;
+        }
+
+        .arc-images {
+            width:95%;
+            max-width:1200px;
+            margin:40px auto;
+
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:24px;
+            justify-items:center;
+            align-items:start;
         }
 
         .arc-image {
-            width:70%;
-            max-width:420px;
-            height:auto;
+            width:100%;
+            max-width:320px;
+            aspect-ratio:1/1;
+
+            object-fit:cover;
+            object-position:center;
+
             display:block;
-            margin:20px auto;
+
+            border-radius:12px;
         }
 
         .back-button {
             display:inline-block;
-            margin:30px auto;
+            margin:40px auto;
             padding:14px 24px;
             background:white;
             color:#0007E6;
@@ -73,6 +90,26 @@ function addStyles() {
 
         .back-button:hover {
             transform:scale(1.05);
+        }
+
+        @media (max-width:900px) {
+
+            .arc-images {
+                grid-template-columns:repeat(2,1fr);
+            }
+
+        }
+
+        @media (max-width:600px) {
+
+            .arc-images {
+                grid-template-columns:1fr;
+            }
+
+            .arc-image {
+                max-width:420px;
+            }
+
         }
 
     `;
@@ -89,6 +126,7 @@ addStyles();
 
 async function loadArc() {
     try {
+
         const response =
             await fetch("../../shared/arcinfo.json");
 
@@ -103,7 +141,9 @@ async function loadArc() {
             arcData[characterID] || {};
 
         buildPage(arc);
+
     } catch (error) {
+
         console.error(error);
 
         document.body.innerHTML = `
@@ -121,6 +161,7 @@ loadArc();
 // ======================================================
 
 function buildPage(arc) {
+
     document.title =
         exists(arc.title)
             ? arc.title
@@ -150,6 +191,7 @@ function buildPage(arc) {
                     class="arc-image"
                     src="./ARCIMAGE/${image}"
                     alt="${exists(arc.title) ? arc.title : characterID}"
+                    loading="lazy"
                 >
             `).join("")}
 
