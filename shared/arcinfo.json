@@ -1,149 +1,140 @@
 {
   "A1": {
-    "title": "Doodle's Archive",
-    "description": "Images featuring Doodle."
+    "description": "Images featuring Doodle.",
+    "title": "Doodle's Archive"
   },
   "A2": {
-    "title": "Rupert's Archive",
-    "description": "Images featuring Rupert."
+    "description": "Images featuring Rupert.",
+    "title": "Rupert's Archive"
   },
   "images": {
     "1": {
-      "title": "The Beginning",
       "paragraph": "RAT",
       "tags": [
         "A1",
-	"BOOKS"
-      ]
+        "BOOKS"
+      ],
+      "title": "The Beginning"
     },
     "2": {
-      "title": "Doodle the Rat",
       "paragraph": "",
       "tags": [
         "A1",
         "BOOKS"
-      ]
+      ],
+      "title": "Doodle the Rat"
     },
     "3": {
-      "title": "",
       "paragraph": "",
       "tags": [
         "A2",
         "BOOKS"
-      ]
+      ],
+      "title": ""
     },
     "4": {
-      "title": "",
       "paragraph": "",
       "tags": [
-	"A1",
+        "A1",
         "BOOKS"
-      ]
+      ],
+      "title": ""
     },
     "5": {
-      "title": "Snel in a Magazine",
       "paragraph": "",
       "tags": [
         "A6",
         "MAGAZINE",
-      	"BOOKS"
-      ]
+        "BOOKS"
+      ],
+      "title": "Snel in a Magazine"
     },
     "6": {
-      "title": "Pastel!",
       "paragraph": "",
       "tags": [
         "A4",
         "MAGAZINE",
-	      "BOOKS"
-      ]
+        "BOOKS"
+      ],
+      "title": "Pastel!"
     },
     "7": {
-      "title": "early render of animation for better off music video",
       "paragraph": "",
       "tags": [
-	"A1",
-	"A4",
-	"BTS",
-	"SCREENSHOT"
-      ]
+        "A1",
+        "A4",
+        "BTS",
+        "SCREENSHOT"
+      ],
+      "title": "early render of animation for better off music video"
     },
     "8": {
-      "title": "",
       "paragraph": "",
       "tags": [
-	"A1",
-	"BTS",
-	"SCREENSHOT"
-      ]
+        "A1",
+        "BTS",
+        "SCREENSHOT"
+      ],
+      "title": ""
     },
     "9": {
-      "title": "",
       "paragraph": "",
       "tags": [
-	"A1",
-	"A2",
-	"A3",
-	"A4",
-	"A5",
-	"A6",
-	"A8",
-	"BTS",
-	"SCREENSHOT"
-	      
-
-      ]
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5",
+        "A6",
+        "A8",
+        "BTS",
+        "SCREENSHOT"
+      ],
+      "title": ""
     },
     "10": {
-      "title": "",
       "paragraph": "",
       "tags": [
-	"A1",
-	"A2",
-	"A3",
-	"A6",
-	"A8",
-	"BTS",
-	"SCREENSHOT"
-
-
-      ]
+        "A1",
+        "A2",
+        "A3",
+        "A6",
+        "A8",
+        "BTS",
+        "SCREENSHOT"
+      ],
+      "title": ""
     },
     "11": {
-      "title": "",
       "paragraph": "",
       "tags": [
-	"A1",
-	"A2",
-	"A6",
-	"A8",
-	"BTS",
-	"SCREENSHOT"
-
-      ]
+        "A1",
+        "A2",
+        "A6",
+        "A8",
+        "BTS",
+        "SCREENSHOT"
+      ],
+      "title": ""
     },
     "12": {
-      "title": "Doodle outside tha crib",
       "paragraph": "",
       "tags": [
-	"A1",
-	"A3",
-	"A8",
-	"DDTRUCK"
-
-
-
-      ]
+        "A1",
+        "A3",
+        "A8",
+        "DDTRUCK"
+      ],
+      "title": "Doodle outside tha crib"
     },
     "13": {
-      "title": "Doodle",
       "paragraph": "Highlighted, Doodle has Glitter Spark Energy",
       "tags": [
         "A1"
-      ]
+      ],
+      "title": "Doodle"
     },
     "14": {
-      "title": "Jot in the Wild",
       "paragraph": "",
       "tags": [
         "A5",
@@ -151,10 +142,10 @@
         "BLOCKS",
         "TAGGING",
         "CHICAGO"
-      ]
+      ],
+      "title": "Jot in the Wild"
     },
     "15": {
-      "title": "The gang 😋😋😁",
       "paragraph": "",
       "tags": [
         "A1",
@@ -165,7 +156,8 @@
         "A6",
         "A7",
         "A8"
-      ]
+      ],
+      "title": "The gang 😋😋😁"
     }
   }
 }
