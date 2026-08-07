@@ -33,117 +33,110 @@ function addStyles() {
     style.innerHTML = `
 
         body {
-            background-color: #bcc8cc;
-            color: #0007E6;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 30px 15px;
+            background-color:#bcc8cc;
+            color:#0007E6;
+            font-family:Arial,sans-serif;
+            text-align:center;
+            margin:0;
+            padding:30px 15px;
         }
 
         h1,
         h2,
         p {
-            color: #0007E6;
+            color:#0007E6;
         }
 
         .arc-description {
-            width: 90%;
-            max-width: 700px;
-            margin: 0 auto 40px;
+            width:90%;
+            max-width:400px;
+            margin:0 auto 30px;
         }
 
 
         /* ============================================= */
-        /* 3 IMAGE GRID                                */
+        /* ARCHIVE GRID                                 */
         /* ============================================= */
 
         .arc-images {
-            width: 95%;
-            max-width: 1200px;
+            width:95%;
+            max-width:400px;
 
-            margin: 40px auto;
+            margin:30px auto;
 
-            display: grid;
+            display:grid;
+            grid-template-columns:repeat(3, minmax(0, 1fr));
 
-            grid-template-columns:
-                repeat(3, minmax(0, 1fr));
+            gap:10px;
 
-            gap: 24px;
-
-            justify-items: center;
-            align-items: start;
-        }
-
-
-        .arc-image {
-            width: 100%;
-            max-width: 350px;
-
-            aspect-ratio: 1 / 1;
-
-            object-fit: cover;
-            object-position: center;
-
-            display: block;
-
-            border-radius: 12px;
+            align-items:start;
         }
 
 
         /* ============================================= */
-        /* BUTTON                                      */
+        /* ONE IMAGE + ITS TEXT                         */
+        /* ============================================= */
+
+        .arc-entry {
+            width:100%;
+            min-width:0;
+        }
+
+        .arc-entry h2 {
+            font-size:14px;
+            margin:0 0 5px;
+            overflow-wrap:anywhere;
+        }
+
+        .arc-entry p {
+            font-size:12px;
+            margin:0 0 6px;
+            overflow-wrap:anywhere;
+        }
+
+
+        /* ============================================= */
+        /* IMAGE                                        */
+        /* ============================================= */
+
+        .arc-image {
+            width:100%;
+            max-width:300px;
+
+            aspect-ratio:1 / 1;
+
+            object-fit:cover;
+            object-position:center;
+
+            display:block;
+
+            margin:0 auto;
+
+            border-radius:8px;
+        }
+
+
+        /* ============================================= */
+        /* BUTTON                                       */
         /* ============================================= */
 
         .back-button {
-            display: inline-block;
+            display:inline-block;
 
-            margin: 40px auto;
+            margin:30px auto;
 
-            padding: 14px 24px;
+            padding:14px 24px;
 
-            background: white;
-            color: #0007E6;
+            background:white;
+            color:#0007E6;
 
-            text-decoration: none;
+            text-decoration:none;
 
-            border-radius: 25px;
+            border-radius:25px;
         }
 
         .back-button:hover {
-            transform: scale(1.05);
-        }
-
-
-        /* ============================================= */
-        /* TABLET                                      */
-        /* ============================================= */
-
-        @media (max-width: 900px) {
-
-            .arc-images {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-            }
-
-        }
-
-
-        /* ============================================= */
-        /* PHONE                                       */
-        /* ============================================= */
-
-        @media (max-width: 600px) {
-
-            .arc-images {
-                grid-template-columns: 1fr;
-                width: 90%;
-            }
-
-            .arc-image {
-                max-width: 420px;
-            }
-
+            transform:scale(1.05);
         }
 
     `;
@@ -183,15 +176,11 @@ async function loadArc() {
         console.error(error);
 
         document.body.innerHTML = `
-
-            <h1>
-                Arc page unavailable
-            </h1>
+            <h1>Arc page unavailable</h1>
 
             <p>
                 The arc information could not be loaded.
             </p>
-
         `;
     }
 }
@@ -219,24 +208,17 @@ function buildPage(arc) {
 
     document.body.innerHTML = `
 
-
         ${exists(arc.title) ? `
-
             <h1>
                 ${arc.title}
             </h1>
-
         ` : ""}
 
 
         ${exists(arc.description) ? `
-
             <p class="arc-description">
-
                 ${arc.description}
-
             </p>
-
         ` : ""}
 
 
@@ -244,12 +226,34 @@ function buildPage(arc) {
 
             ${images.map(image => `
 
-                <img
-                    class="arc-image"
-                    src="./ARCIMAGE/${image}"
-                    alt="${exists(arc.title) ? arc.title : characterID}"
-                    loading="lazy"
-                >
+                <div class="arc-entry">
+
+                    ${exists(image.title) ? `
+                        <h2>
+                            ${image.title}
+                        </h2>
+                    ` : ""}
+
+                    ${exists(image.paragraph) ? `
+                        <p>
+                            ${image.paragraph}
+                        </p>
+                    ` : ""}
+
+                    <img
+                        class="arc-image"
+                        src="./ARCIMAGE/${
+                            image.file || image
+                        }"
+                        alt="${
+                            exists(image.title)
+                                ? image.title
+                                : characterID
+                        }"
+                        loading="lazy"
+                    >
+
+                </div>
 
             `).join("")}
 
@@ -262,7 +266,6 @@ function buildPage(arc) {
         >
             Back to Character
         </a>
-
 
     `;
 }
