@@ -14,7 +14,13 @@
     "number": "A2",
     "name": "Rupert",
     "subname": "the Anteater",
-    "description": "He loves to cook up some grub!",
+    "description": "Rupert is a laid back line cook at Flip Flaps Diner, if you need the perfect stack of pancakes, you know who to ask!
+
+Large, strong and stable, all Rupert's pals appreciate how he's always been a rock during hard times. He loves bringing everyone together to make sure everyone has a good time.This multifaceted mammal is many things, but most of all a big sweetie who can whip up some incredible grub for the crew
+
+Rupert is quite good at gaming and Plays PVP games with the gang frequently. He especially gets into it with Jot , Snel , and Stump
+
+They can be found at Flip Flaps Diner, or at Doodle 's place listening to the latest in-progress track for their niche online music animation project, Ratdoodle",
     "coreLore": {
       "Light": "swag"
     }
@@ -24,7 +30,11 @@
     "number": "A3",
     "name": "Durodemon",
     "subname": "Grubble the Demon",
-    "description": "He loves to cook up some grub!",
+    "description": "Durodemon is a demon. His friends call him by his nickname, Grubble. Very standoff in nature, Durodemon might not be the most polite, or academically honored, he sure can make a car go from A to B !
+
+When Durodemon can escape from the hellish nightmare of a desk covered in piled up paperwork at his Scrapyard, you'll find him out and about in the truck he made from scratch out of scrap material.
+
+Durodemon spends a lot of time in his truck listening to his space scanner to track down new crash sites and scope it out for scrap material to repurpose or sell from the strange space pods that keep crashing into his home planet of Dul'row.",
     "coreLore": {
       "Light": "swag"
     }
@@ -34,7 +44,13 @@
     "number": "A4",
     "name": "Pastel",
     "subname": "the Mouse",
-    "description": "He loves to cook up some grub!",
+    "description": "Pastel is a recklessly ambitious exact-o knife of a scientist who is always searching for the greater truth of our reality. Her main focus of research is archeology, geology, and the barrier between life and death.
+
+Her ultimate dream is to create an army of zombie fossils, form the largest metal band of all time (with the army of zombie fossils) and achieve world domination. After all, it would be better if she was God, and not this pussy who died on some stupid cross.
+
+If Pastel ISNT in her lab staring at rocks or bringing something back from the dead, she's most likely outdoors on a research venture! or at a metal show knocking mfs out!
+
+She likes to spend time hanging out with friends, not so much for the connection, but to update her file back in the lab of their strengths, weaknesses, and behaviors. It seems unlikely she will ever understand friendship, but maybe one day.",
     "coreLore": {
       "Light": "swag"
     }
@@ -44,7 +60,11 @@
     "number": "A5",
     "name": "Jot",
     "subname": "the Chameleon",
-    "description": "He loves to cook up some grub!",
+    "description": "Jot is an ambitious, although sometimes clumsy, apprentice at the Potion Shop! 
+
+Jot usually carries with him a Scepter made from a gemstone he found, and his Magic Book of Spells, so he can remember how to recite spells! (he usually still recites them wrong anyway) Jot aspires to be the greatest wizard of all time!
+
+You can find him Traveling Around in search of magic teachers, spells, and artifacts to help him along his quest.",
     "coreLore": {
       "Light": "swag"
     }
@@ -53,8 +73,18 @@
   "A6": {
     "number": "A6",
     "name": "Snel",
-    "subname": "the Anteater",
-    "description": "He loves to cook up some grub!",
+    "subname": "the Snail",
+    "description": "Just like every other snail, Snel possesses Astral abilities. Unlike other snails however, specifically the abilities Snel was born with are much stronger than normal. She can travel through time, space, and consciousness just by blinking, or meditating.
+
+When Snel was very young she experienced many times, visions and realities, while to others around her, she simply sat down for a few moments.
+
+These abilities have lead to an abnormal life for Snel. Her ease of using advanced techniques at an early age lead to her growing up forced to attend specialized training courses, schools, going to far away lands and planets to hone her strengths with mystics and teachers of all the ancient Astral traditions, like the wise Monk teacher of the forest, Enhar 
+
+Due to experiencing such a potent clairsentience from such a young age, Snel frequently loses track of what really exists in front of her, when she is, or where she is.
+
+This constant isolated experience has lead Snel to adopt a nomadic lifestyle, flying around in her space ship, going where the wind takes her, and doing what she can to not take anything too seriously. She tries to push her ship to go as fast as possible whenever she can, addicted to the adrenaline distracting her from her inner world. the hyperfocus of not colliding with a star at 10x light speed is one of the only things she's found that quiets the noise.
+
+The attempt at accepting the simple joys of life always seems futile to our hero as the burden of enormous pressure of being able to do things others cant weighs on her more and more the stronger she gets. to see into realms unknown, to experience other worlds, universes and timelines play out to completion. The potential for greatness haunts her like a helmet she will never be big enough to wear.",
     "coreLore": {
       "Light": "swag"
     }
@@ -64,7 +94,12 @@
     "number": "A7",
     "name": "Stump",
     "subname": "the Anteater",
-    "description": "He loves to cook up some grub!",
+    "description": "Princess Astraea is the heir to throne of an ancient kingdom. she remembers sparring with her brother, and the fact that he always called her Stump due to her being shorter than the rest of her family and friends.
+
+
+Only a child when Erase the Tyrant Attacked their homeland, she was forced by the king and queen, her parents, to flea through a secret tunnel leading to behind the castle, through a mountain underground. she was the only one to escape the attack.
+
+Stump bares the curse of a demon, which gives her great physical and spiritual strength, however, an effect of the curse is that the physical pain she experiences is also greater",
     "coreLore": {
       "Light": "swag"
     }
@@ -74,7 +109,9 @@
     "number": "A8",
     "name": "Pebble",
     "subname": "the Weebie",
-    "description": "He loves to cook up some grub!",
+    "description": "Pebble is a Weebie Doodle stumbled upon directly after crash landing in dulrow. Pebble had gone feral, lost to the mind control of the eraser until Doodle freed her mind by destroying it! Ever since that day, Pebble has loved to follow Doodle around, no matter where!
+
+Pebble loves destruction, evil, and conquest",
     "coreLore": {
       "Light": "swag"
     }
@@ -84,7 +121,9 @@
     "number": "A9",
     "name": "Skribble",
     "subname": "the ???",
-    "description": "He loves to cook up some grub!",
+    "description": "Not much is known about this mysterious gangster robot warrior. They have been seen flying through the skies of the forgotton valley, troubling the wildlife by installing erasers to drain the life force of the world! 
+
+their aura is cloaked in mystery and strange purple energy called Anivore.",
     "coreLore": {
       "Light": "swag"
     }
