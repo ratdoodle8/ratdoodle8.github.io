@@ -49,6 +49,24 @@
 
 
         /* ============================================= */
+        /* SORT CONTROL                                  */
+        /* ============================================= */
+
+        .sort-controls {
+            margin: 0 auto 20px;
+        }
+
+        .sort-controls select {
+            padding: 8px 10px;
+            border: 1px solid #999;
+            border-radius: 8px;
+
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+
+        /* ============================================= */
         /* 3 COLUMN IMAGE GRID                           */
         /* ============================================= */
 
@@ -85,7 +103,20 @@
         .image-title {
             font-size: 13px;
 
+            margin: 0 0 3px;
+
+            overflow-wrap: anywhere;
+        }
+
+
+        .image-date {
+            font-size: 9px;
+
             margin: 0 0 5px;
+
+            color: #0007E6;
+
+            opacity: 0.75;
 
             overflow-wrap: anywhere;
         }
@@ -199,6 +230,82 @@
 
 
         // ======================================================
+        // Format stored archive date
+        // ======================================================
+
+        function formatArchiveDate(dateValue) {
+
+            if (!hasValue(dateValue)) {
+                return "";
+            }
+
+
+            const date =
+                new Date(dateValue);
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return dateValue;
+
+            }
+
+
+            return date.toLocaleString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
+        }
+
+
+        // ======================================================
+        // Get sortable date
+        // ======================================================
+
+        function getSortableDate(
+            imageInformation
+        ) {
+
+            if (
+                !hasValue(
+                    imageInformation.date
+                )
+            ) {
+
+                return 0;
+
+            }
+
+
+            const date =
+                new Date(
+                    imageInformation.date
+                );
+
+
+            const time =
+                date.getTime();
+
+
+            return Number.isNaN(time)
+                ? 0
+                : time;
+
+        }
+
+
+        // ======================================================
         // Create one archive entry
         // ======================================================
 
@@ -237,6 +344,35 @@
 
                 imageEntry.appendChild(
                     title
+                );
+
+            }
+
+
+            // DATE
+
+            if (
+                hasValue(
+                    imageInformation.date
+                )
+            ) {
+
+                const date =
+                    document.createElement("p");
+
+
+                date.className =
+                    "image-date";
+
+
+                date.textContent =
+                    formatArchiveDate(
+                        imageInformation.date
+                    );
+
+
+                imageEntry.appendChild(
+                    date
                 );
 
             }
@@ -430,6 +566,43 @@
                 }
 
 
+                // SORT DROPDOWN
+
+                const sortControls =
+                    document.createElement("div");
+
+
+                sortControls.className =
+                    "sort-controls";
+
+
+                const sortSelect =
+                    document.createElement("select");
+
+
+                sortSelect.innerHTML = `
+
+                    <option value="oldest">
+                        Oldest first
+                    </option>
+
+                    <option value="latest">
+                        Latest first
+                    </option>
+
+                `;
+
+
+                sortControls.appendChild(
+                    sortSelect
+                );
+
+
+                page.appendChild(
+                    sortControls
+                );
+
+
                 // IMAGE GRID
 
                 const imageContainer =
@@ -449,57 +622,123 @@
                     archiveData.images || {};
 
 
-                const imageNumbers =
-                    Object.keys(allImages)
-                        .sort(
-                            (a, b) =>
-                                Number(a) - Number(b)
+                // ==================================================
+                // Render images
+                // ==================================================
+
+                function renderImages(
+                    sortMode
+                ) {
+
+                    imageContainer.innerHTML =
+                        "";
+
+
+                    const imageNumbers =
+                        Object.keys(
+                            allImages
                         );
 
 
-                imageNumbers.forEach(
-                    imageNumber => {
+                    imageNumbers.sort(
+                        (a, b) => {
 
-                        const imageInformation =
-                            allImages[imageNumber] || {};
-
-
-                        const tags =
-                            Array.isArray(
-                                imageInformation.tags
-                            )
-
-                                ? imageInformation.tags
-
-                                : [];
+                            const dateA =
+                                getSortableDate(
+                                    allImages[a]
+                                );
 
 
-                        // Only show images tagged
-                        // with this character
+                            const dateB =
+                                getSortableDate(
+                                    allImages[b]
+                                );
 
-                        if (
-                            !tags.includes(
-                                characterID
-                            )
-                        ) {
 
-                            return;
+                            if (
+                                sortMode === "latest"
+                            ) {
+
+                                return dateB - dateA;
+
+                            }
+
+
+                            return dateA - dateB;
 
                         }
+                    );
 
 
-                        const imageEntry =
-                            createImageEntry(
+                    imageNumbers.forEach(
+                        imageNumber => {
 
-                                imageNumber,
+                            const imageInformation =
+                                allImages[
+                                    imageNumber
+                                ] || {};
 
-                                imageInformation
 
+                            const tags =
+                                Array.isArray(
+                                    imageInformation.tags
+                                )
+
+                                    ? imageInformation.tags
+
+                                    : [];
+
+
+                            // Only show images tagged
+                            // with this character
+
+                            if (
+                                !tags.includes(
+                                    characterID
+                                )
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            const imageEntry =
+                                createImageEntry(
+
+                                    imageNumber,
+
+                                    imageInformation
+
+                                );
+
+
+                            imageContainer.appendChild(
+                                imageEntry
                             );
 
+                        }
+                    );
 
-                        imageContainer.appendChild(
-                            imageEntry
+                }
+
+
+                // Default oldest first
+
+                renderImages(
+                    "oldest"
+                );
+
+
+                // Change sort order
+
+                sortSelect.addEventListener(
+                    "change",
+
+                    () => {
+
+                        renderImages(
+                            sortSelect.value
                         );
 
                     }
