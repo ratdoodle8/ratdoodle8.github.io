@@ -70,7 +70,7 @@
 
 
         /* ============================================= */
-        /* EACH IMAGE + ITS TITLE/TEXT                   */
+        /* EACH IMAGE + ITS INFORMATION                  */
         /* ============================================= */
 
         .image-entry {
@@ -85,7 +85,22 @@
         .image-title {
             font-size: 13px;
 
-            margin: 0 0 5px;
+            margin: 0 0 3px;
+
+            overflow-wrap: anywhere;
+        }
+
+
+        /* DATE INFO */
+
+        .image-date {
+            font-size: 9px;
+
+            margin: 0 0 6px;
+
+            color: #0007E6;
+
+            opacity: 0.75;
 
             overflow-wrap: anywhere;
         }
@@ -199,6 +214,46 @@
 
 
         // ======================================================
+        // Format archive date
+        // ======================================================
+
+        function formatArchiveDate(dateValue) {
+
+            if (!hasValue(dateValue)) {
+                return "";
+            }
+
+
+            const date =
+                new Date(dateValue);
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return dateValue;
+
+            }
+
+
+            return date.toLocaleString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
+        }
+
+
+        // ======================================================
         // Create one archive entry
         // ======================================================
 
@@ -237,6 +292,35 @@
 
                 imageEntry.appendChild(
                     title
+                );
+
+            }
+
+
+            // DATE + TIME
+
+            if (
+                hasValue(
+                    imageInformation.date
+                )
+            ) {
+
+                const date =
+                    document.createElement("p");
+
+
+                date.className =
+                    "image-date";
+
+
+                date.textContent =
+                    formatArchiveDate(
+                        imageInformation.date
+                    );
+
+
+                imageEntry.appendChild(
+                    date
                 );
 
             }
