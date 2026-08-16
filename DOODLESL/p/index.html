@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Character Archive</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #bcc8cc;
+            color: #0007E6;
+            font-family: Arial, sans-serif;
+            text-align: center;
+
+            margin: 0;
+            padding: 30px 10px;
+        }
+
+        h1,
+        h2,
+        p {
+            color: #0007E6;
+        }
+
+
+        /* ============================================= */
+        /* ARCHIVE DESCRIPTION                           */
+        /* ============================================= */
+
+        .archive-description {
+            width: 90%;
+            max-width: 400px;
+
+            margin: 10px auto 30px;
+
+            line-height: 1.5;
+        }
+
+
+        /* ============================================= */
+        /* 3 COLUMN IMAGE GRID                           */
+        /* ============================================= */
+
+        #archive-images {
+            width: 100%;
+            max-width: 400px;
+
+            margin: 30px auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 8px;
+
+            align-items: start;
+        }
+
+
+        /* ============================================= */
+        /* EACH IMAGE + ITS TITLE/TEXT                   */
+        /* ============================================= */
+
+        .image-entry {
+            width: 100%;
+            min-width: 0;
+
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .image-title {
+            font-size: 13px;
+
+            margin: 0 0 5px;
+
+            overflow-wrap: anywhere;
+        }
+
+
+        .image-paragraph {
+            font-size: 11px;
+
+            margin: 0 0 6px;
+
+            overflow-wrap: anywhere;
+        }
+
+
+        /* ============================================= */
+        /* IMAGE                                         */
+        /* ============================================= */
+
+        .archive-image {
+            width: 100% !important;
+
+            max-width: 300px !important;
+
+            aspect-ratio: 1 / 1;
+
+            height: auto !important;
+
+            object-fit: cover;
+            object-position: center;
+
+            display: block;
+
+            margin: 0 auto;
+
+            border-radius: 7px;
+        }
+
+
+        /* ============================================= */
+        /* BUTTON                                        */
+        /* ============================================= */
+
+        .back-button {
+            display: inline-block;
+
+            background-color: white;
+            color: #0007E6;
+
+            text-decoration: none;
+
+            padding: 14px 24px;
+
+            margin: 30px auto;
+
+            border-radius: 25px;
+        }
+
+
+        .back-button:hover {
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <main id="page">
+
+        <p>Loading...</p>
+
+    </main>
+
+
+    <script>
+
+        // ======================================================
+        // Detect character from /A1/p/
+        // ======================================================
+
+        const pathParts =
+            window.location.pathname
+                .split("/")
+                .filter(Boolean);
+
+
+        const pFolderIndex =
+            pathParts.lastIndexOf("p");
+
+
+        const characterID =
+            pFolderIndex > 0
+                ? pathParts[pFolderIndex - 1]
+                : "";
+
+
+        // ======================================================
+        // Check value
+        // ======================================================
+
+        function hasValue(value) {
+
+            return (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            );
+
+        }
+
+
+        // ======================================================
+        // Create one archive entry
+        // ======================================================
+
+        function createImageEntry(
+            imageNumber,
+            imageInformation
+        ) {
+
+            const imageEntry =
+                document.createElement("section");
+
+
+            imageEntry.className =
+                "image-entry";
+
+
+            // TITLE
+
+            if (
+                hasValue(
+                    imageInformation.title
+                )
+            ) {
+
+                const title =
+                    document.createElement("h2");
+
+
+                title.className =
+                    "image-title";
+
+
+                title.textContent =
+                    imageInformation.title;
+
+
+                imageEntry.appendChild(
+                    title
+                );
+
+            }
+
+
+            // PARAGRAPH
+
+            if (
+                hasValue(
+                    imageInformation.paragraph
+                )
+            ) {
+
+                const paragraph =
+                    document.createElement("p");
+
+
+                paragraph.className =
+                    "image-paragraph";
+
+
+                paragraph.textContent =
+                    imageInformation.paragraph;
+
+
+                imageEntry.appendChild(
+                    paragraph
+                );
+
+            }
+
+
+            // IMAGE
+
+            const image =
+                document.createElement("img");
+
+
+            image.className =
+                "archive-image";
+
+
+            image.src = new URL(
+
+                `../../shared/ARCIMAGE/${imageNumber}.png`,
+
+                document.baseURI
+
+            ).href;
+
+
+            image.alt =
+                hasValue(imageInformation.title)
+                    ? imageInformation.title
+                    : `${characterID} archive image ${imageNumber}`;
+
+
+            image.loading =
+                "lazy";
+
+
+            imageEntry.appendChild(
+                image
+            );
+
+
+            return imageEntry;
+
+        }
+
+
+        // ======================================================
+        // Load archive
+        // ======================================================
+
+        async function loadArchivePage() {
+
+            const page =
+                document.getElementById("page");
+
+
+            if (!characterID) {
+
+                page.innerHTML = `
+
+                    <h1>
+                        Archive unavailable
+                    </h1>
+
+                    <p>
+                        Character could not be detected.
+                    </p>
+
+                `;
+
+                return;
+
+            }
+
+
+            try {
+
+                const jsonURL =
+                    new URL(
+
+                        "../../shared/arcinfo.json",
+
+                        document.baseURI
+
+                    ).href;
+
+
+                const response =
+                    await fetch(jsonURL);
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Could not load arcinfo.json"
+                    );
+
+                }
+
+
+                const archiveData =
+                    await response.json();
+
+
+                const characterArchive =
+                    archiveData[characterID] || {};
+
+
+                const pageTitle =
+                    hasValue(
+                        characterArchive.title
+                    )
+
+                        ? characterArchive.title
+
+                        : `${characterID} Archive`;
+
+
+                document.title =
+                    pageTitle;
+
+
+                page.innerHTML =
+                    "";
+
+
+                // PAGE TITLE
+
+                const title =
+                    document.createElement("h1");
+
+
+                title.textContent =
+                    pageTitle;
+
+
+                page.appendChild(
+                    title
+                );
+
+
+                // PAGE DESCRIPTION
+
+                if (
+                    hasValue(
+                        characterArchive.description
+                    )
+                ) {
+
+                    const description =
+                        document.createElement("p");
+
+
+                    description.className =
+                        "archive-description";
+
+
+                    description.textContent =
+                        characterArchive.description;
+
+
+                    page.appendChild(
+                        description
+                    );
+
+                }
+
+
+                // IMAGE GRID
+
+                const imageContainer =
+                    document.createElement("section");
+
+
+                imageContainer.id =
+                    "archive-images";
+
+
+                page.appendChild(
+                    imageContainer
+                );
+
+
+                const allImages =
+                    archiveData.images || {};
+
+
+                const imageNumbers =
+                    Object.keys(allImages)
+                        .sort(
+                            (a, b) =>
+                                Number(a) - Number(b)
+                        );
+
+
+                imageNumbers.forEach(
+                    imageNumber => {
+
+                        const imageInformation =
+                            allImages[imageNumber] || {};
+
+
+                        const tags =
+                            Array.isArray(
+                                imageInformation.tags
+                            )
+
+                                ? imageInformation.tags
+
+                                : [];
+
+
+                        // Only show images tagged
+                        // with this character
+
+                        if (
+                            !tags.includes(
+                                characterID
+                            )
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const imageEntry =
+                            createImageEntry(
+
+                                imageNumber,
+
+                                imageInformation
+
+                            );
+
+
+                        imageContainer.appendChild(
+                            imageEntry
+                        );
+
+                    }
+                );
+
+
+                // BACK BUTTON
+
+                const backButton =
+                    document.createElement("a");
+
+
+                backButton.className =
+                    "back-button";
+
+
+                backButton.href =
+                    "../";
+
+
+                backButton.textContent =
+                    "Back to Character";
+
+
+                page.appendChild(
+                    backButton
+                );
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                page.innerHTML = `
+
+                    <h1>
+                        Archive unavailable
+                    </h1>
+
+                    <p>
+                        The archive information could not be loaded.
+                    </p>
+
+                    <a
+                        class="back-button"
+                        href="../"
+                    >
+                        Back to Character
+                    </a>
+
+                `;
+
+            }
+
+        }
+
+
+        loadArchivePage();
+
+    </script>
+
+</body>
+
+</html>
