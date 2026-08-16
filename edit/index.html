@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Character Edit</title>
+
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="upload-panel">
+            <h1>Character Edit</h1>
+
+            <form id="edit-form">
+                <div id="character-edits"></div>
+
+                <button
+                    id="add-character-button"
+                    class="secondary-button"
+                    type="button"
+                >
+                    Add Another Character
+                </button>
+
+                <button
+                    id="update-button"
+                    type="submit"
+                >
+                    Update Characters
+                </button>
+
+                <p
+                    id="status-message"
+                    class="status-message"
+                    aria-live="polite"
+                ></p>
+            </form>
+        </section>
+    </main>
+
+    <template id="character-template">
+        <fieldset class="character-edit">
+            <div class="character-heading">
+                <legend>Character</legend>
+
+                <button
+                    class="remove-character-button"
+                    type="button"
+                >
+                    Remove
+                </button>
+            </div>
+
+            <label>
+                Character Number
+
+                <input
+                    class="character-number"
+                    type="text"
+                    maxlength="30"
+                    placeholder="A1"
+                    required
+                >
+            </label>
+
+            <p class="field-help">
+                This selects which character will be edited.
+            </p>
+
+            <label>
+                Number
+
+                <input
+                    class="stat-number"
+                    type="text"
+                    maxlength="100"
+                    placeholder="Leave empty to keep unchanged"
+                >
+            </label>
+
+            <label>
+                Name
+
+                <input
+                    class="stat-name"
+                    type="text"
+                    maxlength="200"
+                    placeholder="Leave empty to keep unchanged"
+                >
+            </label>
+
+            <label>
+                Subname
+
+                <input
+                    class="stat-subname"
+                    type="text"
+                    maxlength="200"
+                    placeholder="Leave empty to keep unchanged"
+                >
+            </label>
+
+            <label>
+                Description
+
+                <textarea
+                    class="stat-description"
+                    rows="7"
+                    maxlength="20000"
+                    placeholder="Leave empty to keep unchanged"
+                ></textarea>
+            </label>
+
+            <label>
+                Core Lore
+
+                <textarea
+                    class="stat-core-lore"
+                    rows="7"
+                    placeholder='Leave empty to keep unchanged. Example: {"Fire":"Fire represents passion."}'
+                ></textarea>
+            </label>
+
+            <p class="field-help">
+                Core Lore must be written as a JSON object.
+            </p>
+
+            <label>
+                Edit Date
+
+                <input
+                    class="stat-editdate"
+                    type="text"
+                    maxlength="200"
+                    placeholder="Leave empty to use the current upload time"
+                >
+            </label>
+        </fieldset>
+    </template>
+
+    <script src="./app.js"></script>
+</body>
+</html>

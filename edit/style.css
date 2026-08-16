@@ -1,0 +1,201 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+
+    background: #bcc8cc;
+    color: #0007E6;
+
+    font-family: Arial, sans-serif;
+}
+
+.admin-page {
+    display: flex;
+    justify-content: center;
+
+    padding: 40px 20px;
+}
+
+.upload-panel {
+    width: 100%;
+    max-width: 700px;
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 8px 30px
+        rgba(0, 0, 0, .15);
+}
+
+h1 {
+    margin: 0 0 30px;
+
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+#character-edits {
+    display: flex;
+    flex-direction: column;
+
+    gap: 24px;
+}
+
+.character-edit {
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+
+    margin: 0;
+    padding: 22px;
+
+    border: 2px solid #bcc8cc;
+    border-radius: 14px;
+}
+
+.character-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+legend,
+label {
+    font-weight: bold;
+}
+
+legend {
+    padding: 0;
+
+    font-size: 19px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+
+    padding: 12px;
+
+    color: #000;
+
+    font-size: 16px;
+    font-family: inherit;
+    font-weight: normal;
+
+    border: 1px solid #bbb;
+    border-radius: 10px;
+}
+
+textarea {
+    resize: vertical;
+
+    min-height: 120px;
+}
+
+.field-help {
+    margin: -7px 0 0;
+
+    font-size: 14px;
+
+    opacity: .75;
+}
+
+button {
+    margin-top: 10px;
+
+    padding: 14px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #0007E6;
+    color: white;
+
+    font-size: 17px;
+
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: .9;
+}
+
+button:disabled {
+    cursor: wait;
+
+    opacity: .6;
+}
+
+.secondary-button {
+    background: white;
+    color: #0007E6;
+
+    border: 2px solid #0007E6;
+}
+
+.remove-character-button {
+    width: auto;
+
+    margin: 0;
+    padding: 7px 13px;
+
+    background: transparent;
+    color: #0007E6;
+
+    border: 1px solid #0007E6;
+
+    font-size: 13px;
+}
+
+.status-message {
+    margin-top: 12px;
+
+    min-height: 24px;
+
+    text-align: center;
+    font-weight: bold;
+}
+
+.status-message[data-type="error"] {
+    color: #a30000;
+}
+
+.status-message[data-type="success"] {
+    color: #087329;
+}
+
+@media (max-width: 520px) {
+    .admin-page {
+        padding: 20px 10px;
+    }
+
+    .upload-panel {
+        padding: 20px 14px;
+    }
+
+    .character-edit {
+        padding: 17px 12px;
+    }
+}
