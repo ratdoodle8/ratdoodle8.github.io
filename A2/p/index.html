@@ -12,6 +12,7 @@
     <title>Character Archive</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -41,21 +42,48 @@
             width: 90%;
             max-width: 400px;
 
-            margin: 10px auto 30px;
+            margin: 10px auto 20px;
 
             line-height: 1.5;
         }
 
 
         /* ============================================= */
-        /* 3 COLUMN IMAGE GRID                          */
+        /* SORT DROPDOWN                                 */
+        /* ============================================= */
+
+        .sort-area {
+            width: 100%;
+            max-width: 400px;
+
+            margin: 0 auto 20px;
+        }
+
+        .sort-area select {
+            font-family: Arial, sans-serif;
+
+            color: #0007E6;
+            background: white;
+
+            border: 0;
+
+            padding: 8px 12px;
+
+            border-radius: 15px;
+
+            cursor: pointer;
+        }
+
+
+        /* ============================================= */
+        /* 3 COLUMN IMAGE GRID                           */
         /* ============================================= */
 
         #archive-images {
             width: 100%;
             max-width: 400px;
 
-            margin: 30px auto;
+            margin: 20px auto 30px;
 
             display: grid;
 
@@ -69,7 +97,7 @@
 
 
         /* ============================================= */
-        /* EACH ARCHIVE ENTRY                           */
+        /* EACH IMAGE + ITS INFORMATION                  */
         /* ============================================= */
 
         .image-entry {
@@ -83,7 +111,19 @@
         .image-title {
             font-size: 13px;
 
-            margin: 0 0 5px;
+            margin: 0 0 3px;
+
+            overflow-wrap: anywhere;
+        }
+
+        .image-date {
+            font-size: 9px;
+
+            margin: 0 0 6px;
+
+            color: #0007E6;
+
+            opacity: 0.75;
 
             overflow-wrap: anywhere;
         }
@@ -98,7 +138,7 @@
 
 
         /* ============================================= */
-        /* GRID IMAGE                                   */
+        /* ARCHIVE IMAGE                                 */
         /* ============================================= */
 
         .archive-image {
@@ -127,7 +167,7 @@
 
 
         /* ============================================= */
-        /* BACK BUTTON                                  */
+        /* BACK BUTTON                                   */
         /* ============================================= */
 
         .back-button {
@@ -151,7 +191,7 @@
 
 
         /* ============================================= */
-        /* IMAGE OVERLAY                                */
+        /* IMAGE OVERLAY                                 */
         /* ============================================= */
 
         #image-overlay {
@@ -179,7 +219,7 @@
 
 
         /* ============================================= */
-        /* OVERLAY BOX                                  */
+        /* OVERLAY BOX                                   */
         /* ============================================= */
 
         .overlay-box {
@@ -202,7 +242,7 @@
 
 
         /* ============================================= */
-        /* CLOSE BUTTON                                 */
+        /* OVERLAY CLOSE BUTTON                          */
         /* ============================================= */
 
         .overlay-close {
@@ -212,6 +252,7 @@
             right: 12px;
 
             border: 0;
+
             background: transparent;
 
             color: #0007E6;
@@ -224,47 +265,36 @@
 
 
         /* ============================================= */
-        /* OVERLAY TEXT                                 */
+        /* OVERLAY INFORMATION                           */
         /* ============================================= */
 
         #overlay-title {
-            margin:
-                5px
-                35px
-                8px;
+            margin: 5px 35px 5px;
 
             font-size: 20px;
+        }
+
+        #overlay-date {
+            margin: 0 auto 8px;
+
+            font-size: 11px;
+
+            opacity: 0.75;
         }
 
         #overlay-paragraph {
             width: 100%;
 
-            margin:
-                0
-                auto
-                15px;
+            margin: 0 auto 15px;
 
             line-height: 1.4;
 
             overflow-wrap: anywhere;
         }
 
-        #overlay-date {
-            width: 100%;
-
-            margin:
-                0
-                auto
-                15px;
-
-            font-size: 12px;
-
-            overflow-wrap: anywhere;
-        }
-
 
         /* ============================================= */
-        /* LARGE OVERLAY IMAGE                          */
+        /* OVERLAY IMAGE                                 */
         /* ============================================= */
 
         #overlay-image {
@@ -284,7 +314,7 @@
 
 
         /* ============================================= */
-        /* ARROWS                                       */
+        /* OVERLAY ARROWS                                */
         /* ============================================= */
 
         .overlay-navigation {
@@ -322,13 +352,15 @@
 
         .overlay-arrow:disabled {
             opacity: 0.35;
+
             cursor: default;
+
             transform: none;
         }
 
 
         /* ============================================= */
-        /* MOBILE                                       */
+        /* MOBILE                                        */
         /* ============================================= */
 
         @media (max-width: 600px) {
@@ -340,9 +372,7 @@
             .overlay-box {
                 width: 100%;
 
-                padding:
-                    20px
-                    12px;
+                padding: 20px 12px;
             }
 
             #overlay-image {
@@ -351,18 +381,21 @@
         }
 
     </style>
+
 </head>
 
 
 <body>
 
     <main id="page">
+
         <p>Loading...</p>
+
     </main>
 
 
     <!-- ============================================= -->
-    <!-- IMAGE OVERLAY                                 -->
+    <!-- IMAGE POPUP                                   -->
     <!-- ============================================= -->
 
     <div
@@ -376,16 +409,15 @@
                 class="overlay-close"
                 id="overlay-close"
                 type="button"
-                aria-label="Close image"
             >
                 ×
             </button>
 
             <h2 id="overlay-title"></h2>
 
-            <p id="overlay-paragraph"></p>
-
             <p id="overlay-date"></p>
+
+            <p id="overlay-paragraph"></p>
 
             <img
                 id="overlay-image"
@@ -399,7 +431,6 @@
                     class="overlay-arrow"
                     id="overlay-previous"
                     type="button"
-                    aria-label="Previous image"
                 >
                     ←
                 </button>
@@ -408,7 +439,6 @@
                     class="overlay-arrow"
                     id="overlay-next"
                     type="button"
-                    aria-label="Next image"
                 >
                     →
                 </button>
@@ -441,10 +471,10 @@
 
 
         // ======================================================
-        // Archive images currently visible on this page
+        // Archive state
         // ======================================================
 
-        const visibleArchiveImages = [];
+        let archiveItems = [];
 
         let currentOverlayIndex = 0;
 
@@ -461,6 +491,41 @@
                 String(value).trim() !== ""
             );
 
+        }
+
+
+        // ======================================================
+        // Format archive date
+        // ======================================================
+
+        function formatArchiveDate(dateValue) {
+
+            if (!hasValue(dateValue)) {
+                return "";
+            }
+
+            const date =
+                new Date(dateValue);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return dateValue;
+            }
+
+            return date.toLocaleString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
         }        // ======================================================
         // Overlay elements
         // ======================================================
@@ -475,14 +540,14 @@
                 "overlay-title"
             );
 
-        const overlayParagraph =
-            document.getElementById(
-                "overlay-paragraph"
-            );
-
         const overlayDate =
             document.getElementById(
                 "overlay-date"
+            );
+
+        const overlayParagraph =
+            document.getElementById(
+                "overlay-paragraph"
             );
 
         const overlayImage =
@@ -507,14 +572,14 @@
 
 
         // ======================================================
-        // Display one image in overlay
+        // Display selected image in popup
         // ======================================================
 
         function displayOverlayImage(index) {
 
             if (
                 index < 0 ||
-                index >= visibleArchiveImages.length
+                index >= archiveItems.length
             ) {
                 return;
             }
@@ -523,7 +588,7 @@
                 index;
 
             const item =
-                visibleArchiveImages[index];
+                archiveItems[index];
 
             const information =
                 item.information;
@@ -550,6 +615,34 @@
 
                 overlayTitle.hidden =
                     true;
+
+            }
+
+
+            // DATE
+
+            if (
+                hasValue(
+                    information.date
+                )
+            ) {
+
+                overlayDate.textContent =
+                    formatArchiveDate(
+                        information.date
+                    );
+
+                overlayDate.hidden =
+                    false;
+
+            } else {
+
+                overlayDate.textContent =
+                    "";
+
+                overlayDate.hidden =
+                    true;
+
             }
 
 
@@ -574,30 +667,7 @@
 
                 overlayParagraph.hidden =
                     true;
-            }
 
-
-            // DATE
-
-            if (
-                hasValue(
-                    information.date
-                )
-            ) {
-
-                overlayDate.textContent =
-                    information.date;
-
-                overlayDate.hidden =
-                    false;
-
-            } else {
-
-                overlayDate.textContent =
-                    "";
-
-                overlayDate.hidden =
-                    true;
             }
 
 
@@ -610,27 +680,25 @@
                 item.alt;
 
 
-            // Disable arrow at beginning/end
+            // ARROWS
 
             overlayPrevious.disabled =
                 currentOverlayIndex === 0;
 
             overlayNext.disabled =
                 currentOverlayIndex ===
-                visibleArchiveImages.length - 1;
+                archiveItems.length - 1;
 
         }
 
 
         // ======================================================
-        // Open overlay
+        // Open popup
         // ======================================================
 
         function openImageOverlay(index) {
 
-            displayOverlayImage(
-                index
-            );
+            displayOverlayImage(index);
 
             imageOverlay.classList.add(
                 "open"
@@ -648,7 +716,7 @@
 
 
         // ======================================================
-        // Close overlay
+        // Close popup
         // ======================================================
 
         function closeImageOverlay() {
@@ -669,7 +737,7 @@
 
 
         // ======================================================
-        // Previous
+        // Previous image
         // ======================================================
 
         function previousOverlayImage() {
@@ -688,14 +756,14 @@
 
 
         // ======================================================
-        // Next
+        // Next image
         // ======================================================
 
         function nextOverlayImage() {
 
             if (
                 currentOverlayIndex <
-                visibleArchiveImages.length - 1
+                archiveItems.length - 1
             ) {
 
                 displayOverlayImage(
@@ -706,10 +774,6 @@
 
         }
 
-
-        // ======================================================
-        // Overlay buttons
-        // ======================================================
 
         overlayClose.addEventListener(
             "click",
@@ -727,9 +791,7 @@
         );
 
 
-        // ======================================================
-        // Clicking dark background closes overlay
-        // ======================================================
+        // Clicking outside box closes it
 
         imageOverlay.addEventListener(
             "click",
@@ -748,9 +810,7 @@
         );
 
 
-        // ======================================================
         // Keyboard controls
-        // ======================================================
 
         document.addEventListener(
             "keydown",
@@ -797,10 +857,16 @@
         // ======================================================
 
         function createImageEntry(
-            imageNumber,
-            imageInformation,
+            item,
             overlayIndex
         ) {
+
+            const imageNumber =
+                item.imageNumber;
+
+            const imageInformation =
+                item.information;
+
 
             const imageEntry =
                 document.createElement(
@@ -832,6 +898,34 @@
 
                 imageEntry.appendChild(
                     title
+                );
+
+            }
+
+
+            // DATE + TIME
+
+            if (
+                hasValue(
+                    imageInformation.date
+                )
+            ) {
+
+                const date =
+                    document.createElement(
+                        "p"
+                    );
+
+                date.className =
+                    "image-date";
+
+                date.textContent =
+                    formatArchiveDate(
+                        imageInformation.date
+                    );
+
+                imageEntry.appendChild(
+                    date
                 );
 
             }
@@ -874,23 +968,16 @@
                 "archive-image";
 
             image.src =
-                new URL(
-                    `../../shared/ARCIMAGE/${imageNumber}.png`,
-                    document.baseURI
-                ).href;
+                item.src;
 
             image.alt =
-                hasValue(
-                    imageInformation.title
-                )
-                    ? imageInformation.title
-                    : `${characterID} archive image ${imageNumber}`;
+                item.alt;
 
             image.loading =
                 "lazy";
 
 
-            // Open overlay when clicked
+            // CLICK IMAGE TO OPEN POPUP
 
             image.addEventListener(
                 "click",
@@ -908,7 +995,71 @@
                 image
             );
 
+
             return imageEntry;
+
+        }
+
+
+        // ======================================================
+        // Draw archive images
+        // ======================================================
+
+        function renderArchiveImages() {
+
+            const imageContainer =
+                document.getElementById(
+                    "archive-images"
+                );
+
+            imageContainer.innerHTML =
+                "";
+
+
+            archiveItems.forEach(
+                (
+                    item,
+                    index
+                ) => {
+
+                    imageContainer.appendChild(
+                        createImageEntry(
+                            item,
+                            index
+                        )
+                    );
+
+                }
+            );
+
+        }
+
+
+        // ======================================================
+        // Sort archive
+        // ======================================================
+
+        function sortArchive(order) {
+
+            if (order === "newest") {
+
+                archiveItems.sort(
+                    (a, b) =>
+                        Number(b.imageNumber) -
+                        Number(a.imageNumber)
+                );
+
+            } else {
+
+                archiveItems.sort(
+                    (a, b) =>
+                        Number(a.imageNumber) -
+                        Number(b.imageNumber)
+                );
+
+            }
+
+            renderArchiveImages();
 
         }        // ======================================================
         // Load archive
@@ -958,13 +1109,16 @@
 
                 }
 
+
                 const archiveData =
                     await response.json();
+
 
                 const characterArchive =
                     archiveData[
                         characterID
                     ] || {};
+
 
                 const pageTitle =
                     hasValue(
@@ -973,14 +1127,18 @@
                         ? characterArchive.title
                         : `${characterID} Archive`;
 
+
                 document.title =
                     pageTitle;
+
 
                 page.innerHTML =
                     "";
 
 
+                // ==================================================
                 // PAGE TITLE
+                // ==================================================
 
                 const title =
                     document.createElement(
@@ -995,7 +1153,9 @@
                 );
 
 
+                // ==================================================
                 // PAGE DESCRIPTION
+                // ==================================================
 
                 if (
                     hasValue(
@@ -1021,7 +1181,82 @@
                 }
 
 
+                // ==================================================
+                // SORT DROPDOWN
+                // ==================================================
+
+                const sortArea =
+                    document.createElement(
+                        "div"
+                    );
+
+                sortArea.className =
+                    "sort-area";
+
+
+                const sortSelect =
+                    document.createElement(
+                        "select"
+                    );
+
+
+                const oldestOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                oldestOption.value =
+                    "oldest";
+
+                oldestOption.textContent =
+                    "Oldest First";
+
+
+                const newestOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                newestOption.value =
+                    "newest";
+
+                newestOption.textContent =
+                    "Newest First";
+
+
+                sortSelect.appendChild(
+                    oldestOption
+                );
+
+                sortSelect.appendChild(
+                    newestOption
+                );
+
+
+                sortSelect.addEventListener(
+                    "change",
+                    () => {
+
+                        sortArchive(
+                            sortSelect.value
+                        );
+
+                    }
+                );
+
+
+                sortArea.appendChild(
+                    sortSelect
+                );
+
+                page.appendChild(
+                    sortArea
+                );
+
+
+                // ==================================================
                 // IMAGE GRID
+                // ==================================================
 
                 const imageContainer =
                     document.createElement(
@@ -1039,6 +1274,7 @@
                 const allImages =
                     archiveData.images || {};
 
+
                 const imageNumbers =
                     Object.keys(
                         allImages
@@ -1050,14 +1286,13 @@
                     );
 
 
-                // Clear current list
-
-                visibleArchiveImages.length =
-                    0;
+                archiveItems =
+                    [];
 
 
-                // First determine which images
-                // actually appear on this page.
+                // ==================================================
+                // Find every image belonging to this character
+                // ==================================================
 
                 imageNumbers.forEach(
                     imageNumber => {
@@ -1067,6 +1302,7 @@
                                 imageNumber
                             ] || {};
 
+
                         const tags =
                             Array.isArray(
                                 imageInformation.tags
@@ -1074,12 +1310,18 @@
                                 ? imageInformation.tags
                                 : [];
 
+
+                        // Only show images tagged
+                        // with this character
+
                         if (
                             !tags.includes(
                                 characterID
                             )
                         ) {
+
                             return;
+
                         }
 
 
@@ -1089,6 +1331,7 @@
                                 document.baseURI
                             ).href;
 
+
                         const imageAlt =
                             hasValue(
                                 imageInformation.title
@@ -1097,7 +1340,8 @@
                                 : `${characterID} archive image ${imageNumber}`;
 
 
-                        visibleArchiveImages.push({
+                        archiveItems.push({
+
                             imageNumber:
                                 imageNumber,
 
@@ -1109,37 +1353,25 @@
 
                             alt:
                                 imageAlt
+
                         });
 
                     }
                 );
 
 
-                // Now create them in the exact
-                // same order as the overlay arrows.
+                // ==================================================
+                // Initial display = oldest first
+                // ==================================================
 
-                visibleArchiveImages.forEach(
-                    (
-                        item,
-                        index
-                    ) => {
-
-                        const imageEntry =
-                            createImageEntry(
-                                item.imageNumber,
-                                item.information,
-                                index
-                            );
-
-                        imageContainer.appendChild(
-                            imageEntry
-                        );
-
-                    }
+                sortArchive(
+                    "oldest"
                 );
 
 
+                // ==================================================
                 // BACK BUTTON
+                // ==================================================
 
                 const backButton =
                     document.createElement(
@@ -1165,6 +1397,7 @@
                 console.error(
                     error
                 );
+
 
                 page.innerHTML = `
                     <h1>
