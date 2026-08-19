@@ -9,7 +9,6 @@
       "Spirit": "Spirit represents memory."
     }
   },
-
   "A2": {
     "number": "A2",
     "name": "Rupert",
@@ -19,7 +18,6 @@
       "Light": "swag"
     }
   },
-
   "A3": {
     "number": "A3",
     "name": "Durodemon",
@@ -29,7 +27,6 @@
       "Light": "swag"
     }
   },
-
   "A4": {
     "number": "A4",
     "name": "Pastel",
@@ -39,7 +36,6 @@
       "Light": "swag"
     }
   },
-
   "A5": {
     "number": "A5",
     "name": "Jot",
@@ -49,7 +45,6 @@
       "Light": "swag"
     }
   },
-
   "A6": {
     "number": "A6",
     "name": "Snel",
@@ -59,17 +54,16 @@
       "Light": "swag"
     }
   },
-
   "A7": {
     "number": "A7",
     "name": "Stump",
-    "subname": "the Anteater",
+    "subname": "the Elephant",
     "description": "Princess Astraea is the heir to throne of an ancient fallen kingdom. she remembers sparring with her brother, and the fact that he always called her Stump due to her being shorter than the rest of her family and friends. <br> Only a child when Erase the Tyrant Attacked their homeland, she was forced by the king and queen, her parents, to flea through a secret tunnel leading to behind the castle, through a mountain underground. she was the only one to escape the attack. <br> Stump bares the curse of a demon, which gives her great physical and spiritual strength, however, an effect of the curse is that the physical pain she experiences is also greater",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "editdate": "2026-08-18T04:17:42.835Z"
   },
-
   "A8": {
     "number": "A8",
     "name": "Pebble",
@@ -79,7 +73,6 @@
       "Light": "swag"
     }
   },
-
   "A9": {
     "number": "A9",
     "name": "Skribble",
