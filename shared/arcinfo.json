@@ -5,11 +5,13 @@
   },
   "A2": {
     "description": "Images featuring Rupert.",
+
     "title": "Rupert's Archive"
   },
   "images": {
     "1": {
       "paragraph": "RAT",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "BOOKS"
@@ -18,6 +20,7 @@
     },
     "2": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "BOOKS"
@@ -26,6 +29,7 @@
     },
     "3": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A2",
         "BOOKS"
@@ -34,6 +38,7 @@
     },
     "4": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "BOOKS"
@@ -42,6 +47,7 @@
     },
     "5": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A6",
         "MAGAZINE",
@@ -51,6 +57,7 @@
     },
     "6": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A4",
         "MAGAZINE",
@@ -60,6 +67,7 @@
     },
     "7": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A4",
@@ -70,6 +78,7 @@
     },
     "8": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "BTS",
@@ -79,6 +88,7 @@
     },
     "9": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A2",
@@ -94,6 +104,7 @@
     },
     "10": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A2",
@@ -107,6 +118,7 @@
     },
     "11": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A2",
@@ -119,6 +131,7 @@
     },
     "12": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A3",
@@ -129,6 +142,7 @@
     },
     "13": {
       "paragraph": "Highlighted, Doodle has Glitter Spark Energy",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1"
       ],
@@ -136,6 +150,7 @@
     },
     "14": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A5",
         "IRL",
@@ -147,6 +162,7 @@
     },
     "15": {
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A2",
@@ -162,6 +178,7 @@
     "16": {
       "title": "Jot the Chameleon Sketch Sheet #1",
       "paragraph": "sketches of jot the chameleon!",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A5",
         "SS"
@@ -170,6 +187,7 @@
     "17": {
       "title": "Pastel the Mouse Sketch Sheet #1",
       "paragraph": "sketches of Pastel the Mouse!",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A4",
         "SS"
@@ -178,6 +196,7 @@
     "18": {
       "title": "Snel the Snail Sketch Sheet #1",
       "paragraph": "sketches of snel the snail",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A6",
         "SS"
@@ -186,6 +205,7 @@
     "19": {
       "title": "Skribble Sketch Sheet #1",
       "paragraph": "sketches of Skribble!",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A9",
         "SS"
@@ -194,6 +214,7 @@
     "20": {
       "title": "Doodle the Rat Sketch Sheet #1",
       "paragraph": "sketches of doodle! i love her! i love this rat!",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "SS"
@@ -202,6 +223,7 @@
     "21": {
       "title": "Claudia",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "P7",
         "SS"
@@ -210,6 +232,7 @@
     "22": {
       "title": "Rupert the Anteater Sketch Sheet #1",
       "paragraph": "rupert! :) sketches of him!",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A2",
         "SS"
@@ -218,6 +241,7 @@
     "23": {
       "title": "Durodemon Sketch Sheet #1",
       "paragraph": "sketches of durodemon!",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A3",
         "SS"
@@ -226,6 +250,7 @@
     "24": {
       "title": "random 😋😋 Sketch Sheet #1",
       "paragraph": "sketches of random things! :)",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A2",
@@ -241,6 +266,7 @@
     "25": {
       "title": "Stump and the Demon Fist",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A7",
         "PAINTING"
@@ -249,6 +275,7 @@
     "26": {
       "title": "Snel the Snail and the Fractal of the Diamond Loop Comic Cover",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A6",
         "PAINTING"
@@ -257,6 +284,7 @@
     "27": {
       "title": "Swag on me. - Snel",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A6",
         "PAINTING"
@@ -265,6 +293,7 @@
     "28": {
       "title": "Doodle’s lamentations #1",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "A5",
@@ -276,6 +305,7 @@
     "29": {
       "title": "Facists do not deserve your civility",
       "paragraph": "a message from stump",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A7",
         "PAINTING"
@@ -284,6 +314,7 @@
     "30": {
       "title": "Ratdoodle",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "TAGGING"
@@ -292,6 +323,7 @@
     "31": {
       "title": "Ratdoodle",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "TAGGING"
@@ -300,6 +332,7 @@
     "32": {
       "title": "",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "TAGGING"
@@ -308,6 +341,7 @@
     "33": {
       "title": "an ancient sigil",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A3",
         "TAGGING"
@@ -316,6 +350,7 @@
     "34": {
       "title": "Dark Magic",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A5",
         "PAINTING"
@@ -324,6 +359,7 @@
     "35": {
       "title": "the lying sign",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A3",
         "PAINTING"
@@ -332,6 +368,7 @@
     "36": {
       "title": "i do not think",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "PAINTING"
@@ -340,6 +377,7 @@
     "37": {
       "title": "",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A1",
         "TAGGING"
@@ -348,6 +386,7 @@
     "38": {
       "title": "Eat Fascist",
       "paragraph": "",
+      "date": "2026-08-15T12:00:00.000Z",
       "tags": [
         "A8",
         "PAINTING"
