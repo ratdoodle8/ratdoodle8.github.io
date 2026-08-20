@@ -5,7 +5,6 @@
   },
   "A2": {
     "description": "Images featuring Rupert.",
-
     "title": "Rupert's Archive"
   },
   "images": {
@@ -462,6 +461,15 @@
       "tags": [
         "A1",
         "A5",
+        "RDWC"
+      ]
+    },
+    "47": {
+      "title": "RDWC#007",
+      "paragraph": "",
+      "date": "2026-08-20T20:48:42.988Z",
+      "tags": [
+        "A4",
         "RDWC"
       ]
     }
