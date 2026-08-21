@@ -2,6 +2,7 @@ name: Create Archive Thumbnails
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
@@ -16,13 +17,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install ImageMagick
-        run: sudo apt-get update && sudo apt-get install -y imagemagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
 
-      - name: Create thumbnails
+      - name: Create archive thumbnails
         run: |
           mkdir -p shared/ARCIMAGE/thumb
 
@@ -31,11 +34,11 @@ jobs:
 
             filename=$(basename "$image" .png)
 
-		convert "$image" \
-  			-resize 6% \
-  			-resize '100x100>' \
-  			-quality 45 \
-  			"shared/ARCIMAGE/thumb/${filename}.webp"
+            convert "$image" \
+              -resize "6%" \
+              -resize "100x100>" \
+              -quality 45 \
+              "shared/ARCIMAGE/thumb/${filename}.webp"
           done
 
       - name: Commit thumbnails
@@ -48,4 +51,6 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "Update archive thumbnails"
             git push
+          else
+            echo "No thumbnail changes."
           fi
