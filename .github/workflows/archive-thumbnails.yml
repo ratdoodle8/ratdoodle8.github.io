@@ -31,10 +31,11 @@ jobs:
 
             filename=$(basename "$image" .png)
 
-            convert "$image" \
-              -resize 10% \
-              -quality 55 \
-              "shared/ARCIMAGE/thumb/${filename}.webp"
+		convert "$image" \
+  			-resize 6% \
+  			-resize '100x100>' \
+  			-quality 45 \
+  			"shared/ARCIMAGE/thumb/${filename}.webp"
           done
 
       - name: Commit thumbnails
