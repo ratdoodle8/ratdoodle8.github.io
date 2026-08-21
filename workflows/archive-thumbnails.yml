@@ -1,0 +1,63 @@
+name: Create Archive Thumbnails
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches:
+      - main
+
+    paths:
+      - "shared/ARCIMAGE/*.png"
+
+permissions:
+  contents: write
+
+jobs:
+  create-thumbnails:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Get repository
+        uses: actions/checkout@v4
+
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+
+      - name: Create thumbnail folder
+        run: |
+          mkdir -p shared/ARCIMAGE/thumb
+
+      - name: Create tiny archive thumbnails
+        run: |
+          for image in shared/ARCIMAGE/*.png; do
+
+            [ -e "$image" ] || continue
+
+            filename=$(basename "$image")
+            name="${filename%.png}"
+
+            convert "$image" \
+              -resize 10% \
+              -quality 55 \
+              "shared/ARCIMAGE/thumb/${name}.webp"
+
+          done
+
+      - name: Save thumbnails
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add shared/ARCIMAGE/thumb
+
+          if git diff --cached --quiet; then
+            echo "No thumbnail changes."
+          else
+            git commit -m "Update archive thumbnails"
+            git push
+          fi
