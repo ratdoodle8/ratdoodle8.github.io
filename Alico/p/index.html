@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Character Archive</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #bcc8cc;
+            color: #0007E6;
+            font-family: Arial, sans-serif;
+            text-align: center;
+
+            margin: 0;
+            padding: 30px 10px;
+        }
+
+        h1,
+        h2,
+        p {
+            color: #0007E6;
+        }
+
+
+        /* ============================================= */
+        /* ARCHIVE DESCRIPTION                           */
+        /* ============================================= */
+
+        .archive-description {
+            width: 90%;
+            max-width: 400px;
+
+            margin: 10px auto 20px;
+
+            line-height: 1.5;
+        }
+
+
+        /* ============================================= */
+        /* SORT DROPDOWN                                 */
+        /* ============================================= */
+
+        .sort-area {
+            width: 100%;
+            max-width: 400px;
+
+            margin: 0 auto 20px;
+        }
+
+        .sort-area select {
+            font-family: Arial, sans-serif;
+
+            color: #0007E6;
+            background: white;
+
+            border: 0;
+
+            padding: 8px 12px;
+
+            border-radius: 15px;
+
+            cursor: pointer;
+        }
+
+
+        /* ============================================= */
+        /* 3 COLUMN IMAGE GRID                           */
+        /* ============================================= */
+
+        #archive-images {
+            width: 100%;
+            max-width: 400px;
+
+            margin: 20px auto 30px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
+            gap: 8px;
+
+            align-items: start;
+        }
+
+
+        /* ============================================= */
+        /* EACH IMAGE + ITS INFORMATION                  */
+        /* ============================================= */
+
+        .image-entry {
+            width: 100%;
+            min-width: 0;
+
+            margin: 0;
+            padding: 0;
+        }
+
+        .image-title {
+            font-size: 13px;
+
+            margin: 0 0 3px;
+
+            overflow-wrap: anywhere;
+        }
+
+        .image-date {
+            font-size: 9px;
+
+            margin: 0 0 6px;
+
+            color: #0007E6;
+
+            opacity: 0.75;
+
+            overflow-wrap: anywhere;
+        }
+
+        .image-paragraph {
+            font-size: 11px;
+
+            margin: 0 0 6px;
+
+            overflow-wrap: anywhere;
+        }
+
+
+        /* ============================================= */
+        /* ARCHIVE IMAGE                                 */
+        /* ============================================= */
+
+        .archive-image {
+            width: 100% !important;
+            max-width: 300px !important;
+
+            aspect-ratio: 1 / 1;
+
+            height: auto !important;
+
+            object-fit: cover;
+            object-position: center;
+
+            display: block;
+
+            margin: 0 auto;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+        }
+
+        .archive-image:hover {
+            opacity: 0.9;
+        }
+
+
+        /* ============================================= */
+        /* BACK BUTTON                                   */
+        /* ============================================= */
+
+        .back-button {
+            display: inline-block;
+
+            background-color: white;
+            color: #0007E6;
+
+            text-decoration: none;
+
+            padding: 14px 24px;
+
+            margin: 30px auto;
+
+            border-radius: 25px;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+        }
+
+
+        /* ============================================= */
+        /* IMAGE OVERLAY                                 */
+        /* ============================================= */
+
+        #image-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            background: rgba(0, 0, 0, 0.75);
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 9999;
+
+            overflow-y: auto;
+        }
+
+        #image-overlay.open {
+            display: flex;
+        }
+
+
+        /* ============================================= */
+        /* OVERLAY BOX                                   */
+        /* ============================================= */
+
+        .overlay-box {
+            position: relative;
+
+            width: min(900px, 100%);
+
+            max-height: calc(100vh - 40px);
+
+            overflow-y: auto;
+
+            background-color: #bcc8cc;
+
+            padding: 22px;
+
+            border-radius: 10px;
+
+            text-align: center;
+        }
+
+
+        /* ============================================= */
+        /* OVERLAY CLOSE BUTTON                          */
+        /* ============================================= */
+
+        .overlay-close {
+            position: absolute;
+
+            top: 8px;
+            right: 12px;
+
+            border: 0;
+
+            background: transparent;
+
+            color: #0007E6;
+
+            font-size: 30px;
+            line-height: 1;
+
+            cursor: pointer;
+        }
+
+
+        /* ============================================= */
+        /* OVERLAY INFORMATION                           */
+        /* ============================================= */
+
+        #overlay-title {
+            margin: 5px 35px 5px;
+
+            font-size: 20px;
+        }
+
+        #overlay-date {
+            margin: 0 auto 8px;
+
+            font-size: 11px;
+
+            opacity: 0.75;
+        }
+
+        #overlay-paragraph {
+            width: 100%;
+
+            margin: 0 auto 15px;
+
+            line-height: 1.4;
+
+            overflow-wrap: anywhere;
+        }
+
+
+        /* ============================================= */
+        /* OVERLAY IMAGE                                 */
+        /* ============================================= */
+
+        #overlay-image {
+            display: block;
+
+            width: 100%;
+            height: auto;
+
+            max-height: 70vh;
+
+            object-fit: contain;
+
+            margin: 0 auto;
+
+            border-radius: 7px;
+        }
+
+
+        /* ============================================= */
+        /* OVERLAY ARROWS                                */
+        /* ============================================= */
+
+        .overlay-navigation {
+            width: 100%;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 35px;
+
+            margin-top: 15px;
+        }
+
+        .overlay-arrow {
+            border: none;
+
+            background: white;
+            color: #0007E6;
+
+            width: 55px;
+            height: 42px;
+
+            border-radius: 22px;
+
+            font-size: 26px;
+
+            cursor: pointer;
+        }
+
+        .overlay-arrow:hover {
+            transform: scale(1.08);
+        }
+
+        .overlay-arrow:disabled {
+            opacity: 0.35;
+
+            cursor: default;
+
+            transform: none;
+        }
+
+
+        /* ============================================= */
+        /* MOBILE                                        */
+        /* ============================================= */
+
+        @media (max-width: 600px) {
+
+            #image-overlay {
+                padding: 10px;
+            }
+
+            .overlay-box {
+                width: 100%;
+
+                padding: 20px 12px;
+            }
+
+            #overlay-image {
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <main id="page">
+
+        <p>Loading...</p>
+
+    </main>
+
+
+    <!-- ============================================= -->
+    <!-- IMAGE POPUP                                   -->
+    <!-- ============================================= -->
+
+    <div
+        id="image-overlay"
+        aria-hidden="true"
+    >
+
+        <div class="overlay-box">
+
+            <button
+                class="overlay-close"
+                id="overlay-close"
+                type="button"
+            >
+                ×
+            </button>
+
+            <h2 id="overlay-title"></h2>
+
+            <p id="overlay-date"></p>
+
+            <p id="overlay-paragraph"></p>
+
+            <img
+                id="overlay-image"
+                src=""
+                alt=""
+            >
+
+            <div class="overlay-navigation">
+
+                <button
+                    class="overlay-arrow"
+                    id="overlay-previous"
+                    type="button"
+                >
+                    ←
+                </button>
+
+                <button
+                    class="overlay-arrow"
+                    id="overlay-next"
+                    type="button"
+                >
+                    →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // ======================================================
+        // Detect character from /A1/p/
+        // ======================================================
+
+        const pathParts =
+            window.location.pathname
+                .split("/")
+                .filter(Boolean);
+
+        const pFolderIndex =
+            pathParts.lastIndexOf("p");
+
+        const characterID =
+            pFolderIndex > 0
+                ? pathParts[pFolderIndex - 1]
+                : "";
+
+
+        // ======================================================
+        // Archive state
+        // ======================================================
+
+        let archiveItems = [];
+
+        let currentOverlayIndex = 0;
+
+
+        // ======================================================
+        // Check value
+        // ======================================================
+
+        function hasValue(value) {
+
+            return (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            );
+
+        }
+
+
+        // ======================================================
+        // Format archive date
+        // ======================================================
+
+        function formatArchiveDate(dateValue) {
+
+            if (!hasValue(dateValue)) {
+                return "";
+            }
+
+            const date =
+                new Date(dateValue);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return dateValue;
+            }
+
+            return date.toLocaleString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
+        }        // ======================================================
+        // Overlay elements
+        // ======================================================
+
+        const imageOverlay =
+            document.getElementById(
+                "image-overlay"
+            );
+
+        const overlayTitle =
+            document.getElementById(
+                "overlay-title"
+            );
+
+        const overlayDate =
+            document.getElementById(
+                "overlay-date"
+            );
+
+        const overlayParagraph =
+            document.getElementById(
+                "overlay-paragraph"
+            );
+
+        const overlayImage =
+            document.getElementById(
+                "overlay-image"
+            );
+
+        const overlayPrevious =
+            document.getElementById(
+                "overlay-previous"
+            );
+
+        const overlayNext =
+            document.getElementById(
+                "overlay-next"
+            );
+
+        const overlayClose =
+            document.getElementById(
+                "overlay-close"
+            );
+
+
+        // ======================================================
+        // Display selected image in popup
+        // ======================================================
+
+        function displayOverlayImage(index) {
+
+            if (
+                index < 0 ||
+                index >= archiveItems.length
+            ) {
+                return;
+            }
+
+            currentOverlayIndex =
+                index;
+
+            const item =
+                archiveItems[index];
+
+            const information =
+                item.information;
+
+
+            // TITLE
+
+            if (
+                hasValue(
+                    information.title
+                )
+            ) {
+
+                overlayTitle.textContent =
+                    information.title;
+
+                overlayTitle.hidden =
+                    false;
+
+            } else {
+
+                overlayTitle.textContent =
+                    "";
+
+                overlayTitle.hidden =
+                    true;
+
+            }
+
+
+            // DATE
+
+            if (
+                hasValue(
+                    information.date
+                )
+            ) {
+
+                overlayDate.textContent =
+                    formatArchiveDate(
+                        information.date
+                    );
+
+                overlayDate.hidden =
+                    false;
+
+            } else {
+
+                overlayDate.textContent =
+                    "";
+
+                overlayDate.hidden =
+                    true;
+
+            }
+
+
+            // PARAGRAPH
+
+            if (
+                hasValue(
+                    information.paragraph
+                )
+            ) {
+
+                overlayParagraph.textContent =
+                    information.paragraph;
+
+                overlayParagraph.hidden =
+                    false;
+
+            } else {
+
+                overlayParagraph.textContent =
+                    "";
+
+                overlayParagraph.hidden =
+                    true;
+
+            }
+
+
+            // IMAGE
+
+            overlayImage.src =
+                item.src;
+
+            overlayImage.alt =
+                item.alt;
+
+
+            // ARROWS
+
+            overlayPrevious.disabled =
+                currentOverlayIndex === 0;
+
+            overlayNext.disabled =
+                currentOverlayIndex ===
+                archiveItems.length - 1;
+
+        }
+
+
+        // ======================================================
+        // Open popup
+        // ======================================================
+
+        function openImageOverlay(index) {
+
+            displayOverlayImage(index);
+
+            imageOverlay.classList.add(
+                "open"
+            );
+
+            imageOverlay.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.style.overflow =
+                "hidden";
+
+        }
+
+
+        // ======================================================
+        // Close popup
+        // ======================================================
+
+        function closeImageOverlay() {
+
+            imageOverlay.classList.remove(
+                "open"
+            );
+
+            imageOverlay.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
+        // ======================================================
+        // Previous image
+        // ======================================================
+
+        function previousOverlayImage() {
+
+            if (
+                currentOverlayIndex > 0
+            ) {
+
+                displayOverlayImage(
+                    currentOverlayIndex - 1
+                );
+
+            }
+
+        }
+
+
+        // ======================================================
+        // Next image
+        // ======================================================
+
+        function nextOverlayImage() {
+
+            if (
+                currentOverlayIndex <
+                archiveItems.length - 1
+            ) {
+
+                displayOverlayImage(
+                    currentOverlayIndex + 1
+                );
+
+            }
+
+        }
+
+
+        overlayClose.addEventListener(
+            "click",
+            closeImageOverlay
+        );
+
+        overlayPrevious.addEventListener(
+            "click",
+            previousOverlayImage
+        );
+
+        overlayNext.addEventListener(
+            "click",
+            nextOverlayImage
+        );
+
+
+        // Clicking outside box closes it
+
+        imageOverlay.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    imageOverlay
+                ) {
+
+                    closeImageOverlay();
+
+                }
+
+            }
+        );
+
+
+        // Keyboard controls
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    !imageOverlay.classList.contains(
+                        "open"
+                    )
+                ) {
+                    return;
+                }
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    closeImageOverlay();
+
+                }
+
+                if (
+                    event.key === "ArrowLeft"
+                ) {
+
+                    previousOverlayImage();
+
+                }
+
+                if (
+                    event.key === "ArrowRight"
+                ) {
+
+                    nextOverlayImage();
+
+                }
+
+            }
+        );
+
+
+        // ======================================================
+        // Create one archive entry
+        // ======================================================
+
+        function createImageEntry(
+            item,
+            overlayIndex
+        ) {
+
+            const imageNumber =
+                item.imageNumber;
+
+            const imageInformation =
+                item.information;
+
+
+            const imageEntry =
+                document.createElement(
+                    "section"
+                );
+
+            imageEntry.className =
+                "image-entry";
+
+
+            // TITLE
+
+            if (
+                hasValue(
+                    imageInformation.title
+                )
+            ) {
+
+                const title =
+                    document.createElement(
+                        "h2"
+                    );
+
+                title.className =
+                    "image-title";
+
+                title.textContent =
+                    imageInformation.title;
+
+                imageEntry.appendChild(
+                    title
+                );
+
+            }
+
+
+            // DATE + TIME
+
+            if (
+                hasValue(
+                    imageInformation.date
+                )
+            ) {
+
+                const date =
+                    document.createElement(
+                        "p"
+                    );
+
+                date.className =
+                    "image-date";
+
+                date.textContent =
+                    formatArchiveDate(
+                        imageInformation.date
+                    );
+
+                imageEntry.appendChild(
+                    date
+                );
+
+            }
+
+
+            // PARAGRAPH
+
+            if (
+                hasValue(
+                    imageInformation.paragraph
+                )
+            ) {
+
+                const paragraph =
+                    document.createElement(
+                        "p"
+                    );
+
+                paragraph.className =
+                    "image-paragraph";
+
+                paragraph.textContent =
+                    imageInformation.paragraph;
+
+                imageEntry.appendChild(
+                    paragraph
+                );
+
+            }
+
+
+            // IMAGE
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+            image.className =
+                "archive-image";
+
+            image.src =
+                item.src;
+
+            image.alt =
+                item.alt;
+
+            image.loading =
+                "lazy";
+
+
+            // CLICK IMAGE TO OPEN POPUP
+
+            image.addEventListener(
+                "click",
+                () => {
+
+                    openImageOverlay(
+                        overlayIndex
+                    );
+
+                }
+            );
+
+
+            imageEntry.appendChild(
+                image
+            );
+
+
+            return imageEntry;
+
+        }
+
+
+        // ======================================================
+        // Draw archive images
+        // ======================================================
+
+        function renderArchiveImages() {
+
+            const imageContainer =
+                document.getElementById(
+                    "archive-images"
+                );
+
+            imageContainer.innerHTML =
+                "";
+
+
+            archiveItems.forEach(
+                (
+                    item,
+                    index
+                ) => {
+
+                    imageContainer.appendChild(
+                        createImageEntry(
+                            item,
+                            index
+                        )
+                    );
+
+                }
+            );
+
+        }
+
+
+        // ======================================================
+        // Sort archive
+        // ======================================================
+
+        function sortArchive(order) {
+
+            if (order === "newest") {
+
+                archiveItems.sort(
+                    (a, b) =>
+                        Number(b.imageNumber) -
+                        Number(a.imageNumber)
+                );
+
+            } else {
+
+                archiveItems.sort(
+                    (a, b) =>
+                        Number(a.imageNumber) -
+                        Number(b.imageNumber)
+                );
+
+            }
+
+            renderArchiveImages();
+
+        }        // ======================================================
+        // Load archive
+        // ======================================================
+
+        async function loadArchivePage() {
+
+            const page =
+                document.getElementById(
+                    "page"
+                );
+
+            if (!characterID) {
+
+                page.innerHTML = `
+                    <h1>
+                        Archive unavailable
+                    </h1>
+
+                    <p>
+                        Character could not be detected.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            try {
+
+                const jsonURL =
+                    new URL(
+                        "../../shared/arcinfo.json",
+                        document.baseURI
+                    ).href;
+
+                const response =
+                    await fetch(
+                        jsonURL
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Could not load arcinfo.json"
+                    );
+
+                }
+
+
+                const archiveData =
+                    await response.json();
+
+
+                const characterArchive =
+                    archiveData[
+                        characterID
+                    ] || {};
+
+
+                const pageTitle =
+                    hasValue(
+                        characterArchive.title
+                    )
+                        ? characterArchive.title
+                        : `${characterID} Archive`;
+
+
+                document.title =
+                    pageTitle;
+
+
+                page.innerHTML =
+                    "";
+
+
+                // ==================================================
+                // PAGE TITLE
+                // ==================================================
+
+                const title =
+                    document.createElement(
+                        "h1"
+                    );
+
+                title.textContent =
+                    pageTitle;
+
+                page.appendChild(
+                    title
+                );
+
+
+                // ==================================================
+                // PAGE DESCRIPTION
+                // ==================================================
+
+                if (
+                    hasValue(
+                        characterArchive.description
+                    )
+                ) {
+
+                    const description =
+                        document.createElement(
+                            "p"
+                        );
+
+                    description.className =
+                        "archive-description";
+
+                    description.textContent =
+                        characterArchive.description;
+
+                    page.appendChild(
+                        description
+                    );
+
+                }
+
+
+                // ==================================================
+                // SORT DROPDOWN
+                // ==================================================
+
+                const sortArea =
+                    document.createElement(
+                        "div"
+                    );
+
+                sortArea.className =
+                    "sort-area";
+
+
+                const sortSelect =
+                    document.createElement(
+                        "select"
+                    );
+
+
+                const oldestOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                oldestOption.value =
+                    "oldest";
+
+                oldestOption.textContent =
+                    "Oldest First";
+
+
+                const newestOption =
+                    document.createElement(
+                        "option"
+                    );
+
+                newestOption.value =
+                    "newest";
+
+                newestOption.textContent =
+                    "Newest First";
+
+
+                sortSelect.appendChild(
+                    oldestOption
+                );
+
+                sortSelect.appendChild(
+                    newestOption
+                );
+
+
+                sortSelect.addEventListener(
+                    "change",
+                    () => {
+
+                        sortArchive(
+                            sortSelect.value
+                        );
+
+                    }
+                );
+
+
+                sortArea.appendChild(
+                    sortSelect
+                );
+
+                page.appendChild(
+                    sortArea
+                );
+
+
+                // ==================================================
+                // IMAGE GRID
+                // ==================================================
+
+                const imageContainer =
+                    document.createElement(
+                        "section"
+                    );
+
+                imageContainer.id =
+                    "archive-images";
+
+                page.appendChild(
+                    imageContainer
+                );
+
+
+                const allImages =
+                    archiveData.images || {};
+
+
+                const imageNumbers =
+                    Object.keys(
+                        allImages
+                    )
+                    .sort(
+                        (a, b) =>
+                            Number(a) -
+                            Number(b)
+                    );
+
+
+                archiveItems =
+                    [];
+
+
+                // ==================================================
+                // Find every image belonging to this character
+                // ==================================================
+
+                imageNumbers.forEach(
+                    imageNumber => {
+
+                        const imageInformation =
+                            allImages[
+                                imageNumber
+                            ] || {};
+
+
+                        const tags =
+                            Array.isArray(
+                                imageInformation.tags
+                            )
+                                ? imageInformation.tags
+                                : [];
+
+
+                        // Only show images tagged
+                        // with this character
+
+                        if (
+                            !tags.includes(
+                                characterID
+                            )
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const imageSource =
+                            new URL(
+                                `../../shared/ARCIMAGE/${imageNumber}.png`,
+                                document.baseURI
+                            ).href;
+
+
+                        const imageAlt =
+                            hasValue(
+                                imageInformation.title
+                            )
+                                ? imageInformation.title
+                                : `${characterID} archive image ${imageNumber}`;
+
+
+                        archiveItems.push({
+
+                            imageNumber:
+                                imageNumber,
+
+                            information:
+                                imageInformation,
+
+                            src:
+                                imageSource,
+
+                            alt:
+                                imageAlt
+
+                        });
+
+                    }
+                );
+
+
+                // ==================================================
+                // Initial display = oldest first
+                // ==================================================
+
+                sortArchive(
+                    "oldest"
+                );
+
+
+                // ==================================================
+                // BACK BUTTON
+                // ==================================================
+
+                const backButton =
+                    document.createElement(
+                        "a"
+                    );
+
+                backButton.className =
+                    "back-button";
+
+                backButton.href =
+                    "../";
+
+                backButton.textContent =
+                    "Back to Character";
+
+                page.appendChild(
+                    backButton
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                page.innerHTML = `
+                    <h1>
+                        Archive unavailable
+                    </h1>
+
+                    <p>
+                        The archive information could not be loaded.
+                    </p>
+
+                    <a
+                        class="back-button"
+                        href="../"
+                    >
+                        Back to Character
+                    </a>
+                `;
+
+            }
+
+        }
+
+
+        loadArchivePage();
+
+    </script>
+
+</body>
+
+</html>
