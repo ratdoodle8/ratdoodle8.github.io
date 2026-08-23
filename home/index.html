@@ -2,75 +2,586 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ratdoodle's World</title>
 
-<title>Home</title>
+    <style>
 
-<style>
+        * {
+            box-sizing: border-box;
+        }
 
-body{
+        body {
+            margin: 0;
+            padding: 30px 10px 60px;
 
-    background:#bcc8cc;
-    color:#0007E6;
-    font-family:Arial,sans-serif;
-    text-align:center;
-    margin:0;
-    padding:60px 20px;
+            background-color: #bcc8cc;
+            color: #0007E6;
 
-}
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
 
-h1{
+        main {
+            width: 100%;
+            max-width: 400px;
 
-    margin-bottom:10px;
+            margin: 0 auto;
+        }
 
-}
+        h1,
+        h2,
+        h3,
+        p,
+        a {
+            color: #0007E6;
+        }
 
-p{
+        h1 {
+            margin: 0 0 8px;
 
-    max-width:600px;
-    margin:0 auto 50px;
+            font-size: 32px;
+        }
 
-}
+        h2 {
+            margin: 0 0 14px;
 
-.button{
+            font-size: 21px;
+        }
 
-    display:inline-block;
+        h3 {
+            margin: 0 0 10px;
 
-    width:250px;
-    height:160px;
+            font-size: 17px;
+        }
 
-    background:white;
+        p {
+            margin: 8px 0;
 
-    border-radius:35px;
+            line-height: 1.45;
+        }
 
-    text-decoration:none;
 
-    transition:0.2s;
+        /* ============================================= */
+        /* TOP NAVIGATION                                */
+        /* ============================================= */
 
-}
+        .top-nav {
+            display: flex;
 
-.button:hover{
+            justify-content: center;
+            flex-wrap: wrap;
 
-    transform:scale(1.05);
+            gap: 8px;
 
-}
+            margin-bottom: 30px;
+        }
 
-</style>
+        .small-button {
+            display: inline-block;
 
+            padding: 8px 14px;
+
+            background-color: white;
+            color: #0007E6;
+
+            border-radius: 20px;
+
+            text-decoration: none;
+
+            font-size: 13px;
+        }
+
+        .small-button:hover {
+            transform: scale(1.04);
+        }
+
+
+        /* ============================================= */
+        /* SECTIONS                                      */
+        /* ============================================= */
+
+        .section {
+            width: 100%;
+
+            margin: 45px auto;
+        }
+
+        .section:first-of-type {
+            margin-top: 20px;
+        }
+
+        .divider {
+            width: 70px;
+            height: 2px;
+
+            margin: 35px auto;
+
+            background-color: #0007E6;
+
+            opacity: 0.25;
+        }
+
+
+        /* ============================================= */
+        /* HERO                                          */
+        /* ============================================= */
+
+        .tagline {
+            margin-top: 0;
+
+            font-size: 15px;
+        }
+
+
+        /* ============================================= */
+        /* BUTTONS                                       */
+        /* ============================================= */
+
+        .button {
+            display: inline-block;
+
+            margin: 12px auto 0;
+            padding: 13px 22px;
+
+            background-color: white;
+            color: #0007E6;
+
+            border-radius: 25px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+        }
+
+        .button-row {
+            display: flex;
+
+            justify-content: center;
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-top: 12px;
+        }
+
+        .button-row .button {
+            margin: 0;
+        }
+
+
+        /* ============================================= */
+        /* OPTIONAL HOMEPAGE IMAGES                      */
+        /* ============================================= */
+
+        .homepage-image {
+            display: block;
+
+            width: 100%;
+            max-width: 400px;
+
+            height: auto;
+
+            margin: 20px auto;
+
+            object-fit: contain;
+
+            border-radius: 7px;
+        }
+
+
+        /* ============================================= */
+        /* PROJECT BOX                                   */
+        /* ============================================= */
+
+        .project {
+            width: 100%;
+
+            margin: 35px auto;
+
+            padding: 20px;
+
+            background-color: rgba(255, 255, 255, 0.18);
+
+            border-radius: 12px;
+        }
+
+        .project p {
+            font-size: 14px;
+        }
+
+
+        /* ============================================= */
+        /* SMALL TEXT                                    */
+        /* ============================================= */
+
+        .small-text {
+            font-size: 12px;
+
+            opacity: 0.8;
+        }
+
+
+        /* ============================================= */
+        /* MOBILE                                        */
+        /* ============================================= */
+
+        @media (max-width: 500px) {
+
+            body {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            h1 {
+                font-size: 27px;
+            }
+
+            .project {
+                padding: 16px;
+            }
+        }
+
+    </style>
 </head>
+
 
 <body>
 
-<h1>Ratdoodle's World</h1>
+    <main>
 
-<p>
-Welcome to Ratdoodle's World.
-</p>
 
-<a class="button" href="/A1"><h1>Critters of Ratdoodle's World</h1></a>
+        <!-- ============================================= -->
+        <!-- NAVIGATION                                    -->
+        <!-- ============================================= -->
+
+        <nav class="top-nav">
+
+            <a
+                class="small-button"
+                href="/characters"
+            >
+                Characters
+            </a>
+
+            <a
+                class="small-button"
+                href="/news"
+            >
+                News
+            </a>
+
+            <a
+                class="small-button"
+                href="/archive"
+            >
+                Archive
+            </a>
+
+            <a
+                class="small-button"
+                href="/socials"
+            >
+                Socials
+            </a>
+
+        </nav>
+
+
+        <!-- ============================================= -->
+        <!-- HERO                                          -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <h1>
+                Ratdoodle's World
+            </h1>
+
+            <p class="tagline">
+                art, music, and games by Ratdoodle
+            </p>
+
+            <div class="button-row">
+
+                <a
+                    class="button"
+                    href="/characters"
+                >
+                    Characters
+                </a>
+
+                <a
+                    class="button"
+                    href="/news"
+                >
+                    Current Projects
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ============================================= -->
+        <!-- WELCOME                                       -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <h2>
+                Welcome to Ratdoodle's World!
+            </h2>
+
+            <p>
+                if you made it here from finding a curious
+                pesky little card:
+            </p>
+
+            <p>
+                Congrats! you have most likely found a
+                [S] (Spirit Card) from an in progress
+                experimental PVP trading card game called:
+            </p>
+
+            <h3>
+                Ratdoodle Destiny Swap!
+            </h3>
+
+            <p>
+                If you post your card on social media,
+                tag @RatdoodlesWorld or use
+                #RatdoodlesWorld to compare your card
+                to others that have been found,
+                or just to flex!
+            </p>
+
+            <a
+                class="button"
+                href="/ds"
+            >
+                Learn About Destiny Swap
+            </a>
+
+        </section>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ============================================= -->
+        <!-- RATDOODLE ADVENTURE                           -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <div class="project">
+
+                <h2>
+                    Ratdoodle Adventure
+                </h2>
+
+                <h3>
+                    Free Demo Available on Steam Now!
+                </h3>
+
+                <p>
+                    Explore an adorable Claymation inspired
+                    world as Doodle the Rat in this whimsical
+                    3D Platforming Adventure!
+                </p>
+
+                <p>
+                    After crash landing on an alien planet,
+                    Doodle finds that its inhabitants may
+                    need even more help than he does!
+                    A flood of strange machines has recently
+                    begun to take hold of the local wildlife,
+                    causing the otherwise docile creatures
+                    to attack anything and everything
+                    around them!
+                </p>
+
+                <p>
+                    Use Doodle's Glitter Ability to float
+                    in the air, or launch around the stage
+                    with a targeted boost mechanic.
+                    Perform good deeds like saving friendly
+                    critters, restoring ancient temples,
+                    and freeing wildlife from the
+                    mind-controlling devices called Erasers
+                    to collect Glitter Sparks.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ============================================= -->
+        <!-- DURODEMON                                     -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <div class="project">
+
+                <h2>
+                    Durodemon's Special Order
+                </h2>
+
+                <h3>
+                    Free Download Available Now!
+                </h3>
+
+                <p>
+                    This game was made in 36 hours
+                    for a game jam!
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ============================================= -->
+        <!-- CHARACTERS                                    -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <h2>
+                Characters
+            </h2>
+
+            <p>
+                Explore the characters of
+                Ratdoodle's World.
+            </p>
+
+            <a
+                class="button"
+                href="/characters"
+            >
+                All Characters
+            </a>
+
+        </section>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ============================================= -->
+        <!-- MUSIC                                         -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <h2>
+                The Music of Ratdoodle's World
+            </h2>
+
+            <p>
+                Click below to hear the mostly instrumental
+                experimental beats and soundscapes created
+                by Ratdoodle's World!
+            </p>
+
+            <a
+                class="button"
+                href="/music"
+            >
+                Listen to Ratdoodle's World
+            </a>
+
+        </section>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ============================================= -->
+        <!-- COMMUNITY                                     -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <h2>
+                Join the Mischief!
+            </h2>
+
+            <p>
+                Follow along with Ratdoodle's World
+                and its projects.
+            </p>
+
+            <a
+                class="button"
+                href="/socials"
+            >
+                Socials
+            </a>
+
+        </section>
+
+
+        <div class="divider"></div>
+
+
+        <!-- ============================================= -->
+        <!-- ABOUT                                         -->
+        <!-- ============================================= -->
+
+        <section class="section">
+
+            <h2>
+                About Ratdoodle's World
+            </h2>
+
+            <p>
+                Ratdoodle's World is a project exploring a
+                world full of tiny spunky creatures I,
+                Ratdoodle, found within the treacherous
+                depths of the darkest corners of my evil,
+                twisted mind.
+            </p>
+
+            <p>
+                I will be adding to this site as time goes
+                on in an attempt to document my ideas and
+                hopefully build cool experiences for weird
+                messed up freaks like me.
+            </p>
+
+            <p>
+                please explore and forgive any scrunkliness!
+            </p>
+
+        </section>
+
+
+        <p class="small-text">
+            Ratdoodle's World
+        </p>
+
+    </main>
 
 </body>
 
