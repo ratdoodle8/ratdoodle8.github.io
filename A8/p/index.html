@@ -138,27 +138,26 @@
 
 
         /* ============================================= */
-        /* ARCHIVE IMAGE                                 */
+        /* GRID THUMBNAIL                                */
         /* ============================================= */
 
         .archive-image {
-            width: 100% !important;
-            max-width: 300px !important;
-
-            aspect-ratio: 1 / 1;
-
-            height: auto !important;
-
-            object-fit: cover;
-            object-position: center;
-
             display: block;
+
+            width: 100%;
+            height: auto;
+
+            max-width: 300px;
+
+            object-fit: contain;
 
             margin: 0 auto;
 
             border-radius: 7px;
 
             cursor: pointer;
+
+            image-rendering: auto;
         }
 
         .archive-image:hover {
@@ -294,7 +293,7 @@
 
 
         /* ============================================= */
-        /* OVERLAY IMAGE                                 */
+        /* FULL RESOLUTION OVERLAY IMAGE                 */
         /* ============================================= */
 
         #overlay-image {
@@ -572,7 +571,7 @@
 
 
         // ======================================================
-        // Display selected image in popup
+        // Display selected FULL RESOLUTION image in popup
         // ======================================================
 
         function displayOverlayImage(index) {
@@ -671,10 +670,15 @@
             }
 
 
-            // IMAGE
+            // ==================================================
+            // FULL RESOLUTION PNG
+            //
+            // The original PNG is not assigned to the popup
+            // until this function runs.
+            // ==================================================
 
             overlayImage.src =
-                item.src;
+                item.fullSrc;
 
             overlayImage.alt =
                 item.alt;
@@ -732,6 +736,13 @@
 
             document.body.style.overflow =
                 "";
+
+            // Remove full-resolution image from popup
+            // after closing.
+
+            overlayImage.removeAttribute(
+                "src"
+            );
 
         }
 
@@ -791,7 +802,9 @@
         );
 
 
-        // Clicking outside box closes it
+        // ======================================================
+        // Clicking outside popup closes it
+        // ======================================================
 
         imageOverlay.addEventListener(
             "click",
@@ -810,7 +823,9 @@
         );
 
 
+        // ======================================================
         // Keyboard controls
+        // ======================================================
 
         document.addEventListener(
             "keydown",
@@ -853,16 +868,13 @@
 
 
         // ======================================================
-        // Create one archive entry
+        // Create one archive grid entry
         // ======================================================
 
         function createImageEntry(
             item,
             overlayIndex
         ) {
-
-            const imageNumber =
-                item.imageNumber;
 
             const imageInformation =
                 item.information;
@@ -957,7 +969,9 @@
             }
 
 
-            // IMAGE
+            // ==================================================
+            // LOW RESOLUTION GRID THUMBNAIL
+            // ==================================================
 
             const image =
                 document.createElement(
@@ -968,7 +982,7 @@
                 "archive-image";
 
             image.src =
-                item.src;
+                item.thumbnailSrc;
 
             image.alt =
                 item.alt;
@@ -976,8 +990,11 @@
             image.loading =
                 "lazy";
 
+            image.decoding =
+                "async";
 
-            // CLICK IMAGE TO OPEN POPUP
+
+            // Click thumbnail to load original
 
             image.addEventListener(
                 "click",
@@ -1096,10 +1113,12 @@
                         document.baseURI
                     ).href;
 
+
                 const response =
                     await fetch(
                         jsonURL
                     );
+
 
                 if (!response.ok) {
 
@@ -1311,9 +1330,6 @@
                                 : [];
 
 
-                        // Only show images tagged
-                        // with this character
-
                         if (
                             !tags.includes(
                                 characterID
@@ -1325,7 +1341,24 @@
                         }
 
 
-                        const imageSource =
+                        // ==========================================
+                        // SMALL WEBP
+                        // Used ONLY by archive grid
+                        // ==========================================
+
+                        const thumbnailSource =
+                            new URL(
+                                `../../shared/ARCIMAGE/thumb/${imageNumber}.webp`,
+                                document.baseURI
+                            ).href;
+
+
+                        // ==========================================
+                        // ORIGINAL PNG
+                        // Used ONLY when image popup is opened
+                        // ==========================================
+
+                        const fullImageSource =
                             new URL(
                                 `../../shared/ARCIMAGE/${imageNumber}.png`,
                                 document.baseURI
@@ -1348,8 +1381,11 @@
                             information:
                                 imageInformation,
 
-                            src:
-                                imageSource,
+                            thumbnailSrc:
+                                thumbnailSource,
+
+                            fullSrc:
+                                fullImageSource,
 
                             alt:
                                 imageAlt
