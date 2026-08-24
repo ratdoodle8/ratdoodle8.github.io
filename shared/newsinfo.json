@@ -1,3 +1,9 @@
 {
-  "posts": {}
+  "posts": {
+    "1": {
+      "title": "test1",
+      "body": "test post",
+      "date": "2026-08-24T06:49:29.341Z"
+    }
+  }
 }
