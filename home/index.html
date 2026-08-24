@@ -72,21 +72,43 @@
         /* TOP NAVIGATION                                */
         /* ============================================= */
 
-        .top-nav {
+        .top-area {
+            width: 100%;
+
             display: flex;
 
+            align-items: flex-start;
             justify-content: center;
-            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin: 20px auto;
+        }
+
+        .top-area .homepage-image {
+            flex: 1;
+
+            width: calc(100% - 105px);
+            max-width: 295px;
+
+            margin: 0;
+        }
+
+        .top-nav {
+            width: 95px;
+
+            display: flex;
+            flex-direction: column;
 
             gap: 8px;
-
-            margin-bottom: 30px;
         }
 
         .small-button {
-            display: inline-block;
+            display: block;
 
-            padding: 8px 14px;
+            width: 100%;
+
+            padding: 8px 10px;
 
             background-color: white;
             color: #0007E6;
@@ -248,6 +270,18 @@
             .project {
                 padding: 16px;
             }
+
+            .top-area {
+                gap: 8px;
+            }
+
+            .top-nav {
+                width: 90px;
+            }
+
+            .top-area .homepage-image {
+                width: calc(100% - 98px);
+            }
         }
 
     </style>
@@ -260,51 +294,50 @@
 
 
         <!-- ============================================= -->
-        <!-- NAVIGATION                                    -->
+        <!-- IMAGE 1 + NAVIGATION                         -->
         <!-- ============================================= -->
 
-        <nav class="top-nav">
+        <div class="top-area">
 
-            <a
-                class="small-button"
-                href="/characters"
+            <img
+                class="homepage-image"
+                src="4.png"
+                alt="Ratdoodle's World"
             >
-                Characters
-            </a>
 
-            <a
-                class="small-button"
-                href="/news"
-            >
-                News
-            </a>
+            <nav class="top-nav">
 
-            <a
-                class="small-button"
-                href="/archive"
-            >
-                Archive
-            </a>
+                <a
+                    class="small-button"
+                    href="/tip"
+                >
+                    Tip
+                </a>
 
-            <a
-                class="small-button"
-                href="/socials"
-            >
-                Socials
-            </a>
+                <a
+                    class="small-button"
+                    href="/contact"
+                >
+                    Contact
+                </a>
 
-        </nav>
+                <a
+                    class="small-button"
+                    href="/socials"
+                >
+                    Socials
+                </a>
 
+                <a
+                    class="small-button"
+                    href="/news"
+                >
+                    News
+                </a>
 
-        <!-- ============================================= -->
-        <!-- IMAGE 1                                       -->
-        <!-- ============================================= -->
+            </nav>
 
-        <img
-            class="homepage-image"
-            src="1.png"
-            alt="Ratdoodle's World"
-        >
+        </div>
 
 
         <!-- ============================================= -->
@@ -582,7 +615,7 @@
 
         <img
             class="homepage-image"
-            src="4.png"
+            src="1.png"
             alt="About Ratdoodle's World"
         >
 
