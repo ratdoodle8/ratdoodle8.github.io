@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>NEWS</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 12px 60px;
+
+            background-color: #bcc8cc;
+            color: #0007E6;
+
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            width: 100%;
+            max-width: 400px;
+
+            margin: 0 auto;
+        }
+
+        h1,
+        h2,
+        p,
+        a {
+            color: #0007E6;
+        }
+
+        h1 {
+            text-align: center;
+
+            margin: 0 0 20px;
+        }
+
+
+        /* ============================================= */
+        /* TOP CONTROLS                                  */
+        /* ============================================= */
+
+        .top-controls {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 30px;
+        }
+
+        select {
+            font-family: Arial, sans-serif;
+
+            color: #0007E6;
+            background-color: white;
+
+            border: 0;
+
+            padding: 8px 12px;
+
+            border-radius: 20px;
+
+            cursor: pointer;
+        }
+
+        .button {
+            display: inline-block;
+
+            background-color: white;
+            color: #0007E6;
+
+            text-decoration: none;
+
+            padding: 9px 16px;
+
+            border-radius: 20px;
+        }
+
+        .button:hover {
+            transform: scale(1.04);
+        }
+
+
+        /* ============================================= */
+        /* POSTS                                         */
+        /* ============================================= */
+
+        .post {
+            width: 100%;
+
+            margin: 0 auto 40px;
+
+            text-align: left;
+        }
+
+        .post-date {
+            margin: 0 0 7px;
+
+            font-size: 11px;
+
+            opacity: 0.75;
+        }
+
+        .post-title {
+            margin: 0 0 12px;
+
+            font-size: 20px;
+        }
+
+        .post-body {
+            margin: 0;
+
+            line-height: 1.5;
+
+            white-space: pre-wrap;
+
+            overflow-wrap: anywhere;
+        }
+
+        .divider {
+            width: 100%;
+            height: 1px;
+
+            background-color: #0007E6;
+
+            opacity: 0.25;
+
+            margin: 0 auto 35px;
+        }
+
+
+        /* ============================================= */
+        /* EMPTY / ERROR                                 */
+        /* ============================================= */
+
+        .message {
+            text-align: center;
+
+            line-height: 1.5;
+        }
+
+
+        /* ============================================= */
+        /* MOBILE                                        */
+        /* ============================================= */
+
+        @media (max-width: 500px) {
+
+            body {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <main>
+
+        <h1>NEWS</h1>
+
+
+        <div class="top-controls">
+
+            <select id="sort-select">
+
+                <option value="newest">
+                    Newest First
+                </option>
+
+                <option value="oldest">
+                    Oldest First
+                </option>
+
+            </select>
+
+
+            <a
+                class="button"
+                href="/"
+            >
+                Home
+            </a>
+
+        </div>
+
+
+        <section id="posts">
+
+            <p class="message">
+                Loading...
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        let newsPosts = [];
+
+
+        // ======================================================
+        // Check value
+        // ======================================================
+
+        function hasValue(value) {
+
+            return (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            );
+
+        }
+
+
+        // ======================================================
+        // Format date
+        // ======================================================
+
+        function formatDate(value) {
+
+            if (!hasValue(value)) {
+                return "";
+            }
+
+            const date =
+                new Date(value);
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+                return value;
+            }
+
+            return date.toLocaleString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
+        }
+
+
+        // ======================================================
+        // Create one post
+        // ======================================================
+
+        function createPost(post) {
+
+            const container =
+                document.createElement(
+                    "article"
+                );
+
+            container.className =
+                "post";
+
+
+            // DATE
+
+            if (hasValue(post.date)) {
+
+                const date =
+                    document.createElement(
+                        "p"
+                    );
+
+                date.className =
+                    "post-date";
+
+                date.textContent =
+                    formatDate(
+                        post.date
+                    );
+
+                container.appendChild(
+                    date
+                );
+
+            }
+
+
+            // TITLE
+
+            if (hasValue(post.title)) {
+
+                const title =
+                    document.createElement(
+                        "h2"
+                    );
+
+                title.className =
+                    "post-title";
+
+                title.textContent =
+                    post.title;
+
+                container.appendChild(
+                    title
+                );
+
+            }
+
+
+            // BODY
+
+            if (hasValue(post.body)) {
+
+                const body =
+                    document.createElement(
+                        "p"
+                    );
+
+                body.className =
+                    "post-body";
+
+                body.textContent =
+                    post.body;
+
+                container.appendChild(
+                    body
+                );
+
+            }
+
+
+            return container;
+
+        }
+
+
+        // ======================================================
+        // Render posts
+        // ======================================================
+
+        function renderPosts() {
+
+            const postsContainer =
+                document.getElementById(
+                    "posts"
+                );
+
+            postsContainer.innerHTML =
+                "";
+
+
+            if (
+                newsPosts.length === 0
+            ) {
+
+                const message =
+                    document.createElement(
+                        "p"
+                    );
+
+                message.className =
+                    "message";
+
+                message.textContent =
+                    "No posts yet.";
+
+                postsContainer.appendChild(
+                    message
+                );
+
+                return;
+            }
+
+
+            newsPosts.forEach(
+                (
+                    post,
+                    index
+                ) => {
+
+                    postsContainer.appendChild(
+                        createPost(post)
+                    );
+
+
+                    if (
+                        index <
+                        newsPosts.length - 1
+                    ) {
+
+                        const divider =
+                            document.createElement(
+                                "div"
+                            );
+
+                        divider.className =
+                            "divider";
+
+                        postsContainer.appendChild(
+                            divider
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // ======================================================
+        // Sort
+        // ======================================================
+
+        function sortPosts(order) {
+
+            if (
+                order === "oldest"
+            ) {
+
+                newsPosts.sort(
+                    (a, b) =>
+                        Number(a.postNumber) -
+                        Number(b.postNumber)
+                );
+
+            } else {
+
+                newsPosts.sort(
+                    (a, b) =>
+                        Number(b.postNumber) -
+                        Number(a.postNumber)
+                );
+
+            }
+
+            renderPosts();
+
+        }
+
+
+        // ======================================================
+        // Load news
+        // ======================================================
+
+        async function loadNews() {
+
+            const postsContainer =
+                document.getElementById(
+                    "posts"
+                );
+
+
+            try {
+
+                const jsonURL =
+                    new URL(
+                        "../shared/newsinfo.json",
+                        document.baseURI
+                    ).href;
+
+
+                const response =
+                    await fetch(
+                        jsonURL,
+                        {
+                            cache: "no-store"
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Could not load newsinfo.json"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                const posts =
+                    data.posts || {};
+
+
+                newsPosts =
+                    Object.keys(posts)
+                        .map(
+                            postNumber => {
+
+                                return {
+
+                                    postNumber:
+                                        postNumber,
+
+                                    ...posts[
+                                        postNumber
+                                    ]
+
+                                };
+
+                            }
+                        );
+
+
+                sortPosts(
+                    "newest"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    error
+                );
+
+
+                postsContainer.innerHTML =
+                    "";
+
+
+                const message =
+                    document.createElement(
+                        "p"
+                    );
+
+                message.className =
+                    "message";
+
+                message.textContent =
+                    "News could not be loaded.";
+
+                postsContainer.appendChild(
+                    message
+                );
+
+            }
+
+        }
+
+
+        // ======================================================
+        // Sort dropdown
+        // ======================================================
+
+        document
+            .getElementById(
+                "sort-select"
+            )
+            .addEventListener(
+                "change",
+                event => {
+
+                    sortPosts(
+                        event.target.value
+                    );
+
+                }
+            );
+
+
+        loadNews();
+
+    </script>
+
+</body>
+
+</html>
