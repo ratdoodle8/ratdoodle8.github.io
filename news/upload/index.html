@@ -333,20 +333,14 @@
 
         // ======================================================
         // NEWS WORKER
-        //
-        // After we create the News Worker, put its URL here.
-        // Example:
-        //
-        // const WORKER_URL =
-        //     "https://news-upload.ratdoodle8.workers.dev/";
         // ======================================================
 
         const WORKER_URL =
-            "PASTE_NEWS_WORKER_URL_HERE";
+            "https://news-upload.ratdoodle8.workers.dev";
 
 
         // ======================================================
-        // Elements
+        // ELEMENTS
         // ======================================================
 
         const form =
@@ -386,7 +380,7 @@
 
 
         // ======================================================
-        // Remember admin key during this browser session
+        // REMEMBER ADMIN KEY FOR THIS BROWSER SESSION
         // ======================================================
 
         const savedAdminKey =
@@ -403,7 +397,7 @@
 
 
         // ======================================================
-        // Status message
+        // STATUS MESSAGE
         // ======================================================
 
         function showStatus(
@@ -421,7 +415,7 @@
 
 
         // ======================================================
-        // Upload
+        // UPLOAD POST
         // ======================================================
 
         form.addEventListener(
@@ -444,6 +438,8 @@
                     adminKeyInput.value.trim();
 
 
+                // POST BODY REQUIRED
+
                 if (!body) {
 
                     showStatus(
@@ -455,6 +451,8 @@
 
                 }
 
+
+                // ADMIN KEY REQUIRED
 
                 if (!adminKey) {
 
@@ -468,26 +466,15 @@
                 }
 
 
-                if (
-                    WORKER_URL ===
-                    "PASTE_NEWS_WORKER_URL_HERE"
-                ) {
-
-                    showStatus(
-                        "The News Worker URL has not been added yet.",
-                        "error"
-                    );
-
-                    return;
-
-                }
-
+                // SAVE KEY FOR CURRENT SESSION
 
                 sessionStorage.setItem(
                     "ratdoodle-admin-key",
                     adminKey
                 );
 
+
+                // DISABLE BUTTON WHILE UPLOADING
 
                 uploadButton.disabled =
                     true;
@@ -503,11 +490,16 @@
 
                 try {
 
+                    // ==================================================
+                    // SEND POST TO CLOUDFLARE WORKER
+                    // ==================================================
+
                     const response =
                         await fetch(
                             WORKER_URL,
                             {
-                                method: "POST",
+                                method:
+                                    "POST",
 
                                 headers: {
 
@@ -522,6 +514,7 @@
                                 body:
                                     JSON.stringify(
                                         {
+
                                             title:
                                                 title,
 
@@ -530,11 +523,16 @@
 
                                             date:
                                                 date
+
                                         }
                                     )
                             }
                         );
 
+
+                    // ==================================================
+                    // READ RESPONSE
+                    // ==================================================
 
                     let result = {};
 
@@ -550,6 +548,10 @@
 
                     }
 
+
+                    // ==================================================
+                    // HANDLE FAILURE
+                    // ==================================================
 
                     if (!response.ok) {
 
@@ -574,14 +576,18 @@
                     }
 
 
+                    // ==================================================
+                    // SUCCESS
+                    // ==================================================
+
                     showStatus(
-                        "Post uploaded successfully.",
+                        `Post ${result.postNumber || ""} uploaded successfully.`,
                         "success"
                     );
 
 
-                    // Clear post fields.
-                    // Keep admin key.
+                    // CLEAR POST FIELDS
+                    // KEEP ADMIN KEY
 
                     titleInput.value =
                         "";
@@ -605,6 +611,7 @@
                         "Upload failed.",
                         "error"
                     );
+
 
                 } finally {
 
