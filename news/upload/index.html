@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>News Upload</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 14px 60px;
+
+            background-color: #bcc8cc;
+            color: #0007E6;
+
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        main {
+            width: 100%;
+            max-width: 400px;
+
+            margin: 0 auto;
+        }
+
+        h1,
+        p,
+        label,
+        a {
+            color: #0007E6;
+        }
+
+        h1 {
+            margin: 0 0 30px;
+        }
+
+
+        /* ============================================= */
+        /* FORM                                          */
+        /* ============================================= */
+
+        form {
+            width: 100%;
+        }
+
+        .field {
+            width: 100%;
+
+            margin-bottom: 22px;
+
+            text-align: left;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+
+            padding: 11px 12px;
+
+            border: 0;
+
+            border-radius: 8px;
+
+            background-color: white;
+            color: #0007E6;
+
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 220px;
+
+            resize: vertical;
+
+            line-height: 1.5;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: 2px solid #0007E6;
+        }
+
+
+        /* ============================================= */
+        /* BUTTONS                                       */
+        /* ============================================= */
+
+        button,
+        .button {
+            display: inline-block;
+
+            border: 0;
+
+            background-color: white;
+            color: #0007E6;
+
+            padding: 13px 22px;
+
+            border-radius: 25px;
+
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+
+            text-decoration: none;
+
+            cursor: pointer;
+        }
+
+        button:hover,
+        .button:hover {
+            transform: scale(1.04);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+
+            cursor: default;
+
+            transform: none;
+        }
+
+        .button-row {
+            display: flex;
+
+            justify-content: center;
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+
+        /* ============================================= */
+        /* STATUS                                        */
+        /* ============================================= */
+
+        #status {
+            min-height: 22px;
+
+            margin: 20px auto;
+
+            line-height: 1.4;
+        }
+
+        #status.success {
+            font-weight: bold;
+        }
+
+        #status.error {
+            font-weight: bold;
+        }
+
+
+        /* ============================================= */
+        /* NOTES                                         */
+        /* ============================================= */
+
+        .note {
+            margin-top: 5px;
+
+            font-size: 11px;
+
+            opacity: 0.75;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <main>
+
+        <h1>
+            NEWS UPLOAD
+        </h1>
+
+
+        <form id="news-form">
+
+
+            <!-- ========================================= -->
+            <!-- TITLE                                     -->
+            <!-- ========================================= -->
+
+            <div class="field">
+
+                <label for="title">
+                    Title
+                </label>
+
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- POST                                      -->
+            <!-- ========================================= -->
+
+            <div class="field">
+
+                <label for="body">
+                    Post
+                </label>
+
+                <textarea
+                    id="body"
+                    name="body"
+                    required
+                ></textarea>
+
+                <p class="note">
+                    Paragraph breaks will be preserved.
+                </p>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- DATE                                      -->
+            <!-- ========================================= -->
+
+            <div class="field">
+
+                <label for="date">
+                    Date / Time
+                </label>
+
+                <input
+                    id="date"
+                    name="date"
+                    type="datetime-local"
+                >
+
+                <p class="note">
+                    Leave blank to use the upload time automatically.
+                </p>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- ADMIN KEY                                 -->
+            <!-- ========================================= -->
+
+            <div class="field">
+
+                <label for="admin-key">
+                    Admin Key
+                </label>
+
+                <input
+                    id="admin-key"
+                    name="admin-key"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- UPLOAD                                    -->
+            <!-- ========================================= -->
+
+            <button
+                id="upload-button"
+                type="submit"
+            >
+                Upload Post
+            </button>
+
+
+        </form>
+
+
+        <p id="status"></p>
+
+
+        <div class="button-row">
+
+            <a
+                class="button"
+                href="/news"
+            >
+                View News
+            </a>
+
+            <a
+                class="button"
+                href="/"
+            >
+                Home
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        // ======================================================
+        // NEWS WORKER
+        //
+        // After we create the News Worker, put its URL here.
+        // Example:
+        //
+        // const WORKER_URL =
+        //     "https://news-upload.YOUR-WORKER.workers.dev";
+        // ======================================================
+
+        const WORKER_URL =
+            "PASTE_NEWS_WORKER_URL_HERE";
+
+
+        // ======================================================
+        // Elements
+        // ======================================================
+
+        const form =
+            document.getElementById(
+                "news-form"
+            );
+
+        const titleInput =
+            document.getElementById(
+                "title"
+            );
+
+        const bodyInput =
+            document.getElementById(
+                "body"
+            );
+
+        const dateInput =
+            document.getElementById(
+                "date"
+            );
+
+        const adminKeyInput =
+            document.getElementById(
+                "admin-key"
+            );
+
+        const uploadButton =
+            document.getElementById(
+                "upload-button"
+            );
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+
+        // ======================================================
+        // Remember admin key during this browser session
+        // ======================================================
+
+        const savedAdminKey =
+            sessionStorage.getItem(
+                "ratdoodle-admin-key"
+            );
+
+        if (savedAdminKey) {
+
+            adminKeyInput.value =
+                savedAdminKey;
+
+        }
+
+
+        // ======================================================
+        // Status message
+        // ======================================================
+
+        function showStatus(
+            message,
+            type = ""
+        ) {
+
+            status.textContent =
+                message;
+
+            status.className =
+                type;
+
+        }
+
+
+        // ======================================================
+        // Upload
+        // ======================================================
+
+        form.addEventListener(
+            "submit",
+            async event => {
+
+                event.preventDefault();
+
+
+                const title =
+                    titleInput.value.trim();
+
+                const body =
+                    bodyInput.value.trim();
+
+                const date =
+                    dateInput.value;
+
+                const adminKey =
+                    adminKeyInput.value.trim();
+
+
+                if (!body) {
+
+                    showStatus(
+                        "Enter a post.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                if (!adminKey) {
+
+                    showStatus(
+                        "Enter the admin key.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    WORKER_URL ===
+                    "PASTE_NEWS_WORKER_URL_HERE"
+                ) {
+
+                    showStatus(
+                        "The News Worker URL has not been added yet.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                sessionStorage.setItem(
+                    "ratdoodle-admin-key",
+                    adminKey
+                );
+
+
+                uploadButton.disabled =
+                    true;
+
+                uploadButton.textContent =
+                    "Uploading...";
+
+
+                showStatus(
+                    "Uploading post..."
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            WORKER_URL,
+                            {
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "X-Admin-Key":
+                                        adminKey
+
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        {
+                                            title:
+                                                title,
+
+                                            body:
+                                                body,
+
+                                            date:
+                                                date
+                                        }
+                                    )
+                            }
+                        );
+
+
+                    let result = {};
+
+
+                    try {
+
+                        result =
+                            await response.json();
+
+                    } catch {
+
+                        // Worker did not return JSON.
+
+                    }
+
+
+                    if (!response.ok) {
+
+                        if (
+                            response.status === 401 ||
+                            response.status === 403
+                        ) {
+
+                            sessionStorage.removeItem(
+                                "ratdoodle-admin-key"
+                            );
+
+                        }
+
+
+                        throw new Error(
+                            result.error ||
+                            result.message ||
+                            `Upload failed with status ${response.status}.`
+                        );
+
+                    }
+
+
+                    showStatus(
+                        "Post uploaded successfully.",
+                        "success"
+                    );
+
+
+                    // Clear post fields.
+                    // Keep admin key.
+
+                    titleInput.value =
+                        "";
+
+                    bodyInput.value =
+                        "";
+
+                    dateInput.value =
+                        "";
+
+
+                } catch (error) {
+
+                    console.error(
+                        error
+                    );
+
+
+                    showStatus(
+                        error.message ||
+                        "Upload failed.",
+                        "error"
+                    );
+
+                } finally {
+
+                    uploadButton.disabled =
+                        false;
+
+                    uploadButton.textContent =
+                        "Upload Post";
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
