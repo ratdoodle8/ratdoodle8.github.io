@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Project Iris</title>
+
+  <style>
+    body {
+      background: #bcc8cc;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 30px 15px;
+    }
+
+    #main {
+      width: 100%;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    button {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    #status {
+      margin: 20px 0;
+    }
+
+    #result {
+      margin-top: 25px;
+    }
+
+    #result img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 15px auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="main">
+
+  <h1>Project Iris</h1>
+
+  <p id="status">Press the button to scan a card.</p>
+
+  <button id="scanButton">Scan Card</button>
+
+  <div id="result"></div>
+
+</div>
+
+<script>
+
+const scanButton = document.getElementById("scanButton");
+const statusText = document.getElementById("status");
+const result = document.getElementById("result");
+
+
+scanButton.addEventListener("click", async () => {
+
+  if (!("NDEFReader" in window)) {
+    statusText.textContent = "NFC scanning is not supported on this device.";
+    return;
+  }
+
+  try {
+
+    const ndef = new NDEFReader();
+
+    await ndef.scan();
+
+    statusText.textContent = "Waiting for card...";
+
+
+    ndef.addEventListener("reading", event => {
+
+      const decoder = new TextDecoder();
+
+      for (const record of event.message.records) {
+
+        if (record.recordType === "text") {
+
+          const cardData = decoder.decode(record.data).trim();
+
+          statusText.textContent = "Card detected: " + cardData;
+
+          loadCard(cardData);
+
+          break;
+        }
+      }
+
+    });
+
+
+  } catch (error) {
+
+    statusText.textContent = "NFC scan failed.";
+
+    console.error(error);
+
+  }
+
+});
+
+
+function loadCard(cardData) {
+
+  /*
+      TEST FORMAT:
+
+      Write text such as:
+
+      A1
+
+      onto the NFC tag.
+
+      The page will then load:
+
+      /A1/CHARIMAGE/1.png
+  */
+
+
+  const safeID = cardData.replace(/[^A-Za-z0-9_-]/g, "");
+
+  if (!safeID) {
+    result.textContent = "Invalid card.";
+    return;
+  }
+
+
+  result.innerHTML = `
+    <h2>${safeID}</h2>
+
+    <img
+      src="/${safeID}/CHARIMAGE/1.png"
+      alt="${safeID}"
+    >
+  `;
+
+}
+
+</script>
+
+</body>
+</html>
