@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In | Ratdoodle</title>
+  
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 30px 15px;
+    background: #bcc8cc;
+    color: #0007E6;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  h1, h2 {
+    margin-top: 0;
+  }
+
+  form, .panel {
+    border: 2px solid #0007E6;
+    padding: 20px;
+    margin-top: 20px;
+    background: #bcc8cc;
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-top: 14px;
+    margin-bottom: 5px;
+  }
+
+  input, select, button {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  input, select {
+    border: 2px solid #0007E6;
+    background: white;
+    color: black;
+  }
+
+  button {
+    margin-top: 18px;
+    border: 2px solid #0007E6;
+    background: #bcc8cc;
+    color: #0007E6;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  a {
+    color: #0007E6;
+  }
+
+  .message {
+    min-height: 22px;
+    margin-top: 12px;
+  }
+
+  .small {
+    font-size: 14px;
+  }
+
+  .stat {
+    margin: 8px 0;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="page">
+  <h1>Log In</h1>
+
+  <form id="loginForm">
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" autocomplete="username" required>
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+    <button type="submit">Log In</button>
+  </form>
+
+  <div id="message" class="message"></div>
+
+  <p class="small">
+    Don't have an account?
+    <a href="/signup/">Sign up</a>
+  </p>
+</div>
+
+<script>
+const form = document.getElementById("loginForm");
+const message = document.getElementById("message");
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  message.textContent = "Account system is not connected yet.";
+
+  /*
+    LATER:
+    Send username + password to your Cloudflare Worker.
+
+    If login succeeds:
+    window.location.href = "/account/";
+  */
+});
+</script>
+
+</body>
+</html>

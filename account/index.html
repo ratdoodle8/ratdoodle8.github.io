@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account | Ratdoodle</title>
+  
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 30px 15px;
+    background: #bcc8cc;
+    color: #0007E6;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  h1, h2 {
+    margin-top: 0;
+  }
+
+  form, .panel {
+    border: 2px solid #0007E6;
+    padding: 20px;
+    margin-top: 20px;
+    background: #bcc8cc;
+  }
+
+  label {
+    display: block;
+    text-align: left;
+    margin-top: 14px;
+    margin-bottom: 5px;
+  }
+
+  input, select, button {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  input, select {
+    border: 2px solid #0007E6;
+    background: white;
+    color: black;
+  }
+
+  button {
+    margin-top: 18px;
+    border: 2px solid #0007E6;
+    background: #bcc8cc;
+    color: #0007E6;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  a {
+    color: #0007E6;
+  }
+
+  .message {
+    min-height: 22px;
+    margin-top: 12px;
+  }
+
+  .small {
+    font-size: 14px;
+  }
+
+  .stat {
+    margin: 8px 0;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="page">
+  <h1>Account</h1>
+
+  <div id="loggedOut" class="panel">
+    <p>You are not logged in.</p>
+    <p><a href="/login/">Log in</a></p>
+    <p><a href="/signup/">Create an account</a></p>
+  </div>
+
+  <div id="loggedIn" style="display:none;">
+    <div class="panel">
+      <h2 id="usernameDisplay">Username</h2>
+      <p class="stat">
+        Account age:
+        <span id="accountAge">0 days</span>
+      </p>
+    </div>
+
+    <div class="panel">
+      <h2>Weebies</h2>
+
+      <div id="weebieSetup">
+        <p>Create your first Weebie.</p>
+
+        <form id="weebieForm">
+          <label for="weebieName">Name</label>
+          <input id="weebieName" type="text" required>
+
+          <label for="primaryColor">Primary Color</label>
+          <select id="primaryColor" required>
+            <option value="">Choose a color</option>
+            <option>Teal</option>
+            <option>Tan</option>
+            <option>Red</option>
+            <option>Pink</option>
+            <option>Blue</option>
+            <option>Lime Green</option>
+            <option>White</option>
+            <option>Purple</option>
+            <option>Silver</option>
+          </select>
+
+          <label for="secondaryColor">Secondary Color</label>
+          <select id="secondaryColor" required>
+            <option value="">Choose a color</option>
+            <option>Teal</option>
+            <option>Tan</option>
+            <option>Red</option>
+            <option>Pink</option>
+            <option>Blue</option>
+            <option>Lime Green</option>
+            <option>White</option>
+            <option>Purple</option>
+            <option>Silver</option>
+          </select>
+
+          <button type="submit">Create Weebie</button>
+        </form>
+
+        <div id="weebieMessage" class="message"></div>
+      </div>
+
+      <div id="weebieDisplay" style="display:none;">
+        <p class="stat">Name: <span id="displayWeebieName"></span></p>
+        <p class="stat">Primary Color: <span id="displayPrimaryColor"></span></p>
+        <p class="stat">Secondary Color: <span id="displaySecondaryColor"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const loggedOut = document.getElementById("loggedOut");
+const loggedIn = document.getElementById("loggedIn");
+
+/*
+  LATER:
+  Ask your Cloudflare Worker whether the visitor is logged in.
+
+  If logged in:
+    loggedOut.style.display = "none";
+    loggedIn.style.display = "block";
+
+    Fill:
+      usernameDisplay
+      accountAge
+
+  If they already have a Weebie:
+    hide weebieSetup
+    show weebieDisplay
+    fill name / primary color / secondary color
+*/
+
+document.getElementById("weebieForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  document.getElementById("weebieMessage").textContent =
+    "Weebie system is not connected yet.";
+
+  /*
+    LATER:
+    Send:
+      weebieName
+      primaryColor
+      secondaryColor
+
+    to your Cloudflare Worker.
+  */
+});
+</script>
+
+</body>
+</html>
