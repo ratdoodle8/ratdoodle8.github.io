@@ -395,6 +395,11 @@
         </p>
 
         <p class="stat">
+          XP:
+          <span id="displayWeebieXP">0</span>
+        </p>
+
+        <p class="stat">
           Primary Color:
           <span id="displayPrimaryColor"></span>
         </p>
@@ -555,6 +560,13 @@ function renderCreateStats() {
     const definition
     of statDefinitions
   ) {
+    if (
+      definition.prompt === false ||
+      definition.type === "system"
+    ) {
+      continue;
+    }
+
     createStatFields.appendChild(
       makeStatField(
         definition,
@@ -572,6 +584,13 @@ function getMissingDefinitions(
 
   return statDefinitions.filter(
     definition => {
+      if (
+        definition.prompt === false ||
+        definition.type === "system"
+      ) {
+        return false;
+      }
+
       const value =
         stats[definition.id];
 
@@ -629,7 +648,10 @@ function renderVisibleStats(
     const definition
     of statDefinitions
   ) {
-    if (definition.hidden) {
+    if (
+      definition.hidden ||
+      definition.id === "xp"
+    ) {
       continue;
     }
 
@@ -851,6 +873,15 @@ function showWeebie(
     weebie.name;
 
   document.getElementById(
+    "displayWeebieXP"
+  ).textContent =
+    Number(
+      weebie.xp ??
+      weebie.stats.xp ??
+      0
+    ).toLocaleString();
+
+  document.getElementById(
     "displayPrimaryColor"
   ).textContent =
     weebie.primary_color;
@@ -1040,7 +1071,11 @@ document.getElementById(
           primaryColor,
         secondary_color:
           secondaryColor,
-        stats
+        xp: 0,
+        stats: {
+          ...stats,
+          xp: 0
+        }
       });
 
       message.textContent =
