@@ -5,88 +5,162 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account | Ratdoodle</title>
 
-<style>
-  * { box-sizing: border-box; }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  body {
-    margin: 0;
-    padding: 30px 15px;
-    background: #bcc8cc;
-    color: #0007E6;
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
+    body {
+      margin: 0;
+      padding: 30px 15px;
+      background: #bcc8cc;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-  .page {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-  }
+    .page {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
 
-  h1, h2 {
-    margin-top: 0;
-  }
+    h1,
+    h2 {
+      margin-top: 0;
+    }
 
-  form, .panel {
-    border: 2px solid #0007E6;
-    padding: 20px;
-    margin-top: 20px;
-    background: #bcc8cc;
-  }
+    form,
+    .panel {
+      border: 2px solid #0007E6;
+      padding: 20px;
+      margin-top: 20px;
+      background: #bcc8cc;
+    }
 
-  label {
-    display: block;
-    text-align: left;
-    margin-top: 14px;
-    margin-bottom: 5px;
-  }
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 14px;
+      margin-bottom: 5px;
+    }
 
-  input, select, button {
-    width: 100%;
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    padding: 10px;
-  }
+    input,
+    select,
+    button {
+      width: 100%;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 10px;
+    }
 
-  input, select {
-    border: 2px solid #0007E6;
-    background: white;
-    color: black;
-  }
+    input,
+    select {
+      border: 2px solid #0007E6;
+      background: white;
+      color: black;
+    }
 
-  button {
-    margin-top: 18px;
-    border: 2px solid #0007E6;
-    background: #bcc8cc;
-    color: #0007E6;
-    cursor: pointer;
-    font-weight: bold;
-  }
+    button {
+      margin-top: 18px;
+      border: 2px solid #0007E6;
+      background: #bcc8cc;
+      color: #0007E6;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-  button:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
+    button:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
 
-  a {
-    color: #0007E6;
-  }
+    a {
+      color: #0007E6;
+    }
 
-  .message {
-    min-height: 22px;
-    margin-top: 12px;
-  }
+    .message {
+      min-height: 22px;
+      margin-top: 12px;
+    }
 
-  .stat {
-    margin: 8px 0;
-  }
+    .stat {
+      margin: 8px 0;
+    }
 
-  #loading {
-    margin-top: 20px;
-  }
-</style>
+    #loading {
+      margin-top: 20px;
+    }
 
+
+    /* WEEBIE IMAGE */
+
+    .weebie-image {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      aspect-ratio: 1 / 1;
+      margin: 20px auto;
+    }
+
+    .weebie-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+
+      -webkit-mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: contain;
+    }
+
+
+    /* BOTTOM LAYER */
+
+    #weebieColor1 {
+      z-index: 1;
+
+      -webkit-mask-image:
+        url("/shared/Weebie-Color1.png");
+
+      mask-image:
+        url("/shared/Weebie-Color1.png");
+    }
+
+
+    /* MIDDLE LAYER */
+
+    #weebieColor2 {
+      z-index: 2;
+
+      -webkit-mask-image:
+        url("/shared/Weebie-Color2.png");
+
+      mask-image:
+        url("/shared/Weebie-Color2.png");
+    }
+
+
+    /* TOP LAYER */
+
+    #weebieOutline {
+      z-index: 3;
+
+      background-image:
+        url("/shared/Weebie-Outline.png");
+    }
+  </style>
 </head>
+
 
 <body>
 
@@ -94,27 +168,42 @@
 
   <h1>Account</h1>
 
+
   <div id="loading">
     Loading account...
   </div>
 
 
-  <div id="loggedOut" class="panel" style="display:none;">
-
-    <p>You are not logged in.</p>
+  <div
+    id="loggedOut"
+    class="panel"
+    style="display:none;"
+  >
 
     <p>
-      <a href="/login/">Log in</a>
+      You are not logged in.
     </p>
 
     <p>
-      <a href="/signup/">Create an account</a>
+      <a href="/login/">
+        Log in
+      </a>
+    </p>
+
+    <p>
+      <a href="/signup/">
+        Create an account
+      </a>
     </p>
 
   </div>
 
 
-  <div id="loggedIn" style="display:none;">
+
+  <div
+    id="loggedIn"
+    style="display:none;"
+  >
 
     <div class="panel">
 
@@ -132,14 +221,22 @@
     </div>
 
 
+
     <div class="panel">
 
       <h2>Weebies</h2>
 
 
-      <div id="weebieSetup" style="display:none;">
+      <!-- CREATE WEEBIE -->
 
-        <p>Create your first Weebie.</p>
+      <div
+        id="weebieSetup"
+        style="display:none;"
+      >
+
+        <p>
+          Create your first Weebie.
+        </p>
 
         <form id="weebieForm">
 
@@ -159,7 +256,10 @@
             Primary Color
           </label>
 
-          <select id="primaryColor" required>
+          <select
+            id="primaryColor"
+            required
+          >
 
             <option value="">
               Choose a color
@@ -182,7 +282,10 @@
             Secondary Color
           </label>
 
-          <select id="secondaryColor" required>
+          <select
+            id="secondaryColor"
+            required
+          >
 
             <option value="">
               Choose a color
@@ -201,21 +304,54 @@
           </select>
 
 
-          <button id="createWeebieButton" type="submit">
+          <button
+            id="createWeebieButton"
+            type="submit"
+          >
             Create Weebie
           </button>
 
         </form>
 
+
         <div
           id="weebieMessage"
-          class="message">
-        </div>
+          class="message"
+        ></div>
 
       </div>
 
 
-      <div id="weebieDisplay" style="display:none;">
+
+      <!-- EXISTING WEEBIE -->
+
+      <div
+        id="weebieDisplay"
+        style="display:none;"
+      >
+
+
+        <!-- LAYERED WEEBIE IMAGE -->
+
+        <div class="weebie-image">
+
+          <div
+            id="weebieColor1"
+            class="weebie-layer"
+          ></div>
+
+          <div
+            id="weebieColor2"
+            class="weebie-layer"
+          ></div>
+
+          <div
+            id="weebieOutline"
+            class="weebie-layer"
+          ></div>
+
+        </div>
+
 
         <p class="stat">
           Name:
@@ -241,26 +377,77 @@
 </div>
 
 
+
 <script>
 
 const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
 
+/*
+  TEMPORARY COLOR VALUES
+
+  You can change these hex values later
+  without changing anything else.
+*/
+
+const COLORS = {
+
+  "Teal":
+    "#24B5A5",
+
+  "Tan":
+    "#C9A875",
+
+  "Red":
+    "#E04444",
+
+  "Pink":
+    "#F28CB1",
+
+  "Blue":
+    "#4A8FE7",
+
+  "Lime Green":
+    "#8FD14F",
+
+  "White":
+    "#F5F5F5",
+
+  "Purple":
+    "#9566CC",
+
+  "Silver":
+    "#B8BEC4"
+
+};
+
+
+
 const loading =
-  document.getElementById("loading");
+  document.getElementById(
+    "loading"
+  );
 
 const loggedOut =
-  document.getElementById("loggedOut");
+  document.getElementById(
+    "loggedOut"
+  );
 
 const loggedIn =
-  document.getElementById("loggedIn");
+  document.getElementById(
+    "loggedIn"
+  );
 
 const weebieSetup =
-  document.getElementById("weebieSetup");
+  document.getElementById(
+    "weebieSetup"
+  );
 
 const weebieDisplay =
-  document.getElementById("weebieDisplay");
+  document.getElementById(
+    "weebieDisplay"
+  );
 
 
 
@@ -268,52 +455,63 @@ async function loadAccount() {
 
   try {
 
-    const response = await fetch(
-      API + "/account",
-      {
-        method: "GET",
-        credentials: "include"
-      }
-    );
+    const response =
+      await fetch(
+        API + "/account",
+        {
+          method: "GET",
+          credentials: "include"
+        }
+      );
 
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
 
-    loading.style.display = "none";
+    loading.style.display =
+      "none";
 
 
     if (!data.loggedIn) {
 
-      loggedOut.style.display = "block";
+      loggedOut.style.display =
+        "block";
 
       return;
     }
 
 
-    loggedIn.style.display = "block";
+    loggedIn.style.display =
+      "block";
 
 
     document.getElementById(
       "usernameDisplay"
-    ).textContent = data.username;
+    ).textContent =
+      data.username;
 
 
     document.getElementById(
       "accountAge"
     ).textContent =
-      calculateAccountAge(data.createdAt);
+      calculateAccountAge(
+        data.createdAt
+      );
 
 
     if (data.weebie) {
 
-      showWeebie(data.weebie);
+      showWeebie(
+        data.weebie
+      );
 
     }
 
     else {
 
-      weebieSetup.style.display = "block";
+      weebieSetup.style.display =
+        "block";
 
     }
 
@@ -332,7 +530,9 @@ async function loadAccount() {
 
 
 
-function calculateAccountAge(createdAt) {
+function calculateAccountAge(
+  createdAt
+) {
 
   const created =
     new Date(createdAt);
@@ -342,13 +542,16 @@ function calculateAccountAge(createdAt) {
 
 
   let years =
-    now.getFullYear() - created.getFullYear();
+    now.getFullYear()
+    - created.getFullYear();
 
   let months =
-    now.getMonth() - created.getMonth();
+    now.getMonth()
+    - created.getMonth();
 
   let days =
-    now.getDate() - created.getDate();
+    now.getDate()
+    - created.getDate();
 
 
   if (days < 0) {
@@ -362,7 +565,8 @@ function calculateAccountAge(createdAt) {
         0
       );
 
-    days += previousMonth.getDate();
+    days +=
+      previousMonth.getDate();
 
   }
 
@@ -370,6 +574,7 @@ function calculateAccountAge(createdAt) {
   if (months < 0) {
 
     years--;
+
     months += 12;
 
   }
@@ -381,7 +586,10 @@ function calculateAccountAge(createdAt) {
   if (years > 0) {
 
     parts.push(
-      years + (years === 1 ? " year" : " years")
+      years +
+      (years === 1
+        ? " year"
+        : " years")
     );
 
   }
@@ -390,14 +598,20 @@ function calculateAccountAge(createdAt) {
   if (months > 0) {
 
     parts.push(
-      months + (months === 1 ? " month" : " months")
+      months +
+      (months === 1
+        ? " month"
+        : " months")
     );
 
   }
 
 
   parts.push(
-    days + (days === 1 ? " day" : " days")
+    days +
+    (days === 1
+      ? " day"
+      : " days")
   );
 
 
@@ -407,7 +621,13 @@ function calculateAccountAge(createdAt) {
 
 
 
-function showWeebie(weebie) {
+/*
+  DISPLAY WEEBIE
+*/
+
+function showWeebie(
+  weebie
+) {
 
   weebieSetup.style.display =
     "none";
@@ -433,9 +653,41 @@ function showWeebie(weebie) {
   ).textContent =
     weebie.secondary_color;
 
+
+  /*
+    COLOR 1 = PRIMARY
+    COLOR 2 = SECONDARY
+  */
+
+  const primaryHex =
+    COLORS[
+      weebie.primary_color
+    ];
+
+  const secondaryHex =
+    COLORS[
+      weebie.secondary_color
+    ];
+
+
+  document.getElementById(
+    "weebieColor1"
+  ).style.backgroundColor =
+    primaryHex;
+
+
+  document.getElementById(
+    "weebieColor2"
+  ).style.backgroundColor =
+    secondaryHex;
+
 }
 
 
+
+/*
+  CREATE WEEBIE
+*/
 
 document.getElementById(
   "weebieForm"
@@ -475,7 +727,8 @@ document.getElementById(
       ).value;
 
 
-    button.disabled = true;
+    button.disabled =
+      true;
 
     message.textContent =
       "Creating Weebie...";
@@ -483,25 +736,28 @@ document.getElementById(
 
     try {
 
-      const response = await fetch(
-        API + "/weebie",
-        {
-          method: "POST",
+      const response =
+        await fetch(
+          API + "/weebie",
+          {
+            method: "POST",
 
-          credentials: "include",
+            credentials:
+              "include",
 
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
 
-          body: JSON.stringify({
-            name,
-            primaryColor,
-            secondaryColor
-          })
-        }
-      );
+            body:
+              JSON.stringify({
+                name,
+                primaryColor,
+                secondaryColor
+              })
+          }
+        );
 
 
       const data =
@@ -514,18 +770,25 @@ document.getElementById(
           data.error ||
           "Unable to create Weebie.";
 
-        button.disabled = false;
+        button.disabled =
+          false;
 
         return;
       }
 
 
       showWeebie({
-        name: name,
-        primary_color: primaryColor,
-        secondary_color: secondaryColor
-      });
 
+        name:
+          name,
+
+        primary_color:
+          primaryColor,
+
+        secondary_color:
+          secondaryColor
+
+      });
 
     }
 
@@ -536,7 +799,8 @@ document.getElementById(
       message.textContent =
         "Unable to connect to the account server.";
 
-      button.disabled = false;
+      button.disabled =
+        false;
 
     }
 
@@ -544,6 +808,10 @@ document.getElementById(
 );
 
 
+
+/*
+  LOG OUT
+*/
 
 document.getElementById(
   "logoutButton"
