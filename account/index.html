@@ -470,13 +470,6 @@ const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
 
-/*
-  TEMPORARY COLOR VALUES
-
-  You can change these hex values later
-  without changing anything else.
-*/
-
 const COLORS = {
 
   "Teal":
@@ -546,6 +539,51 @@ let currentWeebie = null;
 
 
 /*
+  AUTH
+*/
+
+function getSessionToken() {
+
+  return localStorage.getItem(
+    "rd_session"
+  );
+
+}
+
+
+function authHeaders(
+  includeJson = false
+) {
+
+  const headers = {};
+
+  const token =
+    getSessionToken();
+
+
+  if (token) {
+
+    headers["Authorization"] =
+      "Bearer " + token;
+
+  }
+
+
+  if (includeJson) {
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+
+  return headers;
+
+}
+
+
+
+/*
   LOAD ACCOUNT
 */
 
@@ -558,7 +596,12 @@ async function loadAccount() {
         API + "/account",
         {
           method: "GET",
-          credentials: "include"
+
+          credentials:
+            "include",
+
+          headers:
+            authHeaders()
         }
       );
 
@@ -577,6 +620,7 @@ async function loadAccount() {
         "block";
 
       return;
+
     }
 
 
@@ -689,9 +733,11 @@ function calculateAccountAge(
 
     parts.push(
       years +
-      (years === 1
+      (
+        years === 1
         ? " year"
-        : " years")
+        : " years"
+      )
     );
 
   }
@@ -701,9 +747,11 @@ function calculateAccountAge(
 
     parts.push(
       months +
-      (months === 1
+      (
+        months === 1
         ? " month"
-        : " months")
+        : " months"
+      )
     );
 
   }
@@ -711,9 +759,11 @@ function calculateAccountAge(
 
   parts.push(
     days +
-    (days === 1
+    (
+      days === 1
       ? " day"
-      : " days")
+      : " days"
+    )
   );
 
 
@@ -763,7 +813,8 @@ function showWeebie(
   document.getElementById(
     "displayEyelashes"
   ).textContent =
-    weebie.eyelashes || "Not selected";
+    weebie.eyelashes ||
+    "Not selected";
 
 
   const primaryHex =
@@ -777,25 +828,11 @@ function showWeebie(
     ];
 
 
-  /*
-    COLOR 1
-
-    Always uses the primary color.
-  */
-
   document.getElementById(
     "weebieColor1"
   ).style.backgroundColor =
     primaryHex;
 
-
-
-  /*
-    CHECK EYELASHES
-
-    Empty = existing Weebie needs
-    to answer the new stat.
-  */
 
   if (
     weebie.eyelashes !== "Yes" &&
@@ -806,23 +843,20 @@ function showWeebie(
       "block";
 
 
-    /*
-      We do not know which Color2
-      or Outline this Weebie uses yet,
-      so hide those two layers.
-    */
-
     document.getElementById(
       "weebieColor2"
     ).style.display =
       "none";
+
 
     document.getElementById(
       "weebieOutline"
     ).style.display =
       "none";
 
+
     return;
+
   }
 
 
@@ -835,25 +869,22 @@ function showWeebie(
   ).style.display =
     "block";
 
+
   document.getElementById(
     "weebieOutline"
   ).style.display =
     "block";
 
 
-  /*
-    EYELASHES = YES
-
-    Color2.png
-    Outline.png
-  */
-
-  if (weebie.eyelashes === "Yes") {
+  if (
+    weebie.eyelashes === "Yes"
+  ) {
 
     document.getElementById(
       "weebieColor2"
     ).style.webkitMaskImage =
       'url("/shared/Weebie-Color2.png")';
+
 
     document.getElementById(
       "weebieColor2"
@@ -869,19 +900,13 @@ function showWeebie(
   }
 
 
-  /*
-    EYELASHES = NO
-
-    Color2a.png
-    Outline2.png
-  */
-
   else {
 
     document.getElementById(
       "weebieColor2"
     ).style.webkitMaskImage =
       'url("/shared/Weebie-Color2a.png")';
+
 
     document.getElementById(
       "weebieColor2"
@@ -896,11 +921,6 @@ function showWeebie(
 
   }
 
-
-  /*
-    Color2 OR Color2a
-    receives the secondary color.
-  */
 
   document.getElementById(
     "weebieColor2"
@@ -977,10 +997,8 @@ document.getElementById(
             credentials:
               "include",
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
+            headers:
+              authHeaders(true),
 
             body:
               JSON.stringify({
@@ -1007,6 +1025,7 @@ document.getElementById(
           false;
 
         return;
+
       }
 
 
@@ -1025,6 +1044,10 @@ document.getElementById(
           eyelashes
 
       });
+
+
+      message.textContent =
+        "";
 
     }
 
@@ -1094,10 +1117,8 @@ document.getElementById(
             credentials:
               "include",
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
+            headers:
+              authHeaders(true),
 
             body:
               JSON.stringify({
@@ -1121,6 +1142,7 @@ document.getElementById(
           false;
 
         return;
+
       }
 
 
@@ -1171,7 +1193,12 @@ document.getElementById(
         API + "/logout",
         {
           method: "POST",
-          credentials: "include"
+
+          credentials:
+            "include",
+
+          headers:
+            authHeaders()
         }
       );
 
@@ -1182,6 +1209,11 @@ document.getElementById(
       console.error(error);
 
     }
+
+
+    localStorage.removeItem(
+      "rd_session"
+    );
 
 
     window.location.href =
