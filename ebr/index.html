@@ -142,6 +142,10 @@ const TOP=120;
 
 const gravity=0.8;
 
+// Keep gameplay speed identical on 60 Hz, 90 Hz, 120 Hz, and 144 Hz screens.
+const FRAME_TIME=1000/60;
+let lastFrameTime=null;
+
 const HITBOX_SCALE=0.78;
 
 
@@ -387,13 +391,13 @@ this.jumps++;
 
 
 
-update(){
+update(frameScale){
 
 
-this.velocity+=gravity;
+this.velocity+=gravity*frameScale;
 
 
-this.y+=this.velocity;
+this.y+=this.velocity*frameScale;
 
 
 
@@ -413,7 +417,7 @@ this.jumps=0;
 
 
 
-playerTimer++;
+playerTimer+=frameScale;
 
 
 
@@ -1144,10 +1148,18 @@ player.jump();
 });
 
 
-function update(){
+function update(timestamp){
 
 
 requestAnimationFrame(update);
+
+// Convert elapsed milliseconds into 60 FPS-sized steps. The cap prevents a
+// huge jump when a phone restores the page after it was in the background.
+const frameScale=lastFrameTime===null
+? 1
+: Math.min((timestamp-lastFrameTime)/FRAME_TIME,3);
+
+lastFrameTime=timestamp;
 
 
 
@@ -1197,7 +1209,7 @@ if(!gameOver){
 
 
 
-score+=0.05;
+score+=0.05*frameScale;
 
 
 speed=10+(score/80);
@@ -1205,7 +1217,7 @@ speed=10+(score/80);
 
 
 
-spawnTimer++;
+spawnTimer+=frameScale;
 
 
 
@@ -1225,7 +1237,7 @@ spawnColumn();
 
 
 
-player.update();
+player.update(frameScale);
 
 
 player.draw();
@@ -1236,7 +1248,7 @@ player.draw();
 
 
 
-robotTimer++;
+robotTimer+=frameScale;
 
 
 if(robotTimer>8){
@@ -1260,7 +1272,7 @@ robotFrame=0;
 
 
 
-robotBTimer++;
+robotBTimer+=frameScale;
 
 
 if(robotBTimer>8){
@@ -1284,7 +1296,7 @@ robotBFrame=0;
 
 
 
-robotCTimer++;
+robotCTimer+=frameScale;
 
 
 if(robotCTimer>8){
@@ -1308,7 +1320,7 @@ robotCFrame=0;
 
 
 
-robotDTimer++;
+robotDTimer+=frameScale;
 
 
 if(robotDTimer>6){
@@ -1360,7 +1372,7 @@ robotSpeed=speed+4;
 
 
 
-robot.x-=robotSpeed;
+robot.x-=robotSpeed*frameScale;
 
 
 
@@ -1738,7 +1750,7 @@ if(loaded===13){
 setupCircles();
 
 
-update();
+requestAnimationFrame(update);
 
 
 }
