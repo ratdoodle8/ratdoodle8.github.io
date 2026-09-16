@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Password Reset Admin</title>
+
+  <style>
+    body {
+      background: #bcc8cc;
+      font-family: Arial, sans-serif;
+      color: #0007E6;
+      text-align: center;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    input,
+    button {
+      box-sizing: border-box;
+      width: 100%;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    input {
+      border: 1px solid #0007E6;
+      background: white;
+      color: black;
+    }
+
+    button {
+      border: 1px solid #0007E6;
+      background: white;
+      color: #0007E6;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    #result {
+      display: none;
+      margin-top: 25px;
+      padding: 15px;
+      border: 1px solid #0007E6;
+      background: white;
+      color: black;
+      word-break: break-word;
+    }
+
+    #tempPassword {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 12px 0;
+      user-select: all;
+    }
+
+    #error {
+      color: #b00000;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Password Reset</h1>
+
+    <input
+      id="username"
+      type="text"
+      placeholder="Username"
+      autocomplete="off"
+    >
+
+    <input
+      id="adminKey"
+      type="password"
+      placeholder="Admin Key"
+      autocomplete="off"
+    >
+
+    <button id="resetButton">
+      Reset Password
+    </button>
+
+    <div id="error"></div>
+
+    <div id="result">
+
+      <div>
+        Temporary password for
+        <strong id="resultUsername"></strong>:
+      </div>
+
+      <div id="tempPassword"></div>
+
+      <button id="copyButton">
+        Copy Temporary Password
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const API =
+      "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
+
+    const usernameInput =
+      document.getElementById("username");
+
+
+    const adminKeyInput =
+      document.getElementById("adminKey");
+
+
+    const resetButton =
+      document.getElementById("resetButton");
+
+
+    const errorElement =
+      document.getElementById("error");
+
+
+    const resultElement =
+      document.getElementById("result");
+
+
+    const resultUsername =
+      document.getElementById("resultUsername");
+
+
+    const tempPassword =
+      document.getElementById("tempPassword");
+
+
+    const copyButton =
+      document.getElementById("copyButton");
+
+
+
+    resetButton.addEventListener(
+      "click",
+      async () => {
+
+        const username =
+          usernameInput.value.trim();
+
+
+        const adminKey =
+          adminKeyInput.value;
+
+
+        errorElement.textContent = "";
+
+        resultElement.style.display =
+          "none";
+
+
+        if (!username) {
+
+          errorElement.textContent =
+            "Enter a username.";
+
+          return;
+
+        }
+
+
+        if (!adminKey) {
+
+          errorElement.textContent =
+            "Enter the admin key.";
+
+          return;
+
+        }
+
+
+        resetButton.disabled = true;
+
+        resetButton.textContent =
+          "Resetting...";
+
+
+        try {
+
+          const response =
+            await fetch(
+              API + "/admin/reset-password",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+
+                  "X-Admin-Key":
+                    adminKey
+                },
+
+                body:
+                  JSON.stringify({
+                    username
+                  })
+              }
+            );
+
+
+          const data =
+            await response.json();
+
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.error ||
+              "Password reset failed."
+            );
+
+          }
+
+
+          resultUsername.textContent =
+            data.username;
+
+
+          tempPassword.textContent =
+            data.temporaryPassword;
+
+
+          resultElement.style.display =
+            "block";
+
+
+          /*
+            Remove the admin key from the
+            field immediately after use.
+          */
+
+          adminKeyInput.value = "";
+
+
+        }
+
+        catch (error) {
+
+          errorElement.textContent =
+            error.message;
+
+        }
+
+        finally {
+
+          resetButton.disabled = false;
+
+          resetButton.textContent =
+            "Reset Password";
+
+        }
+
+      }
+    );
+
+
+
+    copyButton.addEventListener(
+      "click",
+      async () => {
+
+        const password =
+          tempPassword.textContent;
+
+
+        if (!password) {
+          return;
+        }
+
+
+        try {
+
+          await navigator.clipboard.writeText(
+            password
+          );
+
+
+          copyButton.textContent =
+            "Copied";
+
+
+          setTimeout(
+            () => {
+
+              copyButton.textContent =
+                "Copy Temporary Password";
+
+            },
+            1500
+          );
+
+        }
+
+        catch {
+
+          /*
+            The password remains visible
+            and can still be copied manually.
+          */
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>

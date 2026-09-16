@@ -202,6 +202,51 @@
 
 
   <div
+    id="passwordResetPanel"
+    class="panel"
+    style="display:none;"
+  >
+    <h2>Password Reset Required</h2>
+
+    <p>
+      Enter a new password for your account.
+    </p>
+
+    <form id="passwordResetForm">
+      <label for="newPassword">
+        New Password
+      </label>
+
+      <input
+        id="newPassword"
+        type="password"
+        minlength="8"
+        autocomplete="new-password"
+        required
+      >
+
+      <label for="confirmNewPassword">
+        Confirm New Password
+      </label>
+
+      <input
+        id="confirmNewPassword"
+        type="password"
+        minlength="8"
+        autocomplete="new-password"
+        required
+      >
+
+      <button type="submit">
+        Change Password
+      </button>
+    </form>
+
+    <p id="passwordResetMessage"></p>
+  </div>
+
+
+  <div
     id="loggedIn"
     style="display:none;"
   >
@@ -726,6 +771,14 @@ async function loadAccount() {
       return;
     }
 
+    if (data.passwordResetRequired) {
+      document.getElementById(
+        "passwordResetPanel"
+      ).style.display = "block";
+
+      return;
+    }
+
     loggedIn.style.display =
       "block";
 
@@ -1180,6 +1233,87 @@ document.getElementById(
 
       button.disabled =
         false;
+    }
+  }
+);
+
+
+/* FORCED PASSWORD RESET */
+
+document.getElementById(
+  "passwordResetForm"
+).addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    const password =
+      document.getElementById(
+        "newPassword"
+      ).value;
+
+    const confirmPassword =
+      document.getElementById(
+        "confirmNewPassword"
+      ).value;
+
+    const message =
+      document.getElementById(
+        "passwordResetMessage"
+      );
+
+    message.textContent = "";
+
+    if (password.length < 8) {
+      message.textContent =
+        "Password must be at least 8 characters.";
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      message.textContent =
+        "Passwords do not match.";
+      return;
+    }
+
+    try {
+      const response =
+        await fetch(
+          API + "/password-reset",
+          {
+            method: "POST",
+            credentials: "include",
+            headers: authHeaders(true),
+            body: JSON.stringify({
+              password
+            })
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok) {
+        message.textContent =
+          data.error ||
+          "Unable to reset password.";
+        return;
+      }
+
+      if (data.sessionToken) {
+        localStorage.setItem(
+          "rd_session",
+          data.sessionToken
+        );
+      }
+
+      window.location.reload();
+    }
+
+    catch (error) {
+      console.error(error);
+      message.textContent =
+        "Unable to reset password.";
     }
   }
 );
