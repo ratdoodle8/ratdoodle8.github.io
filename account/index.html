@@ -304,32 +304,9 @@
 
           </select>
 
+          <div id="createStatFields"></div>
 
-          <label for="eyelashes">
-            Eyelashes
-          </label>
-
-          <select
-            id="eyelashes"
-            required
-          >
-
-            <option value="">
-              Choose an option
-            </option>
-
-            <option value="Yes">
-              Yes
-            </option>
-
-            <option value="No">
-              No
-            </option>
-
-          </select>
-
-
-          <button
+<button
             id="createWeebieButton"
             type="submit"
           >
@@ -370,30 +347,9 @@
 
           <form id="missingStatsForm">
 
-            <label for="missingEyelashes">
-              Eyelashes
-            </label>
+            <div id="missingStatFields"></div>
 
-            <select
-              id="missingEyelashes"
-              required
-            >
-
-              <option value="">
-                Choose an option
-              </option>
-
-              <option value="Yes">
-                Yes
-              </option>
-
-              <option value="No">
-                No
-              </option>
-
-            </select>
-
-            <button
+<button
               id="saveMissingStatsButton"
               type="submit"
             >
@@ -448,6 +404,8 @@
           <span id="displaySecondaryColor"></span>
         </p>
 
+        <div id="displayDynamicStats"></div>
+
 
 
       </div>
@@ -465,170 +423,303 @@
 const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
-
 const COLORS = {
-
-  "Teal":
-    "#24B5A5",
-
-  "Tan":
-    "#C9A875",
-
-  "Red":
-    "#E04444",
-
-  "Pink":
-    "#ee89f0",
-
-  "Blue":
-    "#4A8FE7",
-
-  "Lime Green":
-    "#8FD14F",
-
-  "White":
-    "#F5F5F5",
-
-  "Purple":
-    "#ed15ff",
-
-  "Silver":
-    "#B8BEC4"
-
+  "Teal": "#24B5A5",
+  "Tan": "#C9A875",
+  "Red": "#E04444",
+  "Pink": "#ee89f0",
+  "Blue": "#4A8FE7",
+  "Lime Green": "#8FD14F",
+  "White": "#F5F5F5",
+  "Purple": "#ed15ff",
+  "Silver": "#B8BEC4"
 };
 
-
-
 const loading =
-  document.getElementById(
-    "loading"
-  );
+  document.getElementById("loading");
 
 const loggedOut =
-  document.getElementById(
-    "loggedOut"
-  );
+  document.getElementById("loggedOut");
 
 const loggedIn =
-  document.getElementById(
-    "loggedIn"
-  );
+  document.getElementById("loggedIn");
 
 const weebieSetup =
-  document.getElementById(
-    "weebieSetup"
-  );
+  document.getElementById("weebieSetup");
 
 const weebieDisplay =
-  document.getElementById(
-    "weebieDisplay"
-  );
+  document.getElementById("weebieDisplay");
 
 const missingStats =
-  document.getElementById(
-    "missingStats"
-  );
+  document.getElementById("missingStats");
 
+const createStatFields =
+  document.getElementById("createStatFields");
+
+const missingStatFields =
+  document.getElementById("missingStatFields");
+
+const displayDynamicStats =
+  document.getElementById("displayDynamicStats");
 
 let currentWeebie = null;
+let statDefinitions = [];
 
 
-
-/*
-  AUTH
-*/
+/* AUTH */
 
 function getSessionToken() {
-
-  return localStorage.getItem(
-    "rd_session"
-  );
-
+  return localStorage.getItem("rd_session");
 }
 
-
-function authHeaders(
-  includeJson = false
-) {
-
+function authHeaders(includeJson = false) {
   const headers = {};
-
-  const token =
-    getSessionToken();
-
+  const token = getSessionToken();
 
   if (token) {
-
     headers["Authorization"] =
       "Bearer " + token;
-
   }
-
 
   if (includeJson) {
-
     headers["Content-Type"] =
       "application/json";
-
   }
 
-
   return headers;
-
 }
 
 
+/* STAT FIELDS */
 
-/*
-  LOAD ACCOUNT
-*/
+function makeStatField(
+  definition,
+  prefix
+) {
+  const wrapper =
+    document.createElement("div");
+
+  const label =
+    document.createElement("label");
+
+  const id =
+    prefix + definition.id;
+
+  label.htmlFor = id;
+  label.textContent =
+    definition.label;
+
+  wrapper.appendChild(label);
+
+  if (definition.type === "choice") {
+    const select =
+      document.createElement("select");
+
+    select.id = id;
+    select.dataset.statId =
+      definition.id;
+    select.required = true;
+
+    const blank =
+      document.createElement("option");
+
+    blank.value = "";
+    blank.textContent =
+      "Choose an option";
+
+    select.appendChild(blank);
+
+    for (
+      const option
+      of definition.options || []
+    ) {
+      const item =
+        document.createElement("option");
+
+      item.value = option;
+      item.textContent = option;
+
+      select.appendChild(item);
+    }
+
+    wrapper.appendChild(select);
+  }
+
+  return wrapper;
+}
+
+function renderCreateStats() {
+  createStatFields.innerHTML = "";
+
+  for (
+    const definition
+    of statDefinitions
+  ) {
+    createStatFields.appendChild(
+      makeStatField(
+        definition,
+        "createStat_"
+      )
+    );
+  }
+}
+
+function getMissingDefinitions(
+  weebie
+) {
+  const stats =
+    weebie.stats || {};
+
+  return statDefinitions.filter(
+    definition => {
+      const value =
+        stats[definition.id];
+
+      return (
+        value === undefined ||
+        value === null ||
+        value === ""
+      );
+    }
+  );
+}
+
+function renderMissingStats(
+  weebie
+) {
+  const missing =
+    getMissingDefinitions(weebie);
+
+  missingStatFields.innerHTML = "";
+
+  if (missing.length === 0) {
+    missingStats.style.display =
+      "none";
+
+    return false;
+  }
+
+  for (
+    const definition
+    of missing
+  ) {
+    missingStatFields.appendChild(
+      makeStatField(
+        definition,
+        "missingStat_"
+      )
+    );
+  }
+
+  missingStats.style.display =
+    "block";
+
+  return true;
+}
+
+function renderVisibleStats(
+  weebie
+) {
+  displayDynamicStats.innerHTML = "";
+
+  const stats =
+    weebie.stats || {};
+
+  for (
+    const definition
+    of statDefinitions
+  ) {
+    if (definition.hidden) {
+      continue;
+    }
+
+    const value =
+      stats[definition.id];
+
+    if (
+      value === undefined ||
+      value === null ||
+      value === ""
+    ) {
+      continue;
+    }
+
+    const p =
+      document.createElement("p");
+
+    p.className = "stat";
+    p.textContent =
+      definition.label + ": " + value;
+
+    displayDynamicStats.appendChild(p);
+  }
+}
+
+function collectStats(
+  container
+) {
+  const stats = {};
+
+  const fields =
+    container.querySelectorAll(
+      "[data-stat-id]"
+    );
+
+  for (
+    const field
+    of fields
+  ) {
+    stats[field.dataset.statId] =
+      field.value;
+  }
+
+  return stats;
+}
+
+
+/* LOAD ACCOUNT */
 
 async function loadAccount() {
-
   try {
-
     const response =
       await fetch(
         API + "/account",
         {
           method: "GET",
-
-          credentials:
-            "include",
-
-          headers:
-            authHeaders()
+          credentials: "include",
+          headers: authHeaders()
         }
       );
-
 
     const data =
       await response.json();
 
-
     loading.style.display =
       "none";
 
-
     if (!data.loggedIn) {
-
       loggedOut.style.display =
         "block";
 
       return;
-
     }
-
 
     loggedIn.style.display =
       "block";
 
+    statDefinitions =
+      Array.isArray(
+        data.statDefinitions
+      )
+        ? data.statDefinitions
+        : [];
+
+    renderCreateStats();
 
     document.getElementById(
       "usernameDisplay"
     ).textContent =
       data.username;
-
 
     document.getElementById(
       "accountAge"
@@ -637,51 +728,37 @@ async function loadAccount() {
         data.createdAt
       );
 
-
     if (data.weebie) {
-
       showWeebie(
         data.weebie
       );
-
     }
 
     else {
-
       weebieSetup.style.display =
         "block";
-
     }
-
   }
 
   catch (error) {
-
     console.error(error);
 
     loading.textContent =
       "Unable to load account.";
-
   }
-
 }
 
 
-
-/*
-  ACCOUNT AGE
-*/
+/* ACCOUNT AGE */
 
 function calculateAccountAge(
   createdAt
 ) {
-
   const created =
     new Date(createdAt);
 
   const now =
     new Date();
-
 
   let years =
     now.getFullYear()
@@ -695,9 +772,7 @@ function calculateAccountAge(
     now.getDate()
     - created.getDate();
 
-
   if (days < 0) {
-
     months--;
 
     const previousMonth =
@@ -709,77 +784,60 @@ function calculateAccountAge(
 
     days +=
       previousMonth.getDate();
-
   }
-
 
   if (months < 0) {
-
     years--;
-
     months += 12;
-
   }
-
 
   const parts = [];
 
-
   if (years > 0) {
-
     parts.push(
       years +
       (
         years === 1
-        ? " year"
-        : " years"
+          ? " year"
+          : " years"
       )
     );
-
   }
 
-
   if (months > 0) {
-
     parts.push(
       months +
       (
         months === 1
-        ? " month"
-        : " months"
+          ? " month"
+          : " months"
       )
     );
-
   }
-
 
   parts.push(
     days +
     (
       days === 1
-      ? " day"
-      : " days"
+        ? " day"
+        : " days"
     )
   );
 
-
   return parts.join(", ");
-
 }
 
 
-
-/*
-  DISPLAY WEEBIE
-*/
+/* DISPLAY WEEBIE */
 
 function showWeebie(
   weebie
 ) {
-
   currentWeebie =
     weebie;
 
+  currentWeebie.stats =
+    currentWeebie.stats || {};
 
   weebieSetup.style.display =
     "none";
@@ -787,31 +845,29 @@ function showWeebie(
   weebieDisplay.style.display =
     "block";
 
-
   document.getElementById(
     "displayWeebieName"
   ).textContent =
     weebie.name;
-
 
   document.getElementById(
     "displayPrimaryColor"
   ).textContent =
     weebie.primary_color;
 
-
   document.getElementById(
     "displaySecondaryColor"
   ).textContent =
     weebie.secondary_color;
 
+  renderVisibleStats(
+    weebie
+  );
 
-  document.getElementById(
-    "displayEyelashes"
-  ).textContent =
-    weebie.eyelashes ||
-    "Not selected";
-
+  const hasMissing =
+    renderMissingStats(
+      weebie
+    );
 
   const primaryHex =
     COLORS[
@@ -823,122 +879,90 @@ function showWeebie(
       weebie.secondary_color
     ];
 
-
   document.getElementById(
     "weebieColor1"
   ).style.backgroundColor =
     primaryHex;
 
+  const eyelashes =
+    weebie.stats.eyelashes;
 
   if (
-    weebie.eyelashes !== "Yes" &&
-    weebie.eyelashes !== "No"
+    eyelashes !== "Yes" &&
+    eyelashes !== "No"
   ) {
-
-    missingStats.style.display =
-      "block";
-
-
     document.getElementById(
       "weebieColor2"
     ).style.display =
       "none";
-
 
     document.getElementById(
       "weebieOutline"
     ).style.display =
       "none";
 
-
     return;
-
   }
-
-
-  missingStats.style.display =
-    "none";
-
 
   document.getElementById(
     "weebieColor2"
   ).style.display =
     "block";
-
 
   document.getElementById(
     "weebieOutline"
   ).style.display =
     "block";
 
-
-  if (
-    weebie.eyelashes === "Yes"
-  ) {
-
+  if (eyelashes === "Yes") {
     document.getElementById(
       "weebieColor2"
     ).style.webkitMaskImage =
       'url("/shared/Weebie-Color2.png")';
 
-
     document.getElementById(
       "weebieColor2"
     ).style.maskImage =
       'url("/shared/Weebie-Color2.png")';
-
 
     document.getElementById(
       "weebieOutline"
     ).style.backgroundImage =
       'url("/shared/Weebie-Outline.png")';
-
   }
 
-
   else {
-
     document.getElementById(
       "weebieColor2"
     ).style.webkitMaskImage =
       'url("/shared/Weebie-Color2a.png")';
-
 
     document.getElementById(
       "weebieColor2"
     ).style.maskImage =
       'url("/shared/Weebie-Color2a.png")';
 
-
     document.getElementById(
       "weebieOutline"
     ).style.backgroundImage =
       'url("/shared/Weebie-Outline2.png")';
-
   }
-
 
   document.getElementById(
     "weebieColor2"
   ).style.backgroundColor =
     secondaryHex;
-
 }
 
 
-
-/*
-  CREATE NEW WEEBIE
-*/
+/* CREATE NEW WEEBIE */
 
 document.getElementById(
   "weebieForm"
 ).addEventListener(
   "submit",
   async (event) => {
-
     event.preventDefault();
-
 
     const message =
       document.getElementById(
@@ -950,30 +974,25 @@ document.getElementById(
         "createWeebieButton"
       );
 
-
     const name =
       document.getElementById(
         "weebieName"
       ).value.trim();
-
 
     const primaryColor =
       document.getElementById(
         "primaryColor"
       ).value;
 
-
     const secondaryColor =
       document.getElementById(
         "secondaryColor"
       ).value;
 
-
-    const eyelashes =
-      document.getElementById(
-        "eyelashes"
-      ).value;
-
+    const stats =
+      collectStats(
+        createStatFields
+      );
 
     button.disabled =
       true;
@@ -981,18 +1000,13 @@ document.getElementById(
     message.textContent =
       "Creating Weebie...";
 
-
     try {
-
       const response =
         await fetch(
           API + "/weebie",
           {
             method: "POST",
-
-            credentials:
-              "include",
-
+            credentials: "include",
             headers:
               authHeaders(true),
 
@@ -1001,18 +1015,15 @@ document.getElementById(
                 name,
                 primaryColor,
                 secondaryColor,
-                eyelashes
+                stats
               })
           }
         );
 
-
       const data =
         await response.json();
 
-
       if (!response.ok) {
-
         message.textContent =
           data.error ||
           "Unable to create Weebie.";
@@ -1021,34 +1032,22 @@ document.getElementById(
           false;
 
         return;
-
       }
 
-
       showWeebie({
-
-        name:
-          name,
-
+        name,
         primary_color:
           primaryColor,
-
         secondary_color:
           secondaryColor,
-
-        eyelashes:
-          eyelashes
-
+        stats
       });
-
 
       message.textContent =
         "";
-
     }
 
     catch (error) {
-
       console.error(error);
 
       message.textContent =
@@ -1056,44 +1055,34 @@ document.getElementById(
 
       button.disabled =
         false;
-
     }
-
   }
 );
 
 
-
-/*
-  SAVE NEW STAT FOR EXISTING WEEBIE
-*/
+/* SAVE NEW STATS FOR EXISTING WEEBIE */
 
 document.getElementById(
   "missingStatsForm"
 ).addEventListener(
   "submit",
   async (event) => {
-
     event.preventDefault();
 
-
-    const eyelashes =
-      document.getElementById(
-        "missingEyelashes"
-      ).value;
-
+    const stats =
+      collectStats(
+        missingStatFields
+      );
 
     const message =
       document.getElementById(
         "missingStatsMessage"
       );
 
-
     const button =
       document.getElementById(
         "saveMissingStatsButton"
       );
-
 
     button.disabled =
       true;
@@ -1101,35 +1090,27 @@ document.getElementById(
     message.textContent =
       "Saving...";
 
-
     try {
-
       const response =
         await fetch(
           API + "/weebie/update",
           {
             method: "POST",
-
-            credentials:
-              "include",
-
+            credentials: "include",
             headers:
               authHeaders(true),
 
             body:
               JSON.stringify({
-                eyelashes
+                stats
               })
           }
         );
 
-
       const data =
         await response.json();
 
-
       if (!response.ok) {
-
         message.textContent =
           data.error ||
           "Unable to save.";
@@ -1138,26 +1119,25 @@ document.getElementById(
           false;
 
         return;
-
       }
 
-
-      currentWeebie.eyelashes =
-        eyelashes;
-
+      currentWeebie.stats = {
+        ...currentWeebie.stats,
+        ...stats
+      };
 
       showWeebie(
         currentWeebie
       );
 
-
       message.textContent =
         "";
 
+      button.disabled =
+        false;
     }
 
     catch (error) {
-
       console.error(error);
 
       message.textContent =
@@ -1165,59 +1145,41 @@ document.getElementById(
 
       button.disabled =
         false;
-
     }
-
   }
 );
 
 
-
-/*
-  LOG OUT
-*/
+/* LOG OUT */
 
 document.getElementById(
   "logoutButton"
 ).addEventListener(
   "click",
   async () => {
-
     try {
-
       await fetch(
         API + "/logout",
         {
           method: "POST",
-
-          credentials:
-            "include",
-
-          headers:
-            authHeaders()
+          credentials: "include",
+          headers: authHeaders()
         }
       );
-
     }
 
     catch (error) {
-
       console.error(error);
-
     }
-
 
     localStorage.removeItem(
       "rd_session"
     );
 
-
     window.location.href =
       "/login/";
-
   }
 );
-
 
 
 loadAccount();
