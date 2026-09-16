@@ -141,12 +141,6 @@
 
     #weebieColor2 {
       z-index: 2;
-
-      -webkit-mask-image:
-        url("/shared/Weebie-Color2.png");
-
-      mask-image:
-        url("/shared/Weebie-Color2.png");
     }
 
 
@@ -154,9 +148,16 @@
 
     #weebieOutline {
       z-index: 3;
+    }
 
-      background-image:
-        url("/shared/Weebie-Outline.png");
+
+    /* NEW STAT PROMPT */
+
+    #missingStats {
+      display: none;
+      margin-top: 20px;
+      border: 2px solid #0007E6;
+      padding: 20px;
     }
   </style>
 </head>
@@ -304,6 +305,30 @@
           </select>
 
 
+          <label for="eyelashes">
+            Eyelashes
+          </label>
+
+          <select
+            id="eyelashes"
+            required
+          >
+
+            <option value="">
+              Choose an option
+            </option>
+
+            <option value="Yes">
+              Yes
+            </option>
+
+            <option value="No">
+              No
+            </option>
+
+          </select>
+
+
           <button
             id="createWeebieButton"
             type="submit"
@@ -329,6 +354,61 @@
         id="weebieDisplay"
         style="display:none;"
       >
+
+
+        <!-- MISSING STAT PROMPT -->
+
+        <div id="missingStats">
+
+          <h2>
+            New Weebie Option
+          </h2>
+
+          <p>
+            Please choose an option for your Weebie.
+          </p>
+
+          <form id="missingStatsForm">
+
+            <label for="missingEyelashes">
+              Eyelashes
+            </label>
+
+            <select
+              id="missingEyelashes"
+              required
+            >
+
+              <option value="">
+                Choose an option
+              </option>
+
+              <option value="Yes">
+                Yes
+              </option>
+
+              <option value="No">
+                No
+              </option>
+
+            </select>
+
+            <button
+              id="saveMissingStatsButton"
+              type="submit"
+            >
+              Save
+            </button>
+
+          </form>
+
+          <div
+            id="missingStatsMessage"
+            class="message"
+          ></div>
+
+        </div>
+
 
 
         <!-- LAYERED WEEBIE IMAGE -->
@@ -366,6 +446,11 @@
         <p class="stat">
           Secondary Color:
           <span id="displaySecondaryColor"></span>
+        </p>
+
+        <p class="stat">
+          Eyelashes:
+          <span id="displayEyelashes"></span>
         </p>
 
       </div>
@@ -449,7 +534,19 @@ const weebieDisplay =
     "weebieDisplay"
   );
 
+const missingStats =
+  document.getElementById(
+    "missingStats"
+  );
 
+
+let currentWeebie = null;
+
+
+
+/*
+  LOAD ACCOUNT
+*/
 
 async function loadAccount() {
 
@@ -529,6 +626,10 @@ async function loadAccount() {
 }
 
 
+
+/*
+  ACCOUNT AGE
+*/
 
 function calculateAccountAge(
   createdAt
@@ -629,6 +730,10 @@ function showWeebie(
   weebie
 ) {
 
+  currentWeebie =
+    weebie;
+
+
   weebieSetup.style.display =
     "none";
 
@@ -654,10 +759,11 @@ function showWeebie(
     weebie.secondary_color;
 
 
-  /*
-    COLOR 1 = PRIMARY
-    COLOR 2 = SECONDARY
-  */
+  document.getElementById(
+    "displayEyelashes"
+  ).textContent =
+    weebie.eyelashes || "Not selected";
+
 
   const primaryHex =
     COLORS[
@@ -670,11 +776,130 @@ function showWeebie(
     ];
 
 
+  /*
+    COLOR 1
+
+    Always uses the primary color.
+  */
+
   document.getElementById(
     "weebieColor1"
   ).style.backgroundColor =
     primaryHex;
 
+
+
+  /*
+    CHECK EYELASHES
+
+    Empty = existing Weebie needs
+    to answer the new stat.
+  */
+
+  if (
+    weebie.eyelashes !== "Yes" &&
+    weebie.eyelashes !== "No"
+  ) {
+
+    missingStats.style.display =
+      "block";
+
+
+    /*
+      We do not know which Color2
+      or Outline this Weebie uses yet,
+      so hide those two layers.
+    */
+
+    document.getElementById(
+      "weebieColor2"
+    ).style.display =
+      "none";
+
+    document.getElementById(
+      "weebieOutline"
+    ).style.display =
+      "none";
+
+    return;
+  }
+
+
+  missingStats.style.display =
+    "none";
+
+
+  document.getElementById(
+    "weebieColor2"
+  ).style.display =
+    "block";
+
+  document.getElementById(
+    "weebieOutline"
+  ).style.display =
+    "block";
+
+
+  /*
+    EYELASHES = YES
+
+    Color2.png
+    Outline.png
+  */
+
+  if (weebie.eyelashes === "Yes") {
+
+    document.getElementById(
+      "weebieColor2"
+    ).style.webkitMaskImage =
+      'url("/shared/Weebie-Color2.png")';
+
+    document.getElementById(
+      "weebieColor2"
+    ).style.maskImage =
+      'url("/shared/Weebie-Color2.png")';
+
+
+    document.getElementById(
+      "weebieOutline"
+    ).style.backgroundImage =
+      'url("/shared/Weebie-Outline.png")';
+
+  }
+
+
+  /*
+    EYELASHES = NO
+
+    Color2a.png
+    Outline2.png
+  */
+
+  else {
+
+    document.getElementById(
+      "weebieColor2"
+    ).style.webkitMaskImage =
+      'url("/shared/Weebie-Color2a.png")';
+
+    document.getElementById(
+      "weebieColor2"
+    ).style.maskImage =
+      'url("/shared/Weebie-Color2a.png")';
+
+
+    document.getElementById(
+      "weebieOutline"
+    ).style.backgroundImage =
+      'url("/shared/Weebie-Outline2.png")';
+
+  }
+
+
+  /*
+    Color2 OR Color2a
+    receives the secondary color.
+  */
 
   document.getElementById(
     "weebieColor2"
@@ -686,7 +911,7 @@ function showWeebie(
 
 
 /*
-  CREATE WEEBIE
+  CREATE NEW WEEBIE
 */
 
 document.getElementById(
@@ -727,6 +952,12 @@ document.getElementById(
       ).value;
 
 
+    const eyelashes =
+      document.getElementById(
+        "eyelashes"
+      ).value;
+
+
     button.disabled =
       true;
 
@@ -754,7 +985,8 @@ document.getElementById(
               JSON.stringify({
                 name,
                 primaryColor,
-                secondaryColor
+                secondaryColor,
+                eyelashes
               })
           }
         );
@@ -786,9 +1018,122 @@ document.getElementById(
           primaryColor,
 
         secondary_color:
-          secondaryColor
+          secondaryColor,
+
+        eyelashes:
+          eyelashes
 
       });
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "Unable to connect to the account server.";
+
+      button.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+
+/*
+  SAVE NEW STAT FOR EXISTING WEEBIE
+*/
+
+document.getElementById(
+  "missingStatsForm"
+).addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const eyelashes =
+      document.getElementById(
+        "missingEyelashes"
+      ).value;
+
+
+    const message =
+      document.getElementById(
+        "missingStatsMessage"
+      );
+
+
+    const button =
+      document.getElementById(
+        "saveMissingStatsButton"
+      );
+
+
+    button.disabled =
+      true;
+
+    message.textContent =
+      "Saving...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          API + "/weebie/update",
+          {
+            method: "POST",
+
+            credentials:
+              "include",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+                eyelashes
+              })
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        message.textContent =
+          data.error ||
+          "Unable to save.";
+
+        button.disabled =
+          false;
+
+        return;
+      }
+
+
+      currentWeebie.eyelashes =
+        eyelashes;
+
+
+      showWeebie(
+        currentWeebie
+      );
+
+
+      message.textContent =
+        "";
 
     }
 
