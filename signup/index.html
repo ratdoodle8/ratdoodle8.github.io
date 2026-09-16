@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up | Ratdoodle</title>
-  
+
 <style>
   * { box-sizing: border-box; }
 
@@ -63,6 +63,11 @@
     font-weight: bold;
   }
 
+  button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
   a {
     color: #0007E6;
   }
@@ -82,22 +87,46 @@
 </style>
 
 </head>
+
 <body>
 
 <div class="page">
+
   <h1>Sign Up</h1>
 
   <form id="signupForm">
+
     <label for="username">Username</label>
-    <input id="username" name="username" type="text" autocomplete="username" required>
+    <input
+      id="username"
+      name="username"
+      type="text"
+      autocomplete="username"
+      required
+    >
 
     <label for="password">Password</label>
-    <input id="password" name="password" type="password" autocomplete="new-password" required>
+    <input
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="new-password"
+      required
+    >
 
     <label for="confirmPassword">Confirm Password</label>
-    <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required>
+    <input
+      id="confirmPassword"
+      name="confirmPassword"
+      type="password"
+      autocomplete="new-password"
+      required
+    >
 
-    <button type="submit">Create Account</button>
+    <button id="signupButton" type="submit">
+      Create Account
+    </button>
+
   </form>
 
   <div id="message" class="message"></div>
@@ -106,34 +135,106 @@
     Already have an account?
     <a href="/login/">Log in</a>
   </p>
+
 </div>
 
+
 <script>
+
+const API =
+  "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
 const form = document.getElementById("signupForm");
 const message = document.getElementById("message");
+const signupButton = document.getElementById("signupButton");
+
 
 form.addEventListener("submit", async (event) => {
+
   event.preventDefault();
 
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+  const username =
+    document.getElementById("username").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  const confirmPassword =
+    document.getElementById("confirmPassword").value;
+
 
   if (password !== confirmPassword) {
-    message.textContent = "Passwords do not match.";
+
+    message.textContent =
+      "Passwords do not match.";
+
     return;
   }
 
-  message.textContent = "Account system is not connected yet.";
 
-  /*
-    LATER:
-    Send username + password to your Cloudflare Worker.
+  message.textContent =
+    "Creating account...";
 
-    If signup succeeds:
-    window.location.href = "/account/";
-  */
+  signupButton.disabled = true;
+
+
+  try {
+
+    const response = await fetch(
+      API + "/signup",
+      {
+        method: "POST",
+
+        credentials: "include",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    if (!response.ok) {
+
+      message.textContent =
+        data.error || "Unable to create account.";
+
+      signupButton.disabled = false;
+
+      return;
+    }
+
+
+    message.textContent =
+      "Account created.";
+
+
+    window.location.href =
+      "/account/";
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "Unable to connect to the account server.";
+
+    signupButton.disabled = false;
+
+  }
+
 });
+
 </script>
 
 </body>

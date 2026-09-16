@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account | Ratdoodle</title>
-  
+
 <style>
   * { box-sizing: border-box; }
 
@@ -63,6 +63,11 @@
     font-weight: bold;
   }
 
+  button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
   a {
     color: #0007E6;
   }
@@ -72,49 +77,94 @@
     margin-top: 12px;
   }
 
-  .small {
-    font-size: 14px;
-  }
-
   .stat {
     margin: 8px 0;
+  }
+
+  #loading {
+    margin-top: 20px;
   }
 </style>
 
 </head>
+
 <body>
 
 <div class="page">
+
   <h1>Account</h1>
 
-  <div id="loggedOut" class="panel">
-    <p>You are not logged in.</p>
-    <p><a href="/login/">Log in</a></p>
-    <p><a href="/signup/">Create an account</a></p>
+  <div id="loading">
+    Loading account...
   </div>
 
+
+  <div id="loggedOut" class="panel" style="display:none;">
+
+    <p>You are not logged in.</p>
+
+    <p>
+      <a href="/login/">Log in</a>
+    </p>
+
+    <p>
+      <a href="/signup/">Create an account</a>
+    </p>
+
+  </div>
+
+
   <div id="loggedIn" style="display:none;">
+
     <div class="panel">
-      <h2 id="usernameDisplay">Username</h2>
+
+      <h2 id="usernameDisplay"></h2>
+
       <p class="stat">
         Account age:
-        <span id="accountAge">0 days</span>
+        <span id="accountAge"></span>
       </p>
+
+      <button id="logoutButton">
+        Log Out
+      </button>
+
     </div>
 
+
     <div class="panel">
+
       <h2>Weebies</h2>
 
-      <div id="weebieSetup">
+
+      <div id="weebieSetup" style="display:none;">
+
         <p>Create your first Weebie.</p>
 
         <form id="weebieForm">
-          <label for="weebieName">Name</label>
-          <input id="weebieName" type="text" required>
 
-          <label for="primaryColor">Primary Color</label>
+          <label for="weebieName">
+            Name
+          </label>
+
+          <input
+            id="weebieName"
+            type="text"
+            maxlength="30"
+            required
+          >
+
+
+          <label for="primaryColor">
+            Primary Color
+          </label>
+
           <select id="primaryColor" required>
-            <option value="">Choose a color</option>
+
+            <option value="">
+              Choose a color
+            </option>
+
             <option>Teal</option>
             <option>Tan</option>
             <option>Red</option>
@@ -124,11 +174,20 @@
             <option>White</option>
             <option>Purple</option>
             <option>Silver</option>
+
           </select>
 
-          <label for="secondaryColor">Secondary Color</label>
+
+          <label for="secondaryColor">
+            Secondary Color
+          </label>
+
           <select id="secondaryColor" required>
-            <option value="">Choose a color</option>
+
+            <option value="">
+              Choose a color
+            </option>
+
             <option>Teal</option>
             <option>Tan</option>
             <option>Red</option>
@@ -138,61 +197,389 @@
             <option>White</option>
             <option>Purple</option>
             <option>Silver</option>
+
           </select>
 
-          <button type="submit">Create Weebie</button>
+
+          <button id="createWeebieButton" type="submit">
+            Create Weebie
+          </button>
+
         </form>
 
-        <div id="weebieMessage" class="message"></div>
+        <div
+          id="weebieMessage"
+          class="message">
+        </div>
+
       </div>
+
 
       <div id="weebieDisplay" style="display:none;">
-        <p class="stat">Name: <span id="displayWeebieName"></span></p>
-        <p class="stat">Primary Color: <span id="displayPrimaryColor"></span></p>
-        <p class="stat">Secondary Color: <span id="displaySecondaryColor"></span></p>
+
+        <p class="stat">
+          Name:
+          <span id="displayWeebieName"></span>
+        </p>
+
+        <p class="stat">
+          Primary Color:
+          <span id="displayPrimaryColor"></span>
+        </p>
+
+        <p class="stat">
+          Secondary Color:
+          <span id="displaySecondaryColor"></span>
+        </p>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
 
+
 <script>
-const loggedOut = document.getElementById("loggedOut");
-const loggedIn = document.getElementById("loggedIn");
 
-/*
-  LATER:
-  Ask your Cloudflare Worker whether the visitor is logged in.
+const API =
+  "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
-  If logged in:
-    loggedOut.style.display = "none";
+
+const loading =
+  document.getElementById("loading");
+
+const loggedOut =
+  document.getElementById("loggedOut");
+
+const loggedIn =
+  document.getElementById("loggedIn");
+
+const weebieSetup =
+  document.getElementById("weebieSetup");
+
+const weebieDisplay =
+  document.getElementById("weebieDisplay");
+
+
+
+async function loadAccount() {
+
+  try {
+
+    const response = await fetch(
+      API + "/account",
+      {
+        method: "GET",
+        credentials: "include"
+      }
+    );
+
+
+    const data = await response.json();
+
+
+    loading.style.display = "none";
+
+
+    if (!data.loggedIn) {
+
+      loggedOut.style.display = "block";
+
+      return;
+    }
+
+
     loggedIn.style.display = "block";
 
-    Fill:
-      usernameDisplay
-      accountAge
 
-  If they already have a Weebie:
-    hide weebieSetup
-    show weebieDisplay
-    fill name / primary color / secondary color
-*/
+    document.getElementById(
+      "usernameDisplay"
+    ).textContent = data.username;
 
-document.getElementById("weebieForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
 
-  document.getElementById("weebieMessage").textContent =
-    "Weebie system is not connected yet.";
+    document.getElementById(
+      "accountAge"
+    ).textContent =
+      calculateAccountAge(data.createdAt);
 
-  /*
-    LATER:
-    Send:
-      weebieName
-      primaryColor
-      secondaryColor
 
-    to your Cloudflare Worker.
-  */
-});
+    if (data.weebie) {
+
+      showWeebie(data.weebie);
+
+    }
+
+    else {
+
+      weebieSetup.style.display = "block";
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    loading.textContent =
+      "Unable to load account.";
+
+  }
+
+}
+
+
+
+function calculateAccountAge(createdAt) {
+
+  const created =
+    new Date(createdAt);
+
+  const now =
+    new Date();
+
+
+  let years =
+    now.getFullYear() - created.getFullYear();
+
+  let months =
+    now.getMonth() - created.getMonth();
+
+  let days =
+    now.getDate() - created.getDate();
+
+
+  if (days < 0) {
+
+    months--;
+
+    const previousMonth =
+      new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        0
+      );
+
+    days += previousMonth.getDate();
+
+  }
+
+
+  if (months < 0) {
+
+    years--;
+    months += 12;
+
+  }
+
+
+  const parts = [];
+
+
+  if (years > 0) {
+
+    parts.push(
+      years + (years === 1 ? " year" : " years")
+    );
+
+  }
+
+
+  if (months > 0) {
+
+    parts.push(
+      months + (months === 1 ? " month" : " months")
+    );
+
+  }
+
+
+  parts.push(
+    days + (days === 1 ? " day" : " days")
+  );
+
+
+  return parts.join(", ");
+
+}
+
+
+
+function showWeebie(weebie) {
+
+  weebieSetup.style.display =
+    "none";
+
+  weebieDisplay.style.display =
+    "block";
+
+
+  document.getElementById(
+    "displayWeebieName"
+  ).textContent =
+    weebie.name;
+
+
+  document.getElementById(
+    "displayPrimaryColor"
+  ).textContent =
+    weebie.primary_color;
+
+
+  document.getElementById(
+    "displaySecondaryColor"
+  ).textContent =
+    weebie.secondary_color;
+
+}
+
+
+
+document.getElementById(
+  "weebieForm"
+).addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const message =
+      document.getElementById(
+        "weebieMessage"
+      );
+
+    const button =
+      document.getElementById(
+        "createWeebieButton"
+      );
+
+
+    const name =
+      document.getElementById(
+        "weebieName"
+      ).value.trim();
+
+
+    const primaryColor =
+      document.getElementById(
+        "primaryColor"
+      ).value;
+
+
+    const secondaryColor =
+      document.getElementById(
+        "secondaryColor"
+      ).value;
+
+
+    button.disabled = true;
+
+    message.textContent =
+      "Creating Weebie...";
+
+
+    try {
+
+      const response = await fetch(
+        API + "/weebie",
+        {
+          method: "POST",
+
+          credentials: "include",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            name,
+            primaryColor,
+            secondaryColor
+          })
+        }
+      );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        message.textContent =
+          data.error ||
+          "Unable to create Weebie.";
+
+        button.disabled = false;
+
+        return;
+      }
+
+
+      showWeebie({
+        name: name,
+        primary_color: primaryColor,
+        secondary_color: secondaryColor
+      });
+
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "Unable to connect to the account server.";
+
+      button.disabled = false;
+
+    }
+
+  }
+);
+
+
+
+document.getElementById(
+  "logoutButton"
+).addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      await fetch(
+        API + "/logout",
+        {
+          method: "POST",
+          credentials: "include"
+        }
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+    }
+
+
+    window.location.href =
+      "/login/";
+
+  }
+);
+
+
+
+loadAccount();
+
 </script>
 
 </body>
