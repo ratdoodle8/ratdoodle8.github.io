@@ -184,8 +184,6 @@ form.addEventListener(
         {
           method: "POST",
 
-          credentials: "include",
-
           headers: {
             "Content-Type":
               "application/json"
@@ -215,6 +213,31 @@ form.addEventListener(
       }
 
 
+      /*
+        SAVE SESSION TOKEN
+
+        This avoids relying on Safari
+        accepting a cross-site Worker cookie.
+      */
+
+      if (data.sessionToken) {
+
+        localStorage.setItem(
+          "rd_session",
+          data.sessionToken
+        );
+
+      } else {
+
+        message.textContent =
+          "Login server did not return a session.";
+
+        loginButton.disabled = false;
+
+        return;
+      }
+
+
       message.textContent =
         "Logged in.";
 
@@ -222,7 +245,7 @@ form.addEventListener(
       window.location.href =
         "/account/";
 
-    }
+  }
 
     catch (error) {
 
