@@ -212,10 +212,10 @@
 
 
     /* =========================================
-       XP BAR UNDER WEEBIE
+       5000 PUSHUP PROGRESS BAR
     ========================================= */
 
-    #xpArea {
+    #progressArea {
       width: 86%;
 
       margin:
@@ -224,16 +224,7 @@
         0;
     }
 
-    #xpLabel {
-      margin-bottom: 3px;
-
-      text-align: left;
-
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    #xpBar {
+    #progressBar {
       position: relative;
 
       width: 100%;
@@ -246,7 +237,7 @@
       overflow: hidden;
     }
 
-    #xpFill {
+    #progressFill {
       position: absolute;
 
       left: 0;
@@ -258,7 +249,7 @@
       background: #0007E6;
     }
 
-    #xpText {
+    #progressText {
       position: absolute;
 
       inset: 0;
@@ -589,19 +580,17 @@
         </div>
 
 
-        <div id="xpArea">
+        <!-- CURRENT / 5000 PROGRESS -->
 
-          <div id="xpLabel">
-            XP
-          </div>
+        <div id="progressArea">
 
-          <div id="xpBar">
+          <div id="progressBar">
 
-            <div id="xpFill">
+            <div id="progressFill">
             </div>
 
-            <div id="xpText">
-              0 XP
+            <div id="progressText">
+              0 / 5,000
             </div>
 
           </div>
@@ -652,9 +641,9 @@
       5000;
 
 
-    /*
-      SAME COLOR VALUES AS ACCOUNT PAGE
-    */
+    /* =====================================
+       SAME COLORS AS ACCOUNT PAGE
+    ====================================== */
 
     const COLORS = {
 
@@ -742,15 +731,15 @@
       );
 
 
-    const xpFill =
+    const progressFill =
       document.getElementById(
-        "xpFill"
+        "progressFill"
       );
 
 
-    const xpText =
+    const progressText =
       document.getElementById(
-        "xpText"
+        "progressText"
       );
 
 
@@ -850,6 +839,10 @@
         displayedDailyPushups();
 
 
+      /*
+        CURRENT RESETS EVERY 5000.
+      */
+
       const current =
         total %
         PUSHUPS_REQUIRED;
@@ -859,54 +852,56 @@
         current.toLocaleString();
 
 
+      /*
+        DAILY TOTAL NEVER RESETS AT
+        A 5000 MILESTONE.
+
+        It only resets with the daily
+        server reset.
+      */
+
       dailyPushupsElement.textContent =
         total.toLocaleString();
+
+
+      renderProgressBar();
 
     }
 
 
 
     /* =====================================
-       XP DISPLAY
+       CURRENT / 5000 BAR
     ====================================== */
 
-    function renderXP() {
+    function renderProgressBar() {
 
-      /*
-        The account currently has permanent
-        total XP rather than an XP level system.
-
-        This fills the visual bar according to
-        progress through the current 100 XP
-        visual block while still displaying
-        the real permanent XP number.
-      */
-
-      const blockSize =
-        100;
+      const total =
+        displayedDailyPushups();
 
 
-      const progress =
-        currentXP %
-        blockSize;
+      const current =
+        total %
+        PUSHUPS_REQUIRED;
 
 
       const percentage =
         (
-          progress /
-          blockSize
+          current /
+          PUSHUPS_REQUIRED
         ) *
         100;
 
 
-      xpFill.style.width =
+      progressFill.style.width =
         percentage +
         "%";
 
 
-      xpText.textContent =
-        currentXP.toLocaleString() +
-        " XP";
+      progressText.textContent =
+        current.toLocaleString() +
+        " / " +
+        PUSHUPS_REQUIRED.toLocaleString();
 
     }
 
@@ -935,6 +930,34 @@
     }
 
 
+    function getEyelashes() {
+
+      if (!currentWeebie) {
+        return "Yes";
+      }
+
+
+      /*
+        Supports both the newer centralized
+        stat and the legacy top-level value.
+      */
+
+      return (
+        currentWeebie.eyelashes ||
+        currentWeebie.stats?.eyelashes ||
+        "Yes"
+      );
+
+    }
+
+
+
+    /* =====================================
+       UP POSITION
+
+       THIS IS NOW THE PRESSED POSITION.
+    ====================================== */
+
     function showPushupUp() {
 
       if (!currentWeebie) {
@@ -945,13 +968,15 @@
       const primaryHex =
         COLORS[
           currentWeebie.primary_color
-        ];
+        ] ||
+        "#F5F5F5";
 
 
       const secondaryHex =
         COLORS[
           currentWeebie.secondary_color
-        ];
+        ] ||
+        "#F5F5F5";
 
 
       pushupColor1.style.backgroundColor =
@@ -961,13 +986,6 @@
       pushupColor2.style.backgroundColor =
         secondaryHex;
 
-
-      /*
-        UP POSITION
-
-        Up uses one set regardless
-        of eyelashes.
-      */
 
       setMask(
         pushupColor1,
@@ -987,6 +1005,14 @@
     }
 
 
+
+    /* =====================================
+       DOWN POSITION
+
+       THIS IS NOW THE NORMAL /
+       RELEASED POSITION.
+    ====================================== */
+
     function showPushupDown() {
 
       if (!currentWeebie) {
@@ -997,13 +1023,15 @@
       const primaryHex =
         COLORS[
           currentWeebie.primary_color
-        ];
+        ] ||
+        "#F5F5F5";
 
 
       const secondaryHex =
         COLORS[
           currentWeebie.secondary_color
-        ];
+        ] ||
+        "#F5F5F5";
 
 
       pushupColor1.style.backgroundColor =
@@ -1021,35 +1049,13 @@
 
 
       /*
-        EYELASHES = YES
-
-        Default Color2 and Outline.
+        NO EYELASHES
       */
 
       if (
-        currentWeebie.eyelashes ===
-        "Yes"
+        getEyelashes() ===
+        "No"
       ) {
-
-        setMask(
-          pushupColor2,
-          "/shared/Weebie-PushupColor-2.png"
-        );
-
-
-        pushupOutline.style.backgroundImage =
-          'url("/shared/Weebie-Pushup-1.png")';
-
-      }
-
-
-      /*
-        EYELASHES = NO
-
-        Color2a and Outline1a.
-      */
-
-      else {
 
         setMask(
           pushupColor2,
@@ -1059,6 +1065,25 @@
 
         pushupOutline.style.backgroundImage =
           'url("/shared/Weebie-Pushup-1a.png")';
+
+      }
+
+
+      /*
+        EYELASHES
+        Also used as the default.
+      */
+
+      else {
+
+        setMask(
+          pushupColor2,
+          "/shared/Weebie-PushupColor-2.png"
+        );
+
+
+        pushupOutline.style.backgroundImage =
+          'url("/shared/Weebie-Pushup-1.png")';
 
       }
 
@@ -1200,6 +1225,11 @@
 
       renderPushups();
 
+
+      /*
+        CELEBRATE EVERY COMPLETED
+        5000 PUSHUPS.
+      */
 
       if (
         Math.floor(
@@ -1359,9 +1389,6 @@
               0
             );
 
-
-          renderXP();
-
         }
 
 
@@ -1410,6 +1437,9 @@
         status.textContent =
           "Saving...";
 
+
+        renderPushups();
+
       }
 
       finally {
@@ -1434,7 +1464,7 @@
 
 
     /* =====================================
-       LOAD ACCOUNT WEEBIE
+       LOAD ACCOUNT / WEEBIE
     ====================================== */
 
     async function loadWeebie() {
@@ -1518,10 +1548,11 @@
         );
 
 
-      renderXP();
+      /*
+        NORMAL STATE IS NOW DOWN.
+      */
 
-
-      showPushupUp();
+      showPushupDown();
 
 
       return true;
@@ -1632,9 +1663,6 @@
               0
             );
 
-
-          renderXP();
-
         }
 
 
@@ -1667,14 +1695,14 @@
 
 
     /* =====================================
-       BUTTON PRESS / RELEASE
+       BUTTON
 
        PRESS:
-       down pushup position
-       + counts one pushup
+       WEEBIE GOES UP
+       + ONE PUSHUP
 
        RELEASE:
-       returns to up position
+       WEEBIE GOES DOWN
     ====================================== */
 
     function pressButton(
@@ -1694,7 +1722,7 @@
       );
 
 
-      showPushupDown();
+      showPushupUp();
 
 
       handlePushup();
@@ -1709,7 +1737,7 @@
       );
 
 
-      showPushupUp();
+      showPushupDown();
 
     }
 
@@ -1734,6 +1762,30 @@
 
     trainingButton.addEventListener(
       "pointerleave",
+      releaseButton
+    );
+
+
+    /*
+      Extra release protection so the Weebie
+      cannot remain stuck in the UP pose if
+      the pointer leaves the button strangely.
+    */
+
+    window.addEventListener(
+      "pointerup",
+      releaseButton
+    );
+
+
+    window.addEventListener(
+      "pointercancel",
+      releaseButton
+    );
+
+
+    window.addEventListener(
+      "blur",
       releaseButton
     );
 
@@ -1767,6 +1819,8 @@
           "hidden"
         ) {
 
+          releaseButton();
+
           flushPushups();
 
         }
@@ -1778,6 +1832,8 @@
     window.addEventListener(
       "pagehide",
       () => {
+
+        releaseButton();
 
         flushPushups();
 
