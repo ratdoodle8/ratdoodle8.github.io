@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no"
@@ -18,118 +19,234 @@
     html,
     body {
       margin: 0;
+      width: 100%;
       min-height: 100%;
       font-family: Arial, sans-serif;
     }
 
     body {
-      min-height: 100vh;
       background: #bcc8cc;
       color: #0007E6;
-
-      display: flex;
-      flex-direction: column;
-
       overflow-x: hidden;
     }
 
-    header {
-      text-align: center;
-      padding: 24px 15px 10px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    #game {
-      flex: 1;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 25px 20px 120px;
-    }
-
-    #trainingButton {
-      width: min(78vw, 420px);
-      aspect-ratio: 1 / 1;
-
-      border: 4px solid #0007E6;
-      border-radius: 50%;
-
-      background: #ffffff;
-      color: #0007E6;
-
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-
-      cursor: pointer;
-
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-
-      font-family: Arial, sans-serif;
-    }
-
-    #trainingButton:active {
-      transform: scale(0.98);
-    }
-
-    #currentTaps {
-      font-size: clamp(64px, 18vw, 120px);
-      font-weight: bold;
-      line-height: 1;
-    }
-
-    #dailyText {
-      margin-top: 14px;
-      font-size: clamp(14px, 4vw, 19px);
-    }
-
-    #status {
-      margin-top: 10px;
-      min-height: 18px;
-      font-size: 13px;
-    }
-
-    #progressArea {
+    #loading {
       position: fixed;
+      inset: 0;
+      z-index: 10000;
 
-      left: 0;
-      right: 0;
-      bottom: 0;
-
-      padding:
-        15px
-        max(18px, env(safe-area-inset-right))
-        calc(18px + env(safe-area-inset-bottom))
-        max(18px, env(safe-area-inset-left));
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       background: #bcc8cc;
+      color: #0007E6;
+
+      font-size: 18px;
     }
 
-    #progressBar {
-      position: relative;
 
-      width: min(700px, 100%);
-      height: 44px;
+    /* =========================================
+       PAGE
+    ========================================= */
+
+    #page {
+      width: 100%;
+      max-width: 500px;
+      min-height: 100svh;
 
       margin: 0 auto;
 
-      border: 3px solid #0007E6;
+      display: grid;
 
-      background: #ffffff;
+      grid-template-rows:
+        minmax(230px, 1fr)
+        minmax(280px, 1.15fr)
+        minmax(240px, 0.9fr);
+    }
+
+
+    /* =========================================
+       TOP THIRD
+    ========================================= */
+
+    #topSection {
+      position: relative;
+      min-height: 230px;
+      overflow: hidden;
+    }
+
+    h1 {
+      position: absolute;
+
+      top: 14px;
+      left: 0;
+      right: 0;
+
+      z-index: 5;
+
+      margin: 0;
+
+      text-align: center;
+
+      font-size: 26px;
+    }
+
+
+    /* LARGE / HIGH / RIGHT */
+
+    #gif1 {
+      position: absolute;
+
+      width: 58%;
+      max-width: 285px;
+
+      right: 3%;
+      top: 50px;
+
+      object-fit: contain;
+
+      user-select: none;
+      pointer-events: none;
+    }
+
+
+    /* SMALL / LOW / LEFT */
+
+    #gif2 {
+      position: absolute;
+
+      width: 30%;
+      max-width: 145px;
+
+      left: 6%;
+      bottom: 5px;
+
+      object-fit: contain;
+
+      user-select: none;
+      pointer-events: none;
+    }
+
+
+    /* =========================================
+       MIDDLE THIRD
+    ========================================= */
+
+    #middleSection {
+      position: relative;
+      min-height: 280px;
+      overflow: hidden;
+    }
+
+
+    /* =========================================
+       WEEBIE
+       LARGE / HIGH / RIGHT
+    ========================================= */
+
+    #weebieArea {
+      position: absolute;
+
+      width: 62%;
+      max-width: 310px;
+
+      right: 1%;
+      top: 0;
+
+      text-align: center;
+    }
+
+    #weebieName {
+      margin: 0 0 2px;
+
+      font-size: 19px;
+      font-weight: bold;
+
+      min-height: 23px;
+    }
+
+    #weebieImage {
+      position: relative;
+
+      width: 100%;
+      aspect-ratio: 1 / 1;
+
+      margin: 0 auto;
+    }
+
+    .weebie-layer {
+      position: absolute;
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+
+      -webkit-mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: contain;
+
+      pointer-events: none;
+    }
+
+    #pushupColor1 {
+      z-index: 1;
+    }
+
+    #pushupColor2 {
+      z-index: 2;
+    }
+
+    #pushupOutline {
+      z-index: 3;
+    }
+
+
+    /* =========================================
+       XP BAR UNDER WEEBIE
+    ========================================= */
+
+    #xpArea {
+      width: 86%;
+
+      margin:
+        -5px
+        auto
+        0;
+    }
+
+    #xpLabel {
+      margin-bottom: 3px;
+
+      text-align: left;
+
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    #xpBar {
+      position: relative;
+
+      width: 100%;
+      height: 19px;
+
+      border: 2px solid #0007E6;
+
+      background: white;
 
       overflow: hidden;
     }
 
-    #progressFill {
+    #xpFill {
       position: absolute;
 
       left: 0;
@@ -139,11 +256,9 @@
       width: 0%;
 
       background: #0007E6;
-
-      transition: width 0.12s linear;
     }
 
-    #progressText {
+    #xpText {
       position: absolute;
 
       inset: 0;
@@ -152,16 +267,141 @@
       align-items: center;
       justify-content: center;
 
-      font-size: 17px;
+      color: black;
+
+      font-size: 10px;
       font-weight: bold;
-
-      color: #000000;
-
-      mix-blend-mode: difference;
-      filter: invert(1);
 
       pointer-events: none;
     }
+
+
+    /* =========================================
+       PUSHUP INFO
+       SMALL / LOW / LEFT
+    ========================================= */
+
+    #pushupInfo {
+      position: absolute;
+
+      width: 31%;
+
+      left: 6%;
+      bottom: 18px;
+
+      border: 2px solid #0007E6;
+
+      padding: 11px 6px;
+
+      background: #bcc8cc;
+
+      text-align: center;
+    }
+
+    #currentPushups {
+      font-size: clamp(30px, 10vw, 48px);
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    #currentLabel {
+      margin-top: 4px;
+
+      font-size: 10px;
+      font-weight: bold;
+    }
+
+    #dailyPushups {
+      margin-top: 12px;
+
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    #dailyLabel {
+      margin-top: 2px;
+
+      font-size: 10px;
+    }
+
+    #status {
+      min-height: 14px;
+
+      margin-top: 5px;
+
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+
+    /* =========================================
+       BOTTOM THIRD
+       BUTTON ONLY
+    ========================================= */
+
+    #bottomSection {
+      position: relative;
+
+      min-height: 240px;
+
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+
+      padding:
+        8px
+        14px
+        max(12px, env(safe-area-inset-bottom));
+    }
+
+    #trainingButton {
+      width: 100%;
+      min-height: 100%;
+
+      margin: 0;
+
+      border: 4px solid #0007E6;
+      border-radius: 28px;
+
+      background: white;
+      color: #0007E6;
+
+      font-family: Arial, sans-serif;
+
+      cursor: pointer;
+
+      user-select: none;
+      -webkit-user-select: none;
+
+      touch-action: manipulation;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #trainingButton:active,
+    #trainingButton.pressed {
+      background: #f3f3f3;
+    }
+
+    #buttonText {
+      font-size: clamp(28px, 8vw, 42px);
+      font-weight: bold;
+    }
+
+    #buttonSubtext {
+      margin-top: 7px;
+
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+
+    /* =========================================
+       CONFETTI
+    ========================================= */
 
     .confetti {
       position: fixed;
@@ -172,9 +412,9 @@
       left: 50%;
       top: 50%;
 
-      pointer-events: none;
-
       z-index: 9999;
+
+      pointer-events: none;
 
       animation:
         confettiBurst
@@ -204,23 +444,43 @@
       }
     }
 
-    #loading {
-      position: fixed;
-      inset: 0;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* =========================================
+       SMALL PHONE ADJUSTMENT
+    ========================================= */
 
-      background: #bcc8cc;
-      color: #0007E6;
+    @media (max-height: 720px) {
 
-      font-size: 18px;
+      #page {
+        grid-template-rows:
+          210px
+          250px
+          220px;
+      }
 
-      z-index: 10000;
+      #topSection {
+        min-height: 210px;
+      }
+
+      #middleSection {
+        min-height: 250px;
+      }
+
+      #bottomSection {
+        min-height: 220px;
+      }
+
+      #gif1 {
+        width: 53%;
+      }
+
+      #weebieArea {
+        width: 58%;
+      }
     }
   </style>
 </head>
+
 
 <body>
 
@@ -228,85 +488,300 @@
     Loading...
   </div>
 
-  <header>
-    <h1>Weebie Training</h1>
-  </header>
 
-  <main id="game">
+  <div id="page">
 
-    <button
-      id="trainingButton"
-      type="button"
-      aria-label="Train Weebie"
-    >
 
-      <div id="currentTaps">
-        0
+    <!-- =====================================
+         TOP THIRD
+    ====================================== -->
+
+    <section id="topSection">
+
+      <h1>
+        Weebie Training
+      </h1>
+
+
+      <!-- LARGE / HIGH / RIGHT -->
+
+      <img
+        id="gif1"
+        src="/shared/gif1.gif"
+        alt=""
+        draggable="false"
+      >
+
+
+      <!-- SMALL / LOW / LEFT -->
+
+      <img
+        id="gif2"
+        src="/shared/gif2.gif"
+        alt=""
+        draggable="false"
+      >
+
+    </section>
+
+
+
+    <!-- =====================================
+         MIDDLE THIRD
+    ====================================== -->
+
+    <section id="middleSection">
+
+
+      <!-- SMALL / LOW / LEFT -->
+
+      <div id="pushupInfo">
+
+        <div id="currentPushups">
+          0
+        </div>
+
+        <div id="currentLabel">
+          CURRENT
+        </div>
+
+
+        <div id="dailyPushups">
+          0
+        </div>
+
+        <div id="dailyLabel">
+          PUSHUPS TODAY
+        </div>
+
+
+        <div id="status"></div>
+
       </div>
 
-      <div id="dailyText">
-        Total taps today: 0
+
+
+      <!-- LARGE / HIGH / RIGHT -->
+
+      <div id="weebieArea">
+
+        <div id="weebieName">
+        </div>
+
+
+        <div id="weebieImage">
+
+          <div
+            id="pushupColor1"
+            class="weebie-layer"
+          ></div>
+
+          <div
+            id="pushupColor2"
+            class="weebie-layer"
+          ></div>
+
+          <div
+            id="pushupOutline"
+            class="weebie-layer"
+          ></div>
+
+        </div>
+
+
+        <div id="xpArea">
+
+          <div id="xpLabel">
+            XP
+          </div>
+
+          <div id="xpBar">
+
+            <div id="xpFill">
+            </div>
+
+            <div id="xpText">
+              0 XP
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
-      <div id="status"></div>
+    </section>
 
-    </button>
 
-  </main>
 
-  <div id="progressArea">
+    <!-- =====================================
+         BOTTOM THIRD
+    ====================================== -->
 
-    <div id="progressBar">
+    <section id="bottomSection">
 
-      <div id="progressFill"></div>
+      <button
+        id="trainingButton"
+        type="button"
+        aria-label="Do pushup"
+      >
 
-      <div id="progressText">
-        0 / 5000
-      </div>
+        <div id="buttonText">
+          PUSH
+        </div>
 
-    </div>
+        <div id="buttonSubtext">
+          Hold or tap
+        </div>
+
+      </button>
+
+    </section>
 
   </div>
 
 
+
   <script>
+
     const API =
       "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
 
-    const TAPS_REQUIRED = 5000;
+    const PUSHUPS_REQUIRED =
+      5000;
+
+
+    /*
+      SAME COLOR VALUES AS ACCOUNT PAGE
+    */
+
+    const COLORS = {
+
+      "Teal":
+        "#24B5A5",
+
+      "Tan":
+        "#C9A875",
+
+      "Red":
+        "#E04444",
+
+      "Pink":
+        "#ee89f0",
+
+      "Blue":
+        "#4A8FE7",
+
+      "Lime Green":
+        "#8FD14F",
+
+      "White":
+        "#F5F5F5",
+
+      "Purple":
+        "#ed15ff",
+
+      "Silver":
+        "#B8BEC4"
+
+    };
 
 
     const loading =
-      document.getElementById("loading");
+      document.getElementById(
+        "loading"
+      );
+
 
     const trainingButton =
-      document.getElementById("trainingButton");
+      document.getElementById(
+        "trainingButton"
+      );
 
-    const currentTapsElement =
-      document.getElementById("currentTaps");
 
-    const dailyText =
-      document.getElementById("dailyText");
+    const currentPushupsElement =
+      document.getElementById(
+        "currentPushups"
+      );
 
-    const progressFill =
-      document.getElementById("progressFill");
 
-    const progressText =
-      document.getElementById("progressText");
+    const dailyPushupsElement =
+      document.getElementById(
+        "dailyPushups"
+      );
+
 
     const status =
-      document.getElementById("status");
+      document.getElementById(
+        "status"
+      );
 
 
-    let confirmedDailyTaps = 0;
+    const weebieName =
+      document.getElementById(
+        "weebieName"
+      );
 
-    let pendingTaps = 0;
 
-    let sending = false;
+    const pushupColor1 =
+      document.getElementById(
+        "pushupColor1"
+      );
 
-    let loaded = false;
 
+    const pushupColor2 =
+      document.getElementById(
+        "pushupColor2"
+      );
+
+
+    const pushupOutline =
+      document.getElementById(
+        "pushupOutline"
+      );
+
+
+    const xpFill =
+      document.getElementById(
+        "xpFill"
+      );
+
+
+    const xpText =
+      document.getElementById(
+        "xpText"
+      );
+
+
+    let confirmedDailyPushups =
+      0;
+
+
+    let pendingPushups =
+      0;
+
+
+    let sending =
+      false;
+
+
+    let loaded =
+      false;
+
+
+    let currentWeebie =
+      null;
+
+
+    let currentXP =
+      0;
+
+
+
+    /* =====================================
+       AUTH
+    ====================================== */
 
     function getSessionToken() {
 
@@ -323,21 +798,27 @@
 
       const headers = {};
 
+
       const token =
         getSessionToken();
 
 
       if (token) {
 
-        headers["Authorization"] =
-          "Bearer " + token;
+        headers[
+          "Authorization"
+        ] =
+          "Bearer " +
+          token;
 
       }
 
 
       if (includeJson) {
 
-        headers["Content-Type"] =
+        headers[
+          "Content-Type"
+        ] =
           "application/json";
 
       }
@@ -348,54 +829,246 @@
     }
 
 
-    function displayedDailyTaps() {
+
+    /* =====================================
+       PUSHUP DISPLAY
+    ====================================== */
+
+    function displayedDailyPushups() {
 
       return (
-        confirmedDailyTaps +
-        pendingTaps
+        confirmedDailyPushups +
+        pendingPushups
       );
 
     }
 
 
-    function render() {
+    function renderPushups() {
 
       const total =
-        displayedDailyTaps();
+        displayedDailyPushups();
 
 
       const current =
         total %
-        TAPS_REQUIRED;
+        PUSHUPS_REQUIRED;
 
 
-      currentTapsElement.textContent =
+      currentPushupsElement.textContent =
         current.toLocaleString();
 
 
-      dailyText.textContent =
-        "Total taps today: " +
+      dailyPushupsElement.textContent =
         total.toLocaleString();
 
+    }
 
-      progressText.textContent =
-        current.toLocaleString() +
-        " / " +
-        TAPS_REQUIRED.toLocaleString();
+
+
+    /* =====================================
+       XP DISPLAY
+    ====================================== */
+
+    function renderXP() {
+
+      /*
+        The account currently has permanent
+        total XP rather than an XP level system.
+
+        This fills the visual bar according to
+        progress through the current 100 XP
+        visual block while still displaying
+        the real permanent XP number.
+      */
+
+      const blockSize =
+        100;
+
+
+      const progress =
+        currentXP %
+        blockSize;
 
 
       const percentage =
         (
-          current /
-          TAPS_REQUIRED
-        ) * 100;
+          progress /
+          blockSize
+        ) *
+        100;
 
 
-      progressFill.style.width =
-        percentage + "%";
+      xpFill.style.width =
+        percentage +
+        "%";
+
+
+      xpText.textContent =
+        currentXP.toLocaleString() +
+        " XP";
 
     }
 
+
+
+    /* =====================================
+       WEEBIE IMAGE
+    ====================================== */
+
+    function setMask(
+      element,
+      url
+    ) {
+
+      element.style.webkitMaskImage =
+        'url("' +
+        url +
+        '")';
+
+
+      element.style.maskImage =
+        'url("' +
+        url +
+        '")';
+
+    }
+
+
+    function showPushupUp() {
+
+      if (!currentWeebie) {
+        return;
+      }
+
+
+      const primaryHex =
+        COLORS[
+          currentWeebie.primary_color
+        ];
+
+
+      const secondaryHex =
+        COLORS[
+          currentWeebie.secondary_color
+        ];
+
+
+      pushupColor1.style.backgroundColor =
+        primaryHex;
+
+
+      pushupColor2.style.backgroundColor =
+        secondaryHex;
+
+
+      /*
+        UP POSITION
+
+        Up uses one set regardless
+        of eyelashes.
+      */
+
+      setMask(
+        pushupColor1,
+        "/shared/Weebie-PushupUpColor-1.png"
+      );
+
+
+      setMask(
+        pushupColor2,
+        "/shared/Weebie-PushupUpColor-2.png"
+      );
+
+
+      pushupOutline.style.backgroundImage =
+        'url("/shared/Weebie-Pushup-2.png")';
+
+    }
+
+
+    function showPushupDown() {
+
+      if (!currentWeebie) {
+        return;
+      }
+
+
+      const primaryHex =
+        COLORS[
+          currentWeebie.primary_color
+        ];
+
+
+      const secondaryHex =
+        COLORS[
+          currentWeebie.secondary_color
+        ];
+
+
+      pushupColor1.style.backgroundColor =
+        primaryHex;
+
+
+      pushupColor2.style.backgroundColor =
+        secondaryHex;
+
+
+      setMask(
+        pushupColor1,
+        "/shared/Weebie-PushupColor-1.png"
+      );
+
+
+      /*
+        EYELASHES = YES
+
+        Default Color2 and Outline.
+      */
+
+      if (
+        currentWeebie.eyelashes ===
+        "Yes"
+      ) {
+
+        setMask(
+          pushupColor2,
+          "/shared/Weebie-PushupColor-2.png"
+        );
+
+
+        pushupOutline.style.backgroundImage =
+          'url("/shared/Weebie-Pushup-1.png")';
+
+      }
+
+
+      /*
+        EYELASHES = NO
+
+        Color2a and Outline1a.
+      */
+
+      else {
+
+        setMask(
+          pushupColor2,
+          "/shared/Weebie-PushupColor-2a.png"
+        );
+
+
+        pushupOutline.style.backgroundImage =
+          'url("/shared/Weebie-Pushup-1a.png")';
+
+      }
+
+    }
+
+
+
+    /* =====================================
+       CONFETTI
+    ====================================== */
 
     function confettiBurst() {
 
@@ -447,12 +1120,16 @@
 
 
         const x =
-          Math.cos(angle) *
+          Math.cos(
+            angle
+          ) *
           distance;
 
 
         const y =
-          Math.sin(angle) *
+          Math.sin(
+            angle
+          ) *
           distance;
 
 
@@ -474,7 +1151,8 @@
             Math.random() *
             720 -
             360
-          ) + "deg"
+          ) +
+          "deg"
         );
 
 
@@ -485,7 +1163,9 @@
 
         setTimeout(
           () => {
+
             piece.remove();
+
           },
           1200
         );
@@ -495,7 +1175,12 @@
     }
 
 
-    function handleTap() {
+
+    /* =====================================
+       ONE PUSHUP
+    ====================================== */
+
+    function handlePushup() {
 
       if (!loaded) {
         return;
@@ -503,27 +1188,28 @@
 
 
       const before =
-        displayedDailyTaps();
+        displayedDailyPushups();
 
 
-      pendingTaps++;
+      pendingPushups++;
 
 
       const after =
         before + 1;
 
 
-      render();
+      renderPushups();
 
 
       if (
         Math.floor(
           after /
-          TAPS_REQUIRED
-        ) >
+          PUSHUPS_REQUIRED
+        )
+        >
         Math.floor(
           before /
-          TAPS_REQUIRED
+          PUSHUPS_REQUIRED
         )
       ) {
 
@@ -533,21 +1219,27 @@
 
 
       if (
-        pendingTaps >= 50
+        pendingPushups >=
+        50
       ) {
 
-        flushTaps();
+        flushPushups();
 
       }
 
     }
 
 
-    async function flushTaps() {
+
+    /* =====================================
+       SAVE PUSHUPS
+    ====================================== */
+
+    async function flushPushups() {
 
       if (
         sending ||
-        pendingTaps <= 0
+        pendingPushups <= 0
       ) {
 
         return;
@@ -555,17 +1247,18 @@
       }
 
 
-      sending = true;
+      sending =
+        true;
 
 
       const amount =
         Math.min(
-          pendingTaps,
+          pendingPushups,
           100
         );
 
 
-      pendingTaps -=
+      pendingPushups -=
         amount;
 
 
@@ -573,15 +1266,19 @@
 
         const response =
           await fetch(
-            API + "/training",
+            API +
+            "/training",
             {
-              method: "POST",
+              method:
+                "POST",
 
               credentials:
                 "include",
 
               headers:
-                authHeaders(true),
+                authHeaders(
+                  true
+                ),
 
               body:
                 JSON.stringify(
@@ -599,7 +1296,8 @@
 
 
         if (
-          response.status === 401
+          response.status ===
+          401
         ) {
 
           localStorage.removeItem(
@@ -610,6 +1308,7 @@
           window.location.href =
             "/login/";
 
+
           return;
 
         }
@@ -619,47 +1318,66 @@
           data.passwordResetRequired
         ) {
 
-          pendingTaps +=
+          pendingPushups +=
             amount;
 
 
           window.location.href =
             "/account/";
 
+
           return;
 
         }
 
 
-        if (
-          !response.ok
-        ) {
+        if (!response.ok) {
 
           throw new Error(
             data.error ||
-            "Unable to save taps."
+            "Unable to save pushups."
           );
 
         }
 
 
-        confirmedDailyTaps =
+        confirmedDailyPushups =
           Number(
-            data.dailyTaps || 0
+            data.dailyTaps ||
+            0
           );
 
 
-        status.textContent =
-          data.xpAwarded > 0
-            ? "+" +
-              data.xpAwarded +
-              " XP"
-            : "";
+        if (
+          data.totalXP !==
+          undefined
+        ) {
+
+          currentXP =
+            Number(
+              data.totalXP ||
+              0
+            );
+
+
+          renderXP();
+
+        }
 
 
         if (
-          data.xpAwarded > 0
+          Number(
+            data.xpAwarded ||
+            0
+          ) >
+          0
         ) {
+
+          status.textContent =
+            "+" +
+            data.xpAwarded +
+            " XP";
+
 
           setTimeout(
             () => {
@@ -674,13 +1392,13 @@
         }
 
 
-        render();
+        renderPushups();
 
       }
 
       catch (error) {
 
-        pendingTaps +=
+        pendingPushups +=
           amount;
 
 
@@ -696,14 +1414,16 @@
 
       finally {
 
-        sending = false;
+        sending =
+          false;
 
 
         if (
-          pendingTaps >= 50
+          pendingPushups >=
+          50
         ) {
 
-          flushTaps();
+          flushPushups();
 
         }
 
@@ -712,25 +1432,128 @@
     }
 
 
+
+    /* =====================================
+       LOAD ACCOUNT WEEBIE
+    ====================================== */
+
+    async function loadWeebie() {
+
+      const response =
+        await fetch(
+          API +
+          "/account",
+          {
+            method:
+              "GET",
+
+            credentials:
+              "include",
+
+            headers:
+              authHeaders()
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !data.loggedIn
+      ) {
+
+        localStorage.removeItem(
+          "rd_session"
+        );
+
+
+        window.location.href =
+          "/login/";
+
+
+        return false;
+
+      }
+
+
+      if (
+        data.passwordResetRequired
+      ) {
+
+        window.location.href =
+          "/account/";
+
+
+        return false;
+
+      }
+
+
+      if (!data.weebie) {
+
+        window.location.href =
+          "/account/";
+
+
+        return false;
+
+      }
+
+
+      currentWeebie =
+        data.weebie;
+
+
+      weebieName.textContent =
+        currentWeebie.name;
+
+
+      currentXP =
+        Number(
+          currentWeebie.xp ||
+          currentWeebie.stats?.xp ||
+          0
+        );
+
+
+      renderXP();
+
+
+      showPushupUp();
+
+
+      return true;
+
+    }
+
+
+
+    /* =====================================
+       LOAD TRAINING
+    ====================================== */
+
     async function loadTraining() {
-
-      const token =
-        getSessionToken();
-
-
-      /*
-        The cookie is retained as a fallback,
-        but most browsers will use the bearer
-        session token.
-      */
 
       try {
 
+        const weebieReady =
+          await loadWeebie();
+
+
+        if (!weebieReady) {
+          return;
+        }
+
+
         const response =
           await fetch(
-            API + "/training",
+            API +
+            "/training",
             {
-              method: "GET",
+              method:
+                "GET",
 
               credentials:
                 "include",
@@ -746,20 +1569,18 @@
 
 
         if (
-          response.status === 401
+          response.status ===
+          401
         ) {
 
-          if (token) {
-
-            localStorage.removeItem(
-              "rd_session"
-            );
-
-          }
+          localStorage.removeItem(
+            "rd_session"
+          );
 
 
           window.location.href =
             "/login/";
+
 
           return;
 
@@ -773,14 +1594,13 @@
           window.location.href =
             "/account/";
 
+
           return;
 
         }
 
 
-        if (
-          !response.ok
-        ) {
+        if (!response.ok) {
 
           throw new Error(
             data.error ||
@@ -790,18 +1610,39 @@
         }
 
 
-        confirmedDailyTaps =
+        confirmedDailyPushups =
           Number(
-            data.dailyTaps || 0
+            data.dailyTaps ||
+            0
           );
 
 
-        pendingTaps = 0;
+        pendingPushups =
+          0;
 
-        loaded = true;
+
+        if (
+          data.totalXP !==
+          undefined
+        ) {
+
+          currentXP =
+            Number(
+              data.totalXP ||
+              0
+            );
 
 
-        render();
+          renderXP();
+
+        }
+
+
+        loaded =
+          true;
+
+
+        renderPushups();
 
 
         loading.style.display =
@@ -824,37 +1665,98 @@
     }
 
 
+
+    /* =====================================
+       BUTTON PRESS / RELEASE
+
+       PRESS:
+       down pushup position
+       + counts one pushup
+
+       RELEASE:
+       returns to up position
+    ====================================== */
+
+    function pressButton(
+      event
+    ) {
+
+      if (!loaded) {
+        return;
+      }
+
+
+      event.preventDefault();
+
+
+      trainingButton.classList.add(
+        "pressed"
+      );
+
+
+      showPushupDown();
+
+
+      handlePushup();
+
+    }
+
+
+    function releaseButton() {
+
+      trainingButton.classList.remove(
+        "pressed"
+      );
+
+
+      showPushupUp();
+
+    }
+
+
     trainingButton.addEventListener(
       "pointerdown",
-      event => {
-
-        event.preventDefault();
-
-        handleTap();
-
-      }
+      pressButton
     );
 
 
-    /*
-      Save regularly instead of performing
-      a database write for every single tap.
-    */
+    trainingButton.addEventListener(
+      "pointerup",
+      releaseButton
+    );
+
+
+    trainingButton.addEventListener(
+      "pointercancel",
+      releaseButton
+    );
+
+
+    trainingButton.addEventListener(
+      "pointerleave",
+      releaseButton
+    );
+
+
+
+    /* =====================================
+       REGULAR SAVE
+    ====================================== */
 
     setInterval(
       () => {
 
-        flushTaps();
+        flushPushups();
 
       },
       1000
     );
 
 
-    /*
-      Make a final best-effort save when the
-      page is hidden or closed.
-    */
+
+    /* =====================================
+       SAVE WHEN LEAVING
+    ====================================== */
 
     document.addEventListener(
       "visibilitychange",
@@ -865,7 +1767,7 @@
           "hidden"
         ) {
 
-          flushTaps();
+          flushPushups();
 
         }
 
@@ -877,13 +1779,19 @@
       "pagehide",
       () => {
 
-        flushTaps();
+        flushPushups();
 
       }
     );
 
 
+
+    /* =====================================
+       START
+    ====================================== */
+
     loadTraining();
+
   </script>
 
 </body>
