@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  >
+
+  <title>Weebie Training</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #bcc8cc;
+      color: #0007E6;
+
+      display: flex;
+      flex-direction: column;
+
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      padding: 24px 15px 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    #game {
+      flex: 1;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 25px 20px 120px;
+    }
+
+    #trainingButton {
+      width: min(78vw, 420px);
+      aspect-ratio: 1 / 1;
+
+      border: 4px solid #0007E6;
+      border-radius: 50%;
+
+      background: #ffffff;
+      color: #0007E6;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+
+      font-family: Arial, sans-serif;
+    }
+
+    #trainingButton:active {
+      transform: scale(0.98);
+    }
+
+    #currentTaps {
+      font-size: clamp(64px, 18vw, 120px);
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    #dailyText {
+      margin-top: 14px;
+      font-size: clamp(14px, 4vw, 19px);
+    }
+
+    #status {
+      margin-top: 10px;
+      min-height: 18px;
+      font-size: 13px;
+    }
+
+    #progressArea {
+      position: fixed;
+
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      padding:
+        15px
+        max(18px, env(safe-area-inset-right))
+        calc(18px + env(safe-area-inset-bottom))
+        max(18px, env(safe-area-inset-left));
+
+      background: #bcc8cc;
+    }
+
+    #progressBar {
+      position: relative;
+
+      width: min(700px, 100%);
+      height: 44px;
+
+      margin: 0 auto;
+
+      border: 3px solid #0007E6;
+
+      background: #ffffff;
+
+      overflow: hidden;
+    }
+
+    #progressFill {
+      position: absolute;
+
+      left: 0;
+      top: 0;
+      bottom: 0;
+
+      width: 0%;
+
+      background: #0007E6;
+
+      transition: width 0.12s linear;
+    }
+
+    #progressText {
+      position: absolute;
+
+      inset: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 17px;
+      font-weight: bold;
+
+      color: #000000;
+
+      mix-blend-mode: difference;
+      filter: invert(1);
+
+      pointer-events: none;
+    }
+
+    .confetti {
+      position: fixed;
+
+      width: 9px;
+      height: 14px;
+
+      left: 50%;
+      top: 50%;
+
+      pointer-events: none;
+
+      z-index: 9999;
+
+      animation:
+        confettiBurst
+        1100ms
+        ease-out
+        forwards;
+    }
+
+    @keyframes confettiBurst {
+      0% {
+        transform:
+          translate(-50%, -50%)
+          rotate(0deg);
+
+        opacity: 1;
+      }
+
+      100% {
+        transform:
+          translate(
+            calc(-50% + var(--x)),
+            calc(-50% + var(--y))
+          )
+          rotate(var(--r));
+
+        opacity: 0;
+      }
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #bcc8cc;
+      color: #0007E6;
+
+      font-size: 18px;
+
+      z-index: 10000;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loading">
+    Loading...
+  </div>
+
+  <header>
+    <h1>Weebie Training</h1>
+  </header>
+
+  <main id="game">
+
+    <button
+      id="trainingButton"
+      type="button"
+      aria-label="Train Weebie"
+    >
+
+      <div id="currentTaps">
+        0
+      </div>
+
+      <div id="dailyText">
+        Total taps today: 0
+      </div>
+
+      <div id="status"></div>
+
+    </button>
+
+  </main>
+
+  <div id="progressArea">
+
+    <div id="progressBar">
+
+      <div id="progressFill"></div>
+
+      <div id="progressText">
+        0 / 5000
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+    const API =
+      "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
+
+    const TAPS_REQUIRED = 5000;
+
+
+    const loading =
+      document.getElementById("loading");
+
+    const trainingButton =
+      document.getElementById("trainingButton");
+
+    const currentTapsElement =
+      document.getElementById("currentTaps");
+
+    const dailyText =
+      document.getElementById("dailyText");
+
+    const progressFill =
+      document.getElementById("progressFill");
+
+    const progressText =
+      document.getElementById("progressText");
+
+    const status =
+      document.getElementById("status");
+
+
+    let confirmedDailyTaps = 0;
+
+    let pendingTaps = 0;
+
+    let sending = false;
+
+    let loaded = false;
+
+
+    function getSessionToken() {
+
+      return localStorage.getItem(
+        "rd_session"
+      );
+
+    }
+
+
+    function authHeaders(
+      includeJson = false
+    ) {
+
+      const headers = {};
+
+      const token =
+        getSessionToken();
+
+
+      if (token) {
+
+        headers["Authorization"] =
+          "Bearer " + token;
+
+      }
+
+
+      if (includeJson) {
+
+        headers["Content-Type"] =
+          "application/json";
+
+      }
+
+
+      return headers;
+
+    }
+
+
+    function displayedDailyTaps() {
+
+      return (
+        confirmedDailyTaps +
+        pendingTaps
+      );
+
+    }
+
+
+    function render() {
+
+      const total =
+        displayedDailyTaps();
+
+
+      const current =
+        total %
+        TAPS_REQUIRED;
+
+
+      currentTapsElement.textContent =
+        current.toLocaleString();
+
+
+      dailyText.textContent =
+        "Total taps today: " +
+        total.toLocaleString();
+
+
+      progressText.textContent =
+        current.toLocaleString() +
+        " / " +
+        TAPS_REQUIRED.toLocaleString();
+
+
+      const percentage =
+        (
+          current /
+          TAPS_REQUIRED
+        ) * 100;
+
+
+      progressFill.style.width =
+        percentage + "%";
+
+    }
+
+
+    function confettiBurst() {
+
+      const colors = [
+        "#0007E6",
+        "#ff4d6d",
+        "#ffd60a",
+        "#00c853",
+        "#9c27b0",
+        "#ff7a00"
+      ];
+
+
+      for (
+        let i = 0;
+        i < 45;
+        i++
+      ) {
+
+        const piece =
+          document.createElement(
+            "div"
+          );
+
+
+        piece.className =
+          "confetti";
+
+
+        piece.style.background =
+          colors[
+            Math.floor(
+              Math.random() *
+              colors.length
+            )
+          ];
+
+
+        const angle =
+          Math.random() *
+          Math.PI *
+          2;
+
+
+        const distance =
+          100 +
+          Math.random() *
+          240;
+
+
+        const x =
+          Math.cos(angle) *
+          distance;
+
+
+        const y =
+          Math.sin(angle) *
+          distance;
+
+
+        piece.style.setProperty(
+          "--x",
+          x + "px"
+        );
+
+
+        piece.style.setProperty(
+          "--y",
+          y + "px"
+        );
+
+
+        piece.style.setProperty(
+          "--r",
+          (
+            Math.random() *
+            720 -
+            360
+          ) + "deg"
+        );
+
+
+        document.body.appendChild(
+          piece
+        );
+
+
+        setTimeout(
+          () => {
+            piece.remove();
+          },
+          1200
+        );
+
+      }
+
+    }
+
+
+    function handleTap() {
+
+      if (!loaded) {
+        return;
+      }
+
+
+      const before =
+        displayedDailyTaps();
+
+
+      pendingTaps++;
+
+
+      const after =
+        before + 1;
+
+
+      render();
+
+
+      if (
+        Math.floor(
+          after /
+          TAPS_REQUIRED
+        ) >
+        Math.floor(
+          before /
+          TAPS_REQUIRED
+        )
+      ) {
+
+        confettiBurst();
+
+      }
+
+
+      if (
+        pendingTaps >= 50
+      ) {
+
+        flushTaps();
+
+      }
+
+    }
+
+
+    async function flushTaps() {
+
+      if (
+        sending ||
+        pendingTaps <= 0
+      ) {
+
+        return;
+
+      }
+
+
+      sending = true;
+
+
+      const amount =
+        Math.min(
+          pendingTaps,
+          100
+        );
+
+
+      pendingTaps -=
+        amount;
+
+
+      try {
+
+        const response =
+          await fetch(
+            API + "/training",
+            {
+              method: "POST",
+
+              credentials:
+                "include",
+
+              headers:
+                authHeaders(true),
+
+              body:
+                JSON.stringify(
+                  {
+                    taps:
+                      amount
+                  }
+                )
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          response.status === 401
+        ) {
+
+          localStorage.removeItem(
+            "rd_session"
+          );
+
+
+          window.location.href =
+            "/login/";
+
+          return;
+
+        }
+
+
+        if (
+          data.passwordResetRequired
+        ) {
+
+          pendingTaps +=
+            amount;
+
+
+          window.location.href =
+            "/account/";
+
+          return;
+
+        }
+
+
+        if (
+          !response.ok
+        ) {
+
+          throw new Error(
+            data.error ||
+            "Unable to save taps."
+          );
+
+        }
+
+
+        confirmedDailyTaps =
+          Number(
+            data.dailyTaps || 0
+          );
+
+
+        status.textContent =
+          data.xpAwarded > 0
+            ? "+" +
+              data.xpAwarded +
+              " XP"
+            : "";
+
+
+        if (
+          data.xpAwarded > 0
+        ) {
+
+          setTimeout(
+            () => {
+
+              status.textContent =
+                "";
+
+            },
+            1200
+          );
+
+        }
+
+
+        render();
+
+      }
+
+      catch (error) {
+
+        pendingTaps +=
+          amount;
+
+
+        console.error(
+          error
+        );
+
+
+        status.textContent =
+          "Saving...";
+
+      }
+
+      finally {
+
+        sending = false;
+
+
+        if (
+          pendingTaps >= 50
+        ) {
+
+          flushTaps();
+
+        }
+
+      }
+
+    }
+
+
+    async function loadTraining() {
+
+      const token =
+        getSessionToken();
+
+
+      /*
+        The cookie is retained as a fallback,
+        but most browsers will use the bearer
+        session token.
+      */
+
+      try {
+
+        const response =
+          await fetch(
+            API + "/training",
+            {
+              method: "GET",
+
+              credentials:
+                "include",
+
+              headers:
+                authHeaders()
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          response.status === 401
+        ) {
+
+          if (token) {
+
+            localStorage.removeItem(
+              "rd_session"
+            );
+
+          }
+
+
+          window.location.href =
+            "/login/";
+
+          return;
+
+        }
+
+
+        if (
+          data.passwordResetRequired
+        ) {
+
+          window.location.href =
+            "/account/";
+
+          return;
+
+        }
+
+
+        if (
+          !response.ok
+        ) {
+
+          throw new Error(
+            data.error ||
+            "Unable to load training."
+          );
+
+        }
+
+
+        confirmedDailyTaps =
+          Number(
+            data.dailyTaps || 0
+          );
+
+
+        pendingTaps = 0;
+
+        loaded = true;
+
+
+        render();
+
+
+        loading.style.display =
+          "none";
+
+      }
+
+      catch (error) {
+
+        console.error(
+          error
+        );
+
+
+        loading.textContent =
+          "Unable to load training.";
+
+      }
+
+    }
+
+
+    trainingButton.addEventListener(
+      "pointerdown",
+      event => {
+
+        event.preventDefault();
+
+        handleTap();
+
+      }
+    );
+
+
+    /*
+      Save regularly instead of performing
+      a database write for every single tap.
+    */
+
+    setInterval(
+      () => {
+
+        flushTaps();
+
+      },
+      1000
+    );
+
+
+    /*
+      Make a final best-effort save when the
+      page is hidden or closed.
+    */
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+
+        if (
+          document.visibilityState ===
+          "hidden"
+        ) {
+
+          flushTaps();
+
+        }
+
+      }
+    );
+
+
+    window.addEventListener(
+      "pagehide",
+      () => {
+
+        flushTaps();
+
+      }
+    );
+
+
+    loadTraining();
+  </script>
+
+</body>
+</html>
