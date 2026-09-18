@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weebie Leaderboard | Ratdoodle</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 30px 12px;
+      background: #bcc8cc;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    h1 { margin: 0 0 25px; }
+
+    #status {
+      min-height: 22px;
+      margin: 15px 0;
+    }
+
+    .leaderboard {
+      width: 100%;
+      border: 2px solid #0007E6;
+    }
+
+    .header,
+    .row {
+      display: grid;
+      grid-template-columns: 80px 120px minmax(130px, 1fr) 120px minmax(130px, 1fr);
+      align-items: center;
+    }
+
+    .header {
+      font-weight: bold;
+      border-bottom: 2px solid #0007E6;
+      min-height: 48px;
+    }
+
+    .row {
+      min-height: 120px;
+      border-bottom: 1px solid #0007E6;
+    }
+
+    .row:last-child { border-bottom: 0; }
+
+    .cell {
+      padding: 8px;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .placement {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .placement.medal {
+      width: 48px;
+      height: 48px;
+      margin: auto;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      border: 2px solid #555;
+      text-shadow: 0 1px rgba(255,255,255,.6);
+    }
+
+    .gold {
+      background: linear-gradient(135deg, #fff1a8, #d4af37, #fff1a8);
+      border-color: #9c7b10 !important;
+    }
+
+    .silver {
+      background: linear-gradient(135deg, #f4f4f4, #aeb4ba, #f4f4f4);
+      border-color: #777 !important;
+    }
+
+    .bronze {
+      background: linear-gradient(135deg, #e4b27c, #b87333, #e4b27c);
+      border-color: #85501f !important;
+    }
+
+    .weebie-pic {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      margin: auto;
+    }
+
+    .weebie-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      -webkit-mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: contain;
+    }
+
+    .color1 {
+      z-index: 1;
+      -webkit-mask-image: url("/shared/Weebie-Color1.png");
+      mask-image: url("/shared/Weebie-Color1.png");
+    }
+
+    .color2 { z-index: 2; }
+    .outline { z-index: 3; }
+
+    .name,
+    .xp,
+    .owner {
+      font-weight: bold;
+    }
+
+    #showMore {
+      width: 100%;
+      max-width: 300px;
+      margin: 20px auto 0;
+      padding: 11px;
+      border: 2px solid #0007E6;
+      background: #bcc8cc;
+      color: #0007E6;
+      font: bold 16px Arial, sans-serif;
+      cursor: pointer;
+      display: none;
+    }
+
+    .pagination {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .page-arrow,
+    #pageInput {
+      height: 42px;
+      border: 2px solid #0007E6;
+      background: #bcc8cc;
+      color: #0007E6;
+      font: bold 17px Arial, sans-serif;
+    }
+
+    .page-arrow {
+      width: 55px;
+      cursor: pointer;
+    }
+
+    .page-arrow:disabled {
+      opacity: .4;
+      cursor: default;
+    }
+
+    #pageInput {
+      width: 72px;
+      text-align: center;
+    }
+
+    #pageCount {
+      min-width: 70px;
+    }
+
+    @media (max-width: 650px) {
+      body { padding: 20px 6px; }
+
+      h1 { font-size: 25px; }
+
+      .header,
+      .row {
+        grid-template-columns: 48px 78px minmax(82px, 1fr) 70px minmax(82px, 1fr);
+      }
+
+      .header {
+        font-size: 12px;
+      }
+
+      .row {
+        min-height: 88px;
+        font-size: 13px;
+      }
+
+      .cell {
+        padding: 4px 2px;
+      }
+
+      .placement {
+        font-size: 16px;
+      }
+
+      .placement.medal {
+        width: 34px;
+        height: 34px;
+      }
+
+      .weebie-pic {
+        width: 72px;
+        height: 72px;
+      }
+
+      .xp {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="page">
+
+  <h1>Weebie Leaderboard</h1>
+
+  <div class="leaderboard">
+    <div class="header">
+      <div class="cell">Place</div>
+      <div class="cell">Weebie</div>
+      <div class="cell">Name</div>
+      <div class="cell">XP</div>
+      <div class="cell">Owner</div>
+    </div>
+
+    <div id="rows"></div>
+  </div>
+
+  <div id="status">Loading leaderboard...</div>
+
+  <button id="showMore" type="button">Show More</button>
+
+  <div id="pagination" class="pagination">
+    <button id="previousPage" class="page-arrow" type="button">←</button>
+
+    <input
+      id="pageInput"
+      type="number"
+      min="1"
+      value="1"
+      aria-label="Page number"
+    >
+
+    <span id="pageCount">/ 1</span>
+
+    <button id="nextPage" class="page-arrow" type="button">→</button>
+  </div>
+
+</div>
+
+<script>
+const API =
+  "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
+const COLORS = {
+  "Teal": "#24B5A5",
+  "Tan": "#C9A875",
+  "Red": "#E04444",
+  "Pink": "#ee89f0",
+  "Blue": "#4A8FE7",
+  "Lime Green": "#8FD14F",
+  "White": "#F5F5F5",
+  "Purple": "#ed15ff",
+  "Silver": "#B8BEC4"
+};
+
+const rows =
+  document.getElementById("rows");
+
+const status =
+  document.getElementById("status");
+
+const showMore =
+  document.getElementById("showMore");
+
+const pagination =
+  document.getElementById("pagination");
+
+const previousPage =
+  document.getElementById("previousPage");
+
+const nextPage =
+  document.getElementById("nextPage");
+
+const pageInput =
+  document.getElementById("pageInput");
+
+const pageCount =
+  document.getElementById("pageCount");
+
+let currentPage = 1;
+let limit = 10;
+let totalPages = 1;
+let totalWeebies = 0;
+
+
+function makePlacement(number) {
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "placement";
+
+  div.textContent =
+    number;
+
+  if (number === 1) {
+    div.classList.add(
+      "medal",
+      "gold"
+    );
+  }
+
+  else if (number === 2) {
+    div.classList.add(
+      "medal",
+      "silver"
+    );
+  }
+
+  else if (number === 3) {
+    div.classList.add(
+      "medal",
+      "bronze"
+    );
+  }
+
+  return div;
+}
+
+
+function makeWeebiePic(weebie) {
+  const pic =
+    document.createElement("div");
+
+  pic.className =
+    "weebie-pic";
+
+
+  const color1 =
+    document.createElement("div");
+
+  color1.className =
+    "weebie-layer color1";
+
+  color1.style.backgroundColor =
+    COLORS[weebie.primaryColor] ||
+    "transparent";
+
+
+  const color2 =
+    document.createElement("div");
+
+  color2.className =
+    "weebie-layer color2";
+
+  color2.style.backgroundColor =
+    COLORS[weebie.secondaryColor] ||
+    "transparent";
+
+
+  const outline =
+    document.createElement("div");
+
+  outline.className =
+    "weebie-layer outline";
+
+
+  if (weebie.eyelashes === "No") {
+    color2.style.webkitMaskImage =
+      'url("/shared/Weebie-Color2a.png")';
+
+    color2.style.maskImage =
+      'url("/shared/Weebie-Color2a.png")';
+
+    outline.style.backgroundImage =
+      'url("/shared/Weebie-Outline2.png")';
+  }
+
+  else {
+    color2.style.webkitMaskImage =
+      'url("/shared/Weebie-Color2.png")';
+
+    color2.style.maskImage =
+      'url("/shared/Weebie-Color2.png")';
+
+    outline.style.backgroundImage =
+      'url("/shared/Weebie-Outline.png")';
+  }
+
+
+  pic.appendChild(color1);
+  pic.appendChild(color2);
+  pic.appendChild(outline);
+
+  return pic;
+}
+
+
+function makeCell(className = "") {
+  const div =
+    document.createElement("div");
+
+  div.className =
+    "cell " + className;
+
+  return div;
+}
+
+
+function renderRows(weebies) {
+  rows.innerHTML = "";
+
+  for (const weebie of weebies) {
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "row";
+
+
+    const placementCell =
+      makeCell();
+
+    placementCell.appendChild(
+      makePlacement(
+        weebie.placement
+      )
+    );
+
+
+    const pictureCell =
+      makeCell();
+
+    pictureCell.appendChild(
+      makeWeebiePic(
+        weebie
+      )
+    );
+
+
+    const nameCell =
+      makeCell("name");
+
+    nameCell.textContent =
+      weebie.name;
+
+
+    const xpCell =
+      makeCell("xp");
+
+    xpCell.textContent =
+      Number(
+        weebie.xp || 0
+      ).toLocaleString();
+
+
+    const ownerCell =
+      makeCell("owner");
+
+    ownerCell.textContent =
+      weebie.owner;
+
+
+    row.appendChild(
+      placementCell
+    );
+
+    row.appendChild(
+      pictureCell
+    );
+
+    row.appendChild(
+      nameCell
+    );
+
+    row.appendChild(
+      xpCell
+    );
+
+    row.appendChild(
+      ownerCell
+    );
+
+    rows.appendChild(row);
+  }
+}
+
+
+function updateControls() {
+  pageInput.value =
+    currentPage;
+
+  pageInput.max =
+    totalPages;
+
+  pageCount.textContent =
+    "/ " + totalPages;
+
+  previousPage.disabled =
+    currentPage <= 1;
+
+  nextPage.disabled =
+    currentPage >= totalPages;
+
+
+  if (
+    limit === 10 &&
+    totalWeebies > 10
+  ) {
+    showMore.style.display =
+      "block";
+  }
+
+  else {
+    showMore.style.display =
+      "none";
+  }
+
+
+  if (
+    limit === 30 &&
+    totalWeebies > 30
+  ) {
+    pagination.style.display =
+      "flex";
+  }
+
+  else {
+    pagination.style.display =
+      "none";
+  }
+}
+
+
+async function loadLeaderboard(
+  page = 1
+) {
+  status.textContent =
+    "Loading leaderboard...";
+
+  try {
+    const response =
+      await fetch(
+        API +
+        "/leaderboard?page=" +
+        encodeURIComponent(page) +
+        "&limit=" +
+        encodeURIComponent(limit)
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.error ||
+        "Unable to load leaderboard."
+      );
+    }
+
+    currentPage =
+      Number(data.page || 1);
+
+    totalPages =
+      Number(data.totalPages || 1);
+
+    totalWeebies =
+      Number(data.totalWeebies || 0);
+
+    renderRows(
+      Array.isArray(data.weebies)
+        ? data.weebies
+        : []
+    );
+
+    updateControls();
+
+    if (totalWeebies === 0) {
+      status.textContent =
+        "No Weebies yet.";
+    }
+
+    else {
+      status.textContent =
+        totalWeebies.toLocaleString() +
+        (
+          totalWeebies === 1
+            ? " Weebie"
+            : " Weebies"
+        );
+    }
+  }
+
+  catch (error) {
+    console.error(error);
+
+    rows.innerHTML = "";
+
+    status.textContent =
+      "Unable to load leaderboard.";
+  }
+}
+
+
+showMore.addEventListener(
+  "click",
+  () => {
+    limit = 30;
+    currentPage = 1;
+
+    loadLeaderboard(1);
+  }
+);
+
+
+previousPage.addEventListener(
+  "click",
+  () => {
+    if (currentPage > 1) {
+      loadLeaderboard(
+        currentPage - 1
+      );
+    }
+  }
+);
+
+
+nextPage.addEventListener(
+  "click",
+  () => {
+    if (
+      currentPage <
+      totalPages
+    ) {
+      loadLeaderboard(
+        currentPage + 1
+      );
+    }
+  }
+);
+
+
+pageInput.addEventListener(
+  "change",
+  () => {
+    let requested =
+      Number(pageInput.value);
+
+    if (
+      !Number.isInteger(requested)
+    ) {
+      requested =
+        currentPage;
+    }
+
+    requested =
+      Math.max(
+        1,
+        Math.min(
+          totalPages,
+          requested
+        )
+      );
+
+    loadLeaderboard(
+      requested
+    );
+  }
+);
+
+
+pageInput.addEventListener(
+  "keydown",
+  event => {
+    if (event.key === "Enter") {
+      pageInput.blur();
+    }
+  }
+);
+
+
+loadLeaderboard(1);
+</script>
+</body>
+</html>
