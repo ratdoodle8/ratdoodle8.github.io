@@ -1961,6 +1961,34 @@
 }
 </style>
 
+
+<style id="V60-GIF2-TRUE-TRANSPARENCY">
+#gif2 {
+  background: none !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Color overlay is clipped to GIF2's own visible pixels. */
+#gif2ColorOverlayV60 {
+  position: absolute !important;
+  pointer-events: none !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 38, 0, var(--g2-red-a, 0)),
+    rgba(255, 128, 0, var(--g2-orange-a, 0))
+  ) !important;
+  -webkit-mask-image: var(--g2-mask);
+  mask-image: var(--g2-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  z-index: -1 !important;
+}
+</style>
+
 </head>
 
 
@@ -3917,6 +3945,40 @@
 
   setInterval(updateGif2Effect, 120);
   updateGif2Effect();
+})();
+</script>
+
+
+<script id="V60-GIF2-ALPHA-SAFE-COLOR">
+(function () {
+  const gif2 = document.getElementById("gif2");
+  if (!gif2) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "gif2ColorOverlayV60";
+  document.body.appendChild(overlay);
+
+  function syncOverlay() {
+    const r = gif2.getBoundingClientRect();
+    overlay.style.left = (r.left + window.scrollX) + "px";
+    overlay.style.top = (r.top + window.scrollY) + "px";
+    overlay.style.width = r.width + "px";
+    overlay.style.height = r.height + "px";
+
+    const src = gif2.currentSrc || gif2.src;
+    overlay.style.setProperty("--g2-mask", 'url("' + src + '")');
+
+    const c = (typeof combo === "number") ? combo : 0;
+    const p = (typeof getPower === "function") ? getPower() : 0;
+    const strength = Math.min(1, Math.min(1,c/2000)*.75 + Math.min(1,p/100)*.25);
+
+    overlay.style.setProperty("--g2-red-a", (strength * .82).toFixed(3));
+    overlay.style.setProperty("--g2-orange-a", (strength * .68).toFixed(3));
+  }
+
+  setInterval(syncOverlay, 60);
+  window.addEventListener("resize", syncOverlay);
+  syncOverlay();
 })();
 </script>
 
