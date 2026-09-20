@@ -1975,6 +1975,36 @@
 }
 </style>
 
+
+<style id="V71-GIF2-WRAPPER-SHAKE">
+#gif2ShakeContainer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+#gif2ShakeContainer #gif2 {
+  mix-blend-mode: multiply !important;
+  animation: none !important;
+  filter: none !important;
+  transform: none !important;
+  translate: none !important;
+  rotate: none !important;
+  scale: none !important;
+  skew: none !important;
+}
+#gif2ShakeContainer.gif2-wrapper-hit {
+  animation: gif2WrapperShakeV71 var(--gif2-wrap-time,180ms) linear !important;
+}
+@keyframes gif2WrapperShakeV71 {
+  0%   { transform: translate(0,0) rotate(0deg); }
+  20%  { transform: translate(-3.6px,1.6px) rotate(-1.4deg); }
+  40%  { transform: translate(3.8px,-2.2px) rotate(1.6deg); }
+  60%  { transform: translate(-3.4px,1.2px) rotate(-1.8deg); }
+  80%  { transform: translate(2.2px,-1.4px) rotate(1.2deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+</style>
+
 </head>
 
 
@@ -2046,6 +2076,7 @@
 
 
       <!-- SMALL / LOW / LEFT -->
+      <div id="gif2ShakeContainer">
 
       <img
         id="gif2"
@@ -2053,6 +2084,7 @@
         alt=""
         draggable="false"
       >
+      </div>
 
     </section>
 
@@ -3027,6 +3059,15 @@
 
     function registerComboTap() {
       sessionPushups += 1;
+
+      const gif2ShakeContainerV71 = document.getElementById("gif2ShakeContainer");
+      if (gif2ShakeContainerV71) {
+        gif2ShakeContainerV71.classList.remove("gif2-wrapper-hit");
+        void gif2ShakeContainerV71.offsetWidth;
+        gif2ShakeContainerV71.classList.add("gif2-wrapper-hit");
+        setTimeout(() => gif2ShakeContainerV71.classList.remove("gif2-wrapper-hit"), 220);
+      }
+
 
       const now =
         performance.now();
