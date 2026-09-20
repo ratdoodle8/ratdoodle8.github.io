@@ -1283,7 +1283,118 @@
   z-index: 9999 !important;
 }
 
+
+/* CURRENT PUSHUPS BOX — ACTUALLY FILL THE VISIBLE RECTANGLE */
+#pushupInfo {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  opacity: 1 !important;
+}
+
+#pushupInfo::before {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+}
+
 </style>
+
+<style id="FINAL-PUSHUP-BOX-FILL">
+#pushupInfo,
+#pushupInfo[style] {
+  background: white !important;
+  background-color: white !important;
+  background-image: none !important;
+  opacity: 1 !important;
+}
+#pushupInfo::before {
+  content: none !important;
+  display: none !important;
+}
+</style>
+
+
+<style id="FINAL-PUSHUP-BOX-FRONT">
+/* Solid white Current Pushups box, ABOVE the Weebie artwork. */
+#pushupInfo,
+#pushupInfo[style] {
+  position: relative !important;
+  z-index: 5000 !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  isolation: isolate !important;
+}
+
+#pushupInfo::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: -1 !important;
+  background: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Weebie stays behind the stats box. */
+#weebieArea,
+#weebieImage {
+  z-index: 10 !important;
+}
+</style>
+
+
+<style id="REFERENCE-LAYOUT-OVERRIDE">
+#pushupInfo {
+  position: absolute !important;
+  left: 24px !important;
+  top: 365px !important;
+  right: auto !important;
+  width: 140px !important;
+  height: 198px !important;
+  box-sizing: border-box !important;
+  transform: none !important;
+  z-index: 9000 !important;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  isolation: isolate !important;
+}
+
+#pushupInfo::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: #ffffff !important;
+  opacity: 1 !important;
+  z-index: -1 !important;
+}
+
+#weebieName {
+  position: absolute !important;
+  left: 18px !important;
+  top: 205px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 175px !important;
+  max-width: 175px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  text-align: left !important;
+  z-index: 9001 !important;
+}
+
+#weebieArea,
+#weebieImage {
+  z-index: 10 !important;
+}
+</style>
+
 </head>
 
 
@@ -2194,7 +2305,7 @@
       return 1 +
         (
           getPower() /
-          100
+          50
         );
 
     }
@@ -2291,7 +2402,7 @@
 
 
     function updateComboPowerEffects() {
-      const comboStrength = Math.min(1, combo / 250);
+      const comboStrength = Math.min(1, getPower() / 100);
       const power = getPower();
       const powerStrength = power / 100;
 
@@ -3087,9 +3198,9 @@
       name.style.left = "0px";
     }
 
-    pinWeebieNameToFarLeft();
-    window.addEventListener("resize", pinWeebieNameToFarLeft);
-    window.addEventListener("scroll", pinWeebieNameToFarLeft, { passive: true });
+    /* reference layout controls Weebie name position */
+    /* dynamic Weebie-name resize pin disabled */
+    /* dynamic Weebie-name scroll pin disabled */
 
 </script>
 
