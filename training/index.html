@@ -1843,6 +1843,55 @@
 }
 
 </style>
+<style id="V54-GIF2-DOWN">
+#gif2 { top: 14px !important; }
+</style>
+
+<style id="V55-GIF1-PROGRESSIVE-EFFECT">
+/* GIF1 keeps its transparent/removed background. Only the visible GIF pixels are affected. */
+#gif1 {
+  background: transparent !important;
+  transform-origin: 50% 50% !important;
+  filter:
+    sepia(var(--g1-sepia, 0%))
+    saturate(var(--g1-sat, 100%))
+    hue-rotate(var(--g1-hue, 0deg))
+    contrast(var(--g1-contrast, 100%)) !important;
+}
+
+@keyframes gif1ProgressiveDistortion {
+  0%,100% { translate:0 0; rotate:0deg; scale:1 1; skew:0deg 0deg; }
+  20% {
+    translate:calc(var(--g1-move,0px)*-.55) calc(var(--g1-move,0px)*.18);
+    rotate:calc(var(--g1-rot,0deg)*-.45);
+    scale:calc(1 + var(--g1-warp,0)) calc(1 - var(--g1-warp,0)*.35);
+    skew:calc(var(--g1-skew,0deg)*.45) 0deg;
+  }
+  40% {
+    translate:calc(var(--g1-move,0px)*.7) calc(var(--g1-move,0px)*-.22);
+    rotate:calc(var(--g1-rot,0deg)*.6);
+    scale:calc(1 - var(--g1-warp,0)*.3) calc(1 + var(--g1-warp,0)*.8);
+    skew:calc(var(--g1-skew,0deg)*-.65) calc(var(--g1-skew,0deg)*.18);
+  }
+  60% {
+    translate:calc(var(--g1-move,0px)*-.8) calc(var(--g1-move,0px)*-.12);
+    rotate:calc(var(--g1-rot,0deg)*-.75);
+    scale:calc(1 + var(--g1-warp,0)*.55) calc(1 - var(--g1-warp,0)*.18);
+    skew:calc(var(--g1-skew,0deg)*.75) calc(var(--g1-skew,0deg)*-.15);
+  }
+  80% {
+    translate:calc(var(--g1-move,0px)*.5) calc(var(--g1-move,0px)*.16);
+    rotate:calc(var(--g1-rot,0deg)*.35);
+    scale:calc(1 - var(--g1-warp,0)*.18) calc(1 + var(--g1-warp,0)*.45);
+    skew:calc(var(--g1-skew,0deg)*-.35) 0deg;
+  }
+}
+
+#gif1.gif1-progressive-effect {
+  animation:gif1ProgressiveDistortion var(--g1-time,1200ms) linear infinite !important;
+}
+</style>
+
 </head>
 
 
@@ -1862,8 +1911,7 @@
 
     <section id="topSection">
 
-      <h1 id="weebieTrainingActual">
-        Weebie Training
+      <h1 id="weebieTrainingActual">&nbsp;&nbsp;&nbsp;&nbsp;Weebie Training
       </h1>
 
 
@@ -3726,6 +3774,48 @@
   title.style.bottom = "auto";
   title.style.margin = "0";
   title.style.transform = "none";
+})();
+</script>
+
+
+<script id="V55-GIF1-PROGRESSIVE-JS">
+(function () {
+  const gif1 = document.getElementById("gif1");
+  if (!gif1) return;
+
+  function updateGif1Effect() {
+    const c = (typeof combo === "number") ? combo : 0;
+    const p = (typeof getPower === "function") ? getPower() : 0;
+
+    /* Very slow progression: combo ramps to 2000; Power contributes gently. */
+    const comboPart = Math.min(1, c / 2000);
+    const powerPart = Math.min(1, p / 100);
+    const strength = Math.min(1, comboPart * .75 + powerPart * .25);
+
+    gif1.style.setProperty("--g1-sepia", (strength * 55).toFixed(1) + "%");
+    gif1.style.setProperty("--g1-sat", (100 + strength * 170).toFixed(1) + "%");
+    gif1.style.setProperty("--g1-hue", (-strength * 18).toFixed(2) + "deg");
+    gif1.style.setProperty("--g1-contrast", (100 + strength * 28).toFixed(1) + "%");
+
+    gif1.style.setProperty("--g1-move", (strength * 3.2).toFixed(2) + "px");
+    gif1.style.setProperty("--g1-rot", (strength * 1.25).toFixed(3) + "deg");
+    gif1.style.setProperty("--g1-warp", (strength * .035).toFixed(4));
+    gif1.style.setProperty("--g1-skew", (strength * 1.7).toFixed(3) + "deg");
+    gif1.style.setProperty("--g1-time", Math.round(1400 - strength * 500) + "ms");
+
+    gif1.classList.toggle("gif1-progressive-effect", strength > .002);
+  }
+
+  window.updateGif1ProgressiveEffect = updateGif1Effect;
+
+  const observer = new MutationObserver(updateGif1Effect);
+  const comboNode = document.getElementById("comboNumber") || document.getElementById("combo");
+  const powerNode = document.getElementById("powerFill");
+  if (comboNode) observer.observe(comboNode, {subtree:true, childList:true, characterData:true});
+  if (powerNode) observer.observe(powerNode, {attributes:true, attributeFilter:["style"]});
+
+  setInterval(updateGif1Effect, 120);
+  updateGif1Effect();
 })();
 </script>
 
