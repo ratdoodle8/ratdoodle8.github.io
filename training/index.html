@@ -2188,6 +2188,58 @@
 }
 </style>
 
+
+<style id="V77-TAP-ONLY-GIF1-AND-CUTE-STARS">
+/* GIF1 has NO glow or shake while idle. Its existing progressive color/distortion
+   can remain, but all glow is removed until the actual tap burst. */
+#gif1:not(.gif1-fire-hit) {
+  animation: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter:
+    sepia(var(--g1-sepia, 0%))
+    saturate(var(--g1-sat, 100%))
+    hue-rotate(var(--g1-hue, 0deg))
+    contrast(var(--g1-contrast, 100%)) !important;
+}
+
+/* Replace the sharp outlined text stars with soft rounded burst shapes. */
+#gif2PushupStar,
+#weebiePushupStar {
+  font-size: 0 !important;
+  width: 52vmin !important;
+  height: 52vmin !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  -webkit-text-stroke: 0 transparent !important;
+  text-shadow: none !important;
+  background: white !important;
+  clip-path: polygon(
+    50% 0%,
+    58% 27%,
+    76% 10%,
+    73% 34%,
+    100% 30%,
+    79% 48%,
+    98% 63%,
+    72% 62%,
+    81% 91%,
+    58% 73%,
+    48% 100%,
+    41% 74%,
+    17% 94%,
+    28% 65%,
+    0% 68%,
+    23% 50%,
+    3% 35%,
+    30% 36%,
+    22% 9%,
+    43% 29%
+  ) !important;
+  border-radius: 38% !important;
+}
+</style>
+
 </head>
 
 
