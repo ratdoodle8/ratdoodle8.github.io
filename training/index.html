@@ -1892,6 +1892,52 @@
 }
 </style>
 
+
+<style id="V56-GIF2-PROGRESSIVE-EFFECT">
+/* Same progressive effect for GIF2. Background remains transparent. */
+#gif2 {
+  background: transparent !important;
+  transform-origin: 50% 50% !important;
+  filter:
+    sepia(var(--g2-sepia, 0%))
+    saturate(var(--g2-sat, 100%))
+    hue-rotate(var(--g2-hue, 0deg))
+    contrast(var(--g2-contrast, 100%)) !important;
+}
+
+@keyframes gif2ProgressiveDistortionV56 {
+  0%,100% { translate:0 0; rotate:0deg; scale:1 1; skew:0deg 0deg; }
+  20% {
+    translate:calc(var(--g2-move,0px)*-.55) calc(var(--g2-move,0px)*.18);
+    rotate:calc(var(--g2-rot,0deg)*-.45);
+    scale:calc(1 + var(--g2-warp,0)) calc(1 - var(--g2-warp,0)*.35);
+    skew:calc(var(--g2-skew,0deg)*.45) 0deg;
+  }
+  40% {
+    translate:calc(var(--g2-move,0px)*.7) calc(var(--g2-move,0px)*-.22);
+    rotate:calc(var(--g2-rot,0deg)*.6);
+    scale:calc(1 - var(--g2-warp,0)*.3) calc(1 + var(--g2-warp,0)*.8);
+    skew:calc(var(--g2-skew,0deg)*-.65) calc(var(--g2-skew,0deg)*.18);
+  }
+  60% {
+    translate:calc(var(--g2-move,0px)*-.8) calc(var(--g2-move,0px)*-.12);
+    rotate:calc(var(--g2-rot,0deg)*-.75);
+    scale:calc(1 + var(--g2-warp,0)*.55) calc(1 - var(--g2-warp,0)*.18);
+    skew:calc(var(--g2-skew,0deg)*.75) calc(var(--g2-skew,0deg)*-.15);
+  }
+  80% {
+    translate:calc(var(--g2-move,0px)*.5) calc(var(--g2-move,0px)*.16);
+    rotate:calc(var(--g2-rot,0deg)*.35);
+    scale:calc(1 - var(--g2-warp,0)*.18) calc(1 + var(--g2-warp,0)*.45);
+    skew:calc(var(--g2-skew,0deg)*-.35) 0deg;
+  }
+}
+
+#gif2.gif2-progressive-effect {
+  animation: gif2ProgressiveDistortionV56 var(--g2-time,1200ms) linear infinite !important;
+}
+</style>
+
 </head>
 
 
@@ -3816,6 +3862,38 @@
 
   setInterval(updateGif1Effect, 120);
   updateGif1Effect();
+})();
+</script>
+
+
+<script id="V56-GIF2-PROGRESSIVE-JS">
+(function () {
+  const gif2 = document.getElementById("gif2");
+  if (!gif2) return;
+
+  function updateGif2Effect() {
+    const c = (typeof combo === "number") ? combo : 0;
+    const p = (typeof getPower === "function") ? getPower() : 0;
+
+    const comboPart = Math.min(1, c / 2000);
+    const powerPart = Math.min(1, p / 100);
+    const strength = Math.min(1, comboPart * .75 + powerPart * .25);
+
+    gif2.style.setProperty("--g2-sepia", (strength * 55).toFixed(1) + "%");
+    gif2.style.setProperty("--g2-sat", (100 + strength * 170).toFixed(1) + "%");
+    gif2.style.setProperty("--g2-hue", (-strength * 18).toFixed(2) + "deg");
+    gif2.style.setProperty("--g2-contrast", (100 + strength * 28).toFixed(1) + "%");
+    gif2.style.setProperty("--g2-move", (strength * 3.2).toFixed(2) + "px");
+    gif2.style.setProperty("--g2-rot", (strength * 1.25).toFixed(3) + "deg");
+    gif2.style.setProperty("--g2-warp", (strength * .035).toFixed(4));
+    gif2.style.setProperty("--g2-skew", (strength * 1.7).toFixed(3) + "deg");
+    gif2.style.setProperty("--g2-time", Math.round(1400 - strength * 500) + "ms");
+
+    gif2.classList.toggle("gif2-progressive-effect", strength > .002);
+  }
+
+  setInterval(updateGif2Effect, 120);
+  updateGif2Effect();
 })();
 </script>
 
