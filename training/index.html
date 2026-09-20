@@ -2056,6 +2056,11 @@
     const BURST_DURATION_MS =
       630;
 
+      function getBurstDurationMs() {
+        const speedIncrease = (getPower() / 2) * 0.01;
+        return BURST_DURATION_MS / (1 + speedIncrease);
+      }
+
     const MAX_MULTIPLIER =
       100;
 
@@ -2813,7 +2818,7 @@
           1 -
           (
             elapsed /
-            BURST_DURATION_MS
+            getBurstDurationMs()
           )
         );
 
@@ -2900,7 +2905,7 @@
         (
           now - burstStartedAt
         ) <
-        BURST_DURATION_MS
+        getBurstDurationMs()
       ) {
         combo++;
       }
