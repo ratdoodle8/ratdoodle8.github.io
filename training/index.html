@@ -2240,6 +2240,37 @@
 }
 </style>
 
+
+<style id="V78-400PX-ASSET-CAP">
+/* Generated pushup burst assets: never larger than 400x400. */
+#gif2PushupStar,
+#weebiePushupStar {
+  width: min(52vmin, 400px) !important;
+  height: min(52vmin, 400px) !important;
+  max-width: 400px !important;
+  max-height: 400px !important;
+}
+
+/* Keep their animation scaling from exceeding the 400px asset box. */
+@keyframes gif2StarFadeV72 {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.45); }
+  35%  { opacity: .9; transform: translate(-50%, -50%) scale(.92); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes weebieStarFadeV73 {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.45); }
+  35%  { opacity: .9; transform: translate(-50%, -50%) scale(.92); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Keep the tap-only GIF1 fire/glow visual footprint restrained around the asset. */
+#gif1 {
+  max-width: 400px !important;
+  max-height: 400px !important;
+}
+</style>
+
 </head>
 
 
