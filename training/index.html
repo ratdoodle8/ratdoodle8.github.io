@@ -1395,6 +1395,143 @@
 }
 </style>
 
+
+<style id="REFERENCE-LAYOUT-CORRECTION">
+#weebieName {
+  position: absolute !important;
+  left: 0 !important;
+  top: 200px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 190px !important;
+  max-width: 190px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  text-align: left !important;
+  z-index: 9001 !important;
+  font-size: clamp(38px, 11vw, 62px) !important;
+}
+
+#pushupInfo {
+  position: absolute !important;
+  left: 18px !important;
+  top: 365px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 147px !important;
+  height: 198px !important;
+  margin: 0 !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  opacity: 1 !important;
+  z-index: 9000 !important;
+}
+
+#pushupInfo::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  background: #fff !important;
+  z-index: -1 !important;
+}
+
+#weebieArea,
+#weebieImage {
+  z-index: 10 !important;
+}
+</style>
+
+<style>
+
+/* 5,000 pushups XP bar — taller only. */
+#progressBar {
+  height: 20px !important;
+  min-height: 20px !important;
+}
+#progressFill {
+  height: 100% !important;
+}
+
+</style>
+<style>
+
+/* CRAZY WEEBIE ART HIT SHAKE — fires on EVERY pushup tap. */
+@keyframes weebieCrazyHitShake {
+  0%   { transform: translateY(-14px) translate(0,0) rotate(0deg) scale(1); }
+  10%  { transform: translateY(-14px) translate(-18px, 7px) rotate(-7deg) scale(1.04); }
+  20%  { transform: translateY(-14px) translate(16px,-10px) rotate(8deg) scale(.97); }
+  30%  { transform: translateY(-14px) translate(-14px,-5px) rotate(-6deg) scale(1.05); }
+  40%  { transform: translateY(-14px) translate(19px, 8px) rotate(7deg) scale(.98); }
+  50%  { transform: translateY(-14px) translate(-17px, 5px) rotate(-8deg) scale(1.04); }
+  60%  { transform: translateY(-14px) translate(13px,-8px) rotate(6deg) scale(.98); }
+  70%  { transform: translateY(-14px) translate(-10px, 6px) rotate(-5deg) scale(1.03); }
+  80%  { transform: translateY(-14px) translate(8px,-4px) rotate(4deg) scale(.99); }
+  90%  { transform: translateY(-14px) translate(-4px, 2px) rotate(-2deg) scale(1.01); }
+  100% { transform: translateY(-14px) translate(0,0) rotate(0deg) scale(1); }
+}
+
+#weebieImage.weebie-crazy-hit {
+  animation: weebieCrazyHitShake 240ms linear !important;
+  transform-origin: 50% 55% !important;
+  will-change: transform !important;
+}
+
+</style>
+<style>
+
+/* ===== 10X CRAZIER EFFECTS ===== */
+
+/* Every tap: extremely violent Weebie hit shake. */
+@keyframes weebieCrazyHitShake10X {
+  0%   { transform:translateY(-14px) translate(0,0) rotate(0deg) scale(1); }
+  8%   { transform:translateY(-14px) translate(-55px,25px) rotate(-22deg) scale(1.18); }
+  16%  { transform:translateY(-14px) translate(50px,-32px) rotate(25deg) scale(.82); }
+  24%  { transform:translateY(-14px) translate(-48px,-20px) rotate(-20deg) scale(1.22); }
+  32%  { transform:translateY(-14px) translate(58px,27px) rotate(24deg) scale(.85); }
+  40%  { transform:translateY(-14px) translate(-52px,18px) rotate(-26deg) scale(1.20); }
+  48%  { transform:translateY(-14px) translate(46px,-28px) rotate(22deg) scale(.86); }
+  56%  { transform:translateY(-14px) translate(-40px,24px) rotate(-19deg) scale(1.16); }
+  64%  { transform:translateY(-14px) translate(34px,-20px) rotate(17deg) scale(.90); }
+  72%  { transform:translateY(-14px) translate(-28px,16px) rotate(-14deg) scale(1.12); }
+  80%  { transform:translateY(-14px) translate(20px,-12px) rotate(10deg) scale(.94); }
+  90%  { transform:translateY(-14px) translate(-10px,6px) rotate(-6deg) scale(1.05); }
+  100% { transform:translateY(-14px) translate(0,0) rotate(0deg) scale(1); }
+}
+#weebieImage.weebie-crazy-hit {
+  animation:weebieCrazyHitShake10X 310ms linear !important;
+}
+
+/* Whole-game tap impact becomes dramatically stronger as combo rises. */
+@keyframes comboPowerShake10X {
+  0%,100% { transform:translate(0,0) rotate(0deg); }
+  12% { transform:translate(calc(var(--sx10)*-1),var(--sy10)) rotate(calc(var(--sr10)*-1)); }
+  24% { transform:translate(var(--sx10),calc(var(--sy10)*-1)) rotate(var(--sr10)); }
+  38% { transform:translate(calc(var(--sx10)*-.9),calc(var(--sy10)*-.7)) rotate(calc(var(--sr10)*-.8)); }
+  52% { transform:translate(calc(var(--sx10)*.85),calc(var(--sy10)*.8)) rotate(calc(var(--sr10)*.75)); }
+  66% { transform:translate(calc(var(--sx10)*-.65),calc(var(--sy10)*.55)) rotate(calc(var(--sr10)*-.6)); }
+  82% { transform:translate(calc(var(--sx10)*.4),calc(var(--sy10)*-.35)) rotate(calc(var(--sr10)*.35)); }
+}
+#page.combo-power-hit {
+  animation:comboPowerShake10X var(--st10,180ms) linear !important;
+}
+
+/* Power bar shake is now extremely obvious. */
+@keyframes powerBarShake10X {
+  0%,100% { transform:translate(0,7px) rotate(0); }
+  20% { transform:translate(calc(var(--ps10)*-1),4px) rotate(-2deg); }
+  40% { transform:translate(var(--ps10),10px) rotate(2deg); }
+  60% { transform:translate(calc(var(--ps10)*-.8),5px) rotate(-1.5deg); }
+  80% { transform:translate(calc(var(--ps10)*.7),9px) rotate(1.5deg); }
+}
+#comboBars .meter-block.power-shaking {
+  animation:powerBarShake10X 55ms linear infinite !important;
+}
+
+</style>
 </head>
 
 
@@ -2425,7 +2562,7 @@
 
       const powerBlock = document.querySelector("#powerBar")?.closest(".meter-block");
       if (powerBlock) {
-        powerBlock.style.setProperty("--ps", `${(powerStrength * 4.5).toFixed(2)}px`);
+        powerBlock.style.setProperty("--ps10", `${(3 + powerStrength * 35).toFixed(2)}px`);
         powerBlock.classList.toggle("power-shaking", power > 0);
       }
     }
@@ -2435,10 +2572,10 @@
       if (!page) return;
 
       const strength = Math.min(1, combo / 200);
-      page.style.setProperty("--sx", `${(1 + strength * 9).toFixed(2)}px`);
-      page.style.setProperty("--sy", `${(.6 + strength * 6).toFixed(2)}px`);
-      page.style.setProperty("--sr", `${(.15 + strength * 2.5).toFixed(2)}deg`);
-      page.style.setProperty("--st", `${Math.round(105 + strength * 100)}ms`);
+      page.style.setProperty("--sx10", `${(10 + strength * 45).toFixed(2)}px`);
+      page.style.setProperty("--sy10", `${(6 + strength * 30).toFixed(2)}px`);
+      page.style.setProperty("--sr10", `${(1.5 + strength * 10).toFixed(2)}deg`);
+      page.style.setProperty("--st10", `${Math.round(150 + strength * 180)}ms`);
 
       page.classList.remove("combo-power-hit");
       void page.offsetWidth;
@@ -2498,6 +2635,15 @@
        ONE PUSHUP
     ====================================== */
 
+
+    function triggerWeebieCrazyShake() {
+      const art = document.getElementById("weebieImage");
+      if (!art) return;
+      art.classList.remove("weebie-crazy-hit");
+      void art.offsetWidth;
+      art.classList.add("weebie-crazy-hit");
+    }
+
     function handlePushup() {
 
       if (!loaded) {
@@ -2510,6 +2656,7 @@
 
 
       registerComboTap();
+      triggerWeebieCrazyShake();
 
       /*
         Multiplier now affects ACTUAL pushups.
