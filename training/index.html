@@ -991,6 +991,60 @@
       }
     }
 
+
+/* ===== EXACT POSITION/SIZE CHANGES ===== */
+
+/* Move ONLY the top edge of the bottom button down ~70px.
+   Bottom stays where it was, so nothing else reflows. */
+#trainingButton {
+  transform: translateY(70px) !important;
+  height: calc(100% - 70px) !important;
+  min-height: 0 !important;
+}
+
+/* Move ONLY the pushup-stat text block down 100px. */
+#pushupInfo {
+  transform: translateY(110px) !important;
+}
+
+/* Burst + Power: identical dimensions and chunkier. */
+#burstBar,
+#powerBar {
+  height: 22px !important;
+  min-height: 22px !important;
+}
+
+#burstFill,
+#powerFill {
+  height: 100% !important;
+  border-radius: 999px 0 0 999px !important;
+}
+
+/* Pebble: another ~10% larger, overlap explicitly allowed. */
+#weebieImage {
+  width: 132% !important;
+  margin-left: -16% !important;
+  transform: translateY(-14px) !important;
+  overflow: visible !important;
+}
+
+/* Combo + multiplier bubbles: roughly DOUBLE height. */
+#comboBars .spike-stat {
+  min-height: 88px !important;
+  height: 88px !important;
+  padding: 10px 7px !important;
+  box-sizing: border-box !important;
+}
+
+#comboBars .spike-number {
+  font-size: 22px !important;
+  line-height: 1 !important;
+}
+
+#comboBars .combo-stat-row {
+  align-items: center !important;
+}
+
 </style>
 </head>
 
