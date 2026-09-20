@@ -1787,14 +1787,11 @@
 }
 
 </style>
-<style id="V45-VERIFIED-VISIBLE-H1">
+<style id="V46-TITLE-LOCKED-TO-GIF2">
 
-/* v45 — verified visible H1 itself */
+/* v46: Weebie Training locked to GIF2's TOP-LEFT, without moving GIF2 */
 #weebieTrainingActual {
-  position: absolute !important;
-  left: 0 !important;
-  right: auto !important;
-  top: 0 !important;
+  position: fixed !important;
   margin: 0 !important;
   padding: 0 !important;
   transform: none !important;
@@ -1805,6 +1802,14 @@
   line-height: 1 !important;
   white-space: nowrap !important;
   z-index: 30000 !important;
+  pointer-events: none !important;
+}
+
+</style>
+<style id="V47-DOUBLE-TITLE-SIZE">
+
+#weebieTrainingActual {
+  font-size: 18px !important;
 }
 
 </style>
@@ -3647,6 +3652,36 @@
     /* dynamic Weebie-name resize pin disabled */
     /* dynamic Weebie-name scroll pin disabled */
 
+</script>
+
+
+<script id="V46-TITLE-GIF2-LOCK">
+(function () {
+  function lockTrainingTitleToGif2() {
+    const gif2 = document.getElementById("gif2");
+    const title = document.getElementById("weebieTrainingActual");
+    if (!gif2 || !title) return;
+
+    const r = gif2.getBoundingClientRect();
+
+    /* Left edge EXACTLY matches GIF2.
+       Title sits directly above GIF2. */
+    title.style.left = r.left + "px";
+    title.style.top = Math.max(0, r.top - title.offsetHeight) + "px";
+  }
+
+  window.addEventListener("load", lockTrainingTitleToGif2);
+  window.addEventListener("resize", lockTrainingTitleToGif2);
+  window.addEventListener("orientationchange", lockTrainingTitleToGif2);
+
+  if (document.readyState !== "loading") {
+    requestAnimationFrame(lockTrainingTitleToGif2);
+  } else {
+    document.addEventListener("DOMContentLoaded", function () {
+      requestAnimationFrame(lockTrainingTitleToGif2);
+    });
+  }
+})();
 </script>
 
 </body>
