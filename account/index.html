@@ -150,6 +150,24 @@
       z-index: 3;
     }
 
+    #weebieEquippedLayers {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .weebie-equipped-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
 
     /* NEW STAT PROMPT */
 
@@ -459,6 +477,8 @@
             id="weebieOutline"
             class="weebie-layer"
           ></div>
+
+          <div id="weebieEquippedLayers"></div>
 
         </div>
 
@@ -1313,9 +1333,50 @@ async function loadInventory() {
   }
 }
 
+function renderEquippedItems() {
+  const container =
+    document.getElementById("weebieEquippedLayers");
+
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const equippedItems =
+    currentInventory
+      .filter(
+        item =>
+          item.type === "swag" &&
+          Boolean(item.equipped) &&
+          item.image
+      )
+      .sort(
+        (a, b) =>
+          Number(a.layernumber ?? 4) -
+          Number(b.layernumber ?? 4)
+      );
+
+  for (const item of equippedItems) {
+    const image =
+      document.createElement("img");
+
+    image.className =
+      "weebie-equipped-layer";
+
+    image.src = item.image;
+    image.alt = "";
+
+    image.style.zIndex =
+      String(Number(item.layernumber ?? 4));
+
+    container.appendChild(image);
+  }
+}
+
+
 function renderInventory() {
   inventoryGrid.innerHTML = "";
   inventoryMessage.textContent = "";
+  renderEquippedItems();
   if (currentInventory.length === 0) { inventoryEmpty.style.display = "block"; return; }
   inventoryEmpty.style.display = "none";
   for (const item of currentInventory) {
