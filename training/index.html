@@ -2454,6 +2454,120 @@ body.pushup-blue-wash::before {
 }
 </style>
 
+
+<style id="V82-WEEBIE-COLOR1-FRONT-STAR">
+#weebieColorPushupStar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(52vmin, 400px);
+  height: min(52vmin, 400px);
+  max-width: 400px;
+  max-height: 400px;
+  font-size: 0;
+  line-height: 0;
+  opacity: 0;
+  z-index: 0.5;
+  pointer-events: none;
+  user-select: none;
+  background: var(--weebie-color1, var(--color1, #ffffff));
+  clip-path: polygon(
+    50% 0%,
+    58% 27%,
+    76% 10%,
+    73% 34%,
+    100% 30%,
+    79% 48%,
+    98% 63%,
+    72% 62%,
+    81% 91%,
+    58% 73%,
+    48% 100%,
+    41% 74%,
+    17% 94%,
+    28% 65%,
+    0% 68%,
+    23% 50%,
+    3% 35%,
+    30% 36%,
+    22% 9%,
+    43% 29%
+  );
+  border-radius: 38%;
+  transform: translate(-50%, -50%) scale(.45);
+}
+
+#weebieColorPushupStar.weebie-color-star-hit {
+  animation: weebieColorStarFadeV82 220ms ease-out forwards !important;
+}
+
+@keyframes weebieColorStarFadeV82 {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(.45); }
+  35%  { opacity: .9; transform: translate(-50%, -50%) scale(.92); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Layer order: old stars/effects < color1 star < Weebie artwork. */
+#weebiePushupStar { z-index: 0 !important; }
+#weebieColorPushupStar { z-index: 1 !important; }
+#weebieArt,
+#weebieLayers,
+#weebieEquippedLayers {
+  position: relative;
+  z-index: 2 !important;
+}
+</style>
+
+
+<style id="V83-COLOR2-DUAL-FLARE">
+#pushupLensFlare .flareCore {
+  background: var(--weebie-color2, var(--color2, #111111)) !important;
+  box-shadow:
+    0 0 35px 18px color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 72%, transparent),
+    0 0 95px 52px color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 30%, transparent) !important;
+}
+
+#pushupLensFlare .flareRay,
+#pushupLensFlare .flareOrb {
+  background: color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 38%, transparent) !important;
+}
+
+#pushupLensFlare::after {
+  background:
+    radial-gradient(circle at 50% 50%,
+      color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 92%, transparent) 0 12%,
+      color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 55%, transparent) 13% 20%,
+      color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 20%, transparent) 28%,
+      transparent 62%),
+    linear-gradient(28deg,
+      transparent 42%,
+      color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 25%, transparent) 48%,
+      color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 25%, transparent) 52%,
+      transparent 58%) !important;
+}
+
+/* Slight background tint now uses color2 too. */
+body.pushup-blue-wash::before {
+  animation: pushupColor2WashV83 1000ms ease-out forwards !important;
+}
+@keyframes pushupColor2WashV83 {
+  0%   { background: transparent; }
+  12%  { background: color-mix(in srgb, var(--weebie-color2, var(--color2, #111111)) 7.5%, transparent); }
+  100% { background: transparent; }
+}
+</style>
+
+
+<style id="V84-COLOR1-STAR-DOUBLE-SIZE">
+/* Color1 star is exactly 2x the other 400px-max Weebie star. */
+#weebieColorPushupStar {
+  width: min(104vmin, 800px) !important;
+  height: min(104vmin, 800px) !important;
+  max-width: 800px !important;
+  max-height: 800px !important;
+}
+</style>
+
 </head>
 
 
@@ -2598,6 +2712,7 @@ body.pushup-blue-wash::before {
 
       <div id="weebieArea">
         <div id="weebiePushupStar" aria-hidden="true">★</div>
+        <div id="weebieColorPushupStar" aria-hidden="true">★</div>
 
         <div id="weebieName">
         </div>
@@ -3564,6 +3679,23 @@ body.pushup-blue-wash::before {
           weebiePushupStarV73.classList.remove("weebie-star-hit");
           void weebiePushupStarV73.offsetWidth;
           weebiePushupStarV73.classList.add("weebie-star-hit");
+
+          const weebieColorPushupStarV82 = document.getElementById("weebieColorPushupStar");
+          if (weebieColorPushupStarV82) {
+            const colorCandidatesV82 = [
+              getComputedStyle(document.documentElement).getPropertyValue("--weebie-color1").trim(),
+              getComputedStyle(document.documentElement).getPropertyValue("--color1").trim(),
+              getComputedStyle(document.body).getPropertyValue("--weebie-color1").trim(),
+              getComputedStyle(document.body).getPropertyValue("--color1").trim()
+            ].filter(Boolean);
+            if (colorCandidatesV82.length) {
+              weebieColorPushupStarV82.style.background = colorCandidatesV82[0];
+            }
+            weebieColorPushupStarV82.classList.remove("weebie-color-star-hit");
+            void weebieColorPushupStarV82.offsetWidth;
+            weebieColorPushupStarV82.classList.add("weebie-color-star-hit");
+            setTimeout(() => weebieColorPushupStarV82.classList.remove("weebie-color-star-hit"), 220);
+          }
           setTimeout(() => weebiePushupStarV73.classList.remove("weebie-star-hit"), 220);
         }
       }
@@ -4450,6 +4582,30 @@ body.pushup-blue-wash::before {
   }
 
   gif1.addEventListener("pointerdown", fireGlow);
+})();
+</script>
+
+
+<script id="V82-WEEBIE-COLOR1-STAR-SYNC">
+(function () {
+  const star = document.getElementById("weebieColorPushupStar");
+  if (!star) return;
+
+  function syncColor1() {
+    const root = document.documentElement;
+    const body = document.body;
+    const candidates = [
+      getComputedStyle(root).getPropertyValue("--weebie-color1").trim(),
+      getComputedStyle(root).getPropertyValue("--color1").trim(),
+      getComputedStyle(body).getPropertyValue("--weebie-color1").trim(),
+      getComputedStyle(body).getPropertyValue("--color1").trim()
+    ].filter(Boolean);
+    if (candidates.length) star.style.background = candidates[0];
+  }
+
+  syncColor1();
+  setTimeout(syncColor1, 250);
+  setTimeout(syncColor1, 1000);
 })();
 </script>
 
