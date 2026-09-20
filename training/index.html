@@ -4178,6 +4178,18 @@ body.pushup-blue-wash::before {
 
       showPushupDown();
 
+      /* V85: sync effect colors directly to the loaded Weebie's real colors. */
+      const effectColor1V85 = COLORS[currentWeebie.primary_color] || "#F5F5F5";
+      const effectColor2V85 = COLORS[currentWeebie.secondary_color] || "#F5F5F5";
+
+      document.documentElement.style.setProperty("--weebie-color1", effectColor1V85);
+      document.documentElement.style.setProperty("--weebie-color2", effectColor2V85);
+
+      const color1StarV85 = document.getElementById("weebieColorPushupStar");
+      if (color1StarV85) {
+        color1StarV85.style.background = effectColor1V85;
+      }
+
 
       return true;
 
