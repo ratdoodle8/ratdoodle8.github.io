@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Ratdoodle</title>
+
+  <script>
+    const path = window.location.pathname;
+
+    if (path.startsWith("/user/")) {
+      sessionStorage.setItem(
+        "rd_user_path",
+        path
+      );
+
+      window.location.replace(
+        "/user/?profile=" +
+        encodeURIComponent(
+          path.substring("/user/".length)
+        )
+      );
+    }
+  </script>
+</head>
+
+<body>
+  <h1>404</h1>
+  <p>Page not found.</p>
+</body>
+</html>
