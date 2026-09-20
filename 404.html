@@ -8,17 +8,16 @@
     const path = window.location.pathname;
 
     if (path.startsWith("/user/")) {
-      sessionStorage.setItem(
-        "rd_user_path",
-        path
-      );
+      const username = path
+        .substring("/user/".length)
+        .replace(/\/+$/, "");
 
-      window.location.replace(
-        "/user/?profile=" +
-        encodeURIComponent(
-          path.substring("/user/".length)
-        )
-      );
+      if (username) {
+        window.location.replace(
+          "/user/?profile=" +
+          encodeURIComponent(username)
+        );
+      }
     }
   </script>
 </head>
