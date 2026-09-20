@@ -1749,55 +1749,41 @@
 }
 
 </style>
-<style id="V39-GIF1-ABOVE-COMBO">
+<style id="V42-TOP-ONLY-FIX">
 
-/* v39: GIF1 is anchored directly above the combo bubbles at every screen size.
-   Absolute positioning means nothing else is moved/reflowed. */
-#comboBars {
-  overflow: visible !important;
-}
-
+/* v42: ONLY GIF1 + title. GIF2 and every other element remain untouched. */
 #gif1 {
   position: absolute !important;
+  top: 0 !important;
+  right: 8px !important;
+  left: auto !important;
+  bottom: auto !important;
   z-index: 20000 !important;
-  left: 50% !important;
-  top: auto !important;
-  bottom: 100% !important;
-  transform: translateX(-50%) !important;
   margin: 0 !important;
+  transform: none !important;
   pointer-events: none !important;
 }
 
-</style>
-<style id="V40-TITLE-LOCKED-TO-GIF2">
-
-/* v40: lock Weebie Training to GIF2 */
-#gif2 {
-  position: relative !important;
-}
-
-/* Title: directly above GIF2, left edges locked together, width = half GIF2. */
 #topTitle,
 #trainingTitle,
 #weebieTraining,
 .weebie-training,
 .training-title {
   position: absolute !important;
-  left: 0 !important;
+  top: 4px !important;
+  left: 4px !important;
   right: auto !important;
-  bottom: 100% !important;
-  top: auto !important;
-  width: 50% !important;
-  max-width: 50% !important;
+  bottom: auto !important;
+  width: auto !important;
+  max-width: none !important;
   margin: 0 !important;
   padding: 0 !important;
   transform: none !important;
   text-align: left !important;
-  font-size: 9px !important;
+  font-size: 7px !important;
   line-height: 1 !important;
   white-space: nowrap !important;
   z-index: 20001 !important;
-  pointer-events: none !important;
 }
 
 </style>
@@ -1827,15 +1813,14 @@
 
       <!-- LARGE / HIGH / RIGHT -->
 
-      
-
-      <div id="comboBars">
-<img
+      <img
         id="gif1"
         src="/shared/gif1.gif"
         alt=""
         draggable="false"
       >
+
+      <div id="comboBars">
 
         <div class="combo-stat-row">
           <div class="spike-stat">
