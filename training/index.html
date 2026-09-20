@@ -1787,6 +1787,25 @@
 }
 
 </style>
+<style id="V44-ACTUAL-TITLE-LEFT">
+
+/* v44: ACTUAL Weebie Training title — hard-pinned to left edge */
+#title {
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  text-align: left !important;
+  transform: none !important;
+  font-size: 9px !important;
+  z-index: 30000 !important;
+}
+
+</style>
 </head>
 
 
@@ -2038,6 +2057,7 @@
 
     let combo =
       0;
+    let sessionPushups = 0;
 
     let burstStartedAt =
       0;
@@ -2691,7 +2711,8 @@
 
     function getMultiplier() {
 
-      return 1 + (getPower() / 10) * 0.5;
+      const multiplierRate = 0.5 + Math.floor(sessionPushups / 100) * 0.2;
+      return 1 + (getPower() / 10) * multiplierRate;
 
     }
 
@@ -2832,6 +2853,7 @@
 
 
     function registerComboTap() {
+      sessionPushups += 1;
 
       const now =
         performance.now();
