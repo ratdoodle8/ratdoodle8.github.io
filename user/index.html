@@ -1,47 +1,593 @@
-function getUsername() {
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
-  const profile =
-    params.get("profile");
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  if (profile) {
-    return profile.trim();
-  }
+  <title>User | Ratdoodle</title>
 
-  const parts =
-    window.location.pathname
-      .split("/")
-      .filter(Boolean);
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-  if (
-    parts.length >= 2 &&
-    parts[0] === "user"
-  ) {
-    return decodeURIComponent(
-      parts[1]
-    ).trim();
-  }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #bcc8cc;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
 
-  return "";
-}
+    .page {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .username {
+      margin: 0 0 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .weebie-image {
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      aspect-ratio: 1 / 1;
+      margin: 20px auto;
+    }
+
+    .weebie-layer {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+
+      -webkit-mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: contain;
+    }
+
+    .stat {
+      margin: 8px 0;
+      font-size: 18px;
+    }
+
+    .error {
+      margin-top: 25px;
+      font-size: 16px;
+    }
+
+    #profile {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <h1 id="pageTitle">
+      User
+    </h1>
+
+    <p
+      id="status"
+      class="error"
+    >
+      Loading...
+    </p>
+
+    <div id="profile">
+
+      <p
+        id="username"
+        class="username"
+      ></p>
+
+      <div
+        id="weebieImage"
+        class="weebie-image"
+      >
+        <div
+          id="primaryLayer"
+          class="weebie-layer"
+        ></div>
+
+        <div
+          id="secondaryLayer"
+          class="weebie-layer"
+        ></div>
+
+        <div
+          id="outlineLayer"
+          class="weebie-layer"
+        ></div>
+      </div>
+
+      <p class="stat">
+        Name:
+        <span id="weebieName"></span>
+      </p>
+
+      <p class="stat">
+        XP:
+        <span id="weebieXP">0</span>
+      </p>
+
+      <div id="publicStats"></div>
+
+    </div>
+
+  </main>
 
 
-const username = getUsername();
+  <script>
+    const API =
+      "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
 
-if (
-  new URLSearchParams(
-    window.location.search
-  ).has("profile") &&
-  username
-) {
-  history.replaceState(
-    null,
-    "",
-    "/user/" +
-    encodeURIComponent(username)
-  );
-}
+    const COLORS = {
+      "Teal": "#24B5A5",
+      "Tan": "#C9A875",
+      "Red": "#E04444",
+      "Pink": "#ee89f0",
+      "Blue": "#4A8FE7",
+      "Lime Green": "#8FD14F",
+      "White": "#F5F5F5",
+      "Purple": "#ed15ff",
+      "Silver": "#B8BEC4"
+    };
+
+
+    function getUsername() {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      const profile =
+        params.get("profile");
+
+
+      if (profile) {
+
+        return profile.trim();
+
+      }
+
+
+      const parts =
+        window.location.pathname
+          .split("/")
+          .filter(Boolean);
+
+
+      if (
+        parts.length >= 2 &&
+        parts[0].toLowerCase() === "user"
+      ) {
+
+        try {
+
+          return decodeURIComponent(
+            parts[1]
+          ).trim();
+
+        }
+
+        catch (error) {
+
+          return "";
+
+        }
+
+      }
+
+
+      return "";
+
+    }
+
+
+    function cleanVisibleURL(
+      username
+    ) {
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+
+      if (
+        params.has("profile") &&
+        username
+      ) {
+
+        history.replaceState(
+          null,
+          "",
+          "/user/" +
+          encodeURIComponent(
+            username
+          )
+        );
+
+      }
+
+    }
+
+
+    function setMask(
+      element,
+      image
+    ) {
+
+      element.style.webkitMaskImage =
+        `url("${image}")`;
+
+      element.style.maskImage =
+        `url("${image}")`;
+
+    }
+
+
+    function renderWeebie(
+      weebie
+    ) {
+
+      const primaryLayer =
+        document.getElementById(
+          "primaryLayer"
+        );
+
+      const secondaryLayer =
+        document.getElementById(
+          "secondaryLayer"
+        );
+
+      const outlineLayer =
+        document.getElementById(
+          "outlineLayer"
+        );
+
+
+      const noEyelashes =
+        String(
+          weebie.eyelashes || "Yes"
+        ).toLowerCase() === "no";
+
+
+      setMask(
+        primaryLayer,
+        "/shared/Weebie-Color1.png"
+      );
+
+
+      primaryLayer.style.backgroundColor =
+        COLORS[
+          weebie.primaryColor
+        ] || "#FFFFFF";
+
+
+      if (noEyelashes) {
+
+        setMask(
+          secondaryLayer,
+          "/shared/Weebie-Color2a.png"
+        );
+
+        outlineLayer.style.backgroundImage =
+          'url("/shared/Weebie-Outline2.png")';
+
+      }
+
+      else {
+
+        setMask(
+          secondaryLayer,
+          "/shared/Weebie-Color2.png"
+        );
+
+        outlineLayer.style.backgroundImage =
+          'url("/shared/Weebie-Outline.png")';
+
+      }
+
+
+      secondaryLayer.style.backgroundColor =
+        COLORS[
+          weebie.secondaryColor
+        ] || "#FFFFFF";
+
+    }
+
+
+    function renderPublicStats(
+      weebie
+    ) {
+
+      const container =
+        document.getElementById(
+          "publicStats"
+        );
+
+
+      container.innerHTML = "";
+
+
+      const stats =
+        weebie.stats || {};
+
+
+      const definitions =
+        weebie.statDefinitions || [];
+
+
+      for (
+        const definition
+        of definitions
+      ) {
+
+        if (
+          definition.id === "xp"
+        ) {
+
+          continue;
+
+        }
+
+
+        if (
+          stats[
+            definition.id
+          ] === undefined ||
+          stats[
+            definition.id
+          ] === null ||
+          stats[
+            definition.id
+          ] === ""
+        ) {
+
+          continue;
+
+        }
+
+
+        const paragraph =
+          document.createElement(
+            "p"
+          );
+
+
+        paragraph.className =
+          "stat";
+
+
+        const label =
+          document.createTextNode(
+            definition.label +
+            ": "
+          );
+
+
+        const value =
+          document.createElement(
+            "span"
+          );
+
+
+        value.textContent =
+          stats[
+            definition.id
+          ];
+
+
+        paragraph.appendChild(
+          label
+        );
+
+
+        paragraph.appendChild(
+          value
+        );
+
+
+        container.appendChild(
+          paragraph
+        );
+
+      }
+
+    }
+
+
+    async function loadProfile() {
+
+      const status =
+        document.getElementById(
+          "status"
+        );
+
+      const profile =
+        document.getElementById(
+          "profile"
+        );
+
+
+      const username =
+        getUsername();
+
+
+      if (!username) {
+
+        status.textContent =
+          "User not found.";
+
+        return;
+
+      }
+
+
+      try {
+
+        const response =
+          await fetch(
+            API +
+            "/user/" +
+            encodeURIComponent(
+              username
+            )
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          !response.ok ||
+          !data.success
+        ) {
+
+          status.textContent =
+            data.error ||
+            "User not found.";
+
+          return;
+
+        }
+
+
+        cleanVisibleURL(
+          data.username
+        );
+
+
+        document.title =
+          data.username +
+          " | Ratdoodle";
+
+
+        document.getElementById(
+          "pageTitle"
+        ).textContent =
+          data.username;
+
+
+        document.getElementById(
+          "username"
+        ).textContent =
+          "@" +
+          data.username;
+
+
+        status.style.display =
+          "none";
+
+
+        profile.style.display =
+          "block";
+
+
+        if (!data.weebie) {
+
+          document.getElementById(
+            "weebieImage"
+          ).style.display =
+            "none";
+
+
+          document.getElementById(
+            "weebieName"
+          ).parentElement.style.display =
+            "none";
+
+
+          document.getElementById(
+            "weebieXP"
+          ).parentElement.style.display =
+            "none";
+
+
+          document.getElementById(
+            "publicStats"
+          ).textContent =
+            "This user does not have a Weebie yet.";
+
+
+          return;
+
+        }
+
+
+        const weebie =
+          data.weebie;
+
+
+        document.getElementById(
+          "weebieName"
+        ).textContent =
+          weebie.name;
+
+
+        document.getElementById(
+          "weebieXP"
+        ).textContent =
+          Number(
+            weebie.stats?.xp || 0
+          ).toLocaleString();
+
+
+        renderWeebie(
+          weebie
+        );
+
+
+        renderPublicStats(
+          weebie
+        );
+
+      }
+
+      catch (error) {
+
+        status.textContent =
+          "Unable to load user.";
+
+      }
+
+    }
+
+
+    loadProfile();
+  </script>
+
+</body>
+</html>
