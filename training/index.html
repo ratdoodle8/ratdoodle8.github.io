@@ -1938,6 +1938,29 @@
 }
 </style>
 
+
+<style id="V57-NO-GIF-CLICK-BACKGROUND">
+#gif1, #gif2,
+#gif1.gif1-progressive-effect,
+#gif2.gif2-progressive-effect,
+#gif2.gif2-shake-hit {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+</style>
+
+
+<style id="V58-GIF2-COLOR-SHAKE-TRANSPARENT">
+#gif2,
+#gif2.gif2-progressive-effect,
+#gif2.gif2-shake-hit {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+</style>
+
 </head>
 
 
@@ -3879,14 +3902,14 @@
     const powerPart = Math.min(1, p / 100);
     const strength = Math.min(1, comboPart * .75 + powerPart * .25);
 
-    gif2.style.setProperty("--g2-sepia", (strength * 55).toFixed(1) + "%");
-    gif2.style.setProperty("--g2-sat", (100 + strength * 170).toFixed(1) + "%");
-    gif2.style.setProperty("--g2-hue", (-strength * 18).toFixed(2) + "deg");
-    gif2.style.setProperty("--g2-contrast", (100 + strength * 28).toFixed(1) + "%");
-    gif2.style.setProperty("--g2-move", (strength * 3.2).toFixed(2) + "px");
-    gif2.style.setProperty("--g2-rot", (strength * 1.25).toFixed(3) + "deg");
-    gif2.style.setProperty("--g2-warp", (strength * .035).toFixed(4));
-    gif2.style.setProperty("--g2-skew", (strength * 1.7).toFixed(3) + "deg");
+    gif2.style.setProperty("--g2-sepia", (strength * 165).toFixed(1) + "%");
+    gif2.style.setProperty("--g2-sat", (100 + strength * 510).toFixed(1) + "%");
+    gif2.style.setProperty("--g2-hue", (-strength * 54).toFixed(2) + "deg");
+    gif2.style.setProperty("--g2-contrast", (100 + strength * 84).toFixed(1) + "%");
+    gif2.style.setProperty("--g2-move", (strength * 9.6).toFixed(2) + "px");
+    gif2.style.setProperty("--g2-rot", (strength * 3.75).toFixed(3) + "deg");
+    gif2.style.setProperty("--g2-warp", (strength * .105).toFixed(4));
+    gif2.style.setProperty("--g2-skew", (strength * 5.1).toFixed(3) + "deg");
     gif2.style.setProperty("--g2-time", Math.round(1400 - strength * 500) + "ms");
 
     gif2.classList.toggle("gif2-progressive-effect", strength > .002);
