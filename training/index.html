@@ -1822,6 +1822,27 @@
 }
 
 </style>
+<style id="V52-GIF2-BEHIND-STRONGER-SHAKE">
+
+/* v52: GIF2 behind everything + slightly stronger independent shake */
+#gif2 {
+  position: relative !important;
+  z-index: -1 !important;
+}
+
+@keyframes gif2SlightlyStrongerShake {
+  0%,100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: -1.35px .65px; rotate: -.12deg; }
+  40% { translate: 1.45px -.75px; rotate: .13deg; }
+  60% { translate: -1.25px .55px; rotate: -.11deg; }
+  80% { translate: 1.15px -.60px; rotate: .10deg; }
+}
+
+#gif2.gif2-shake-hit {
+  animation: gif2SlightlyStrongerShake 930ms linear !important;
+}
+
+</style>
 </head>
 
 
@@ -2924,6 +2945,15 @@
 
 
 
+
+    function triggerGif2SlightlyStrongerShake() {
+      const gif2 = document.getElementById("gif2");
+      if (!gif2) return;
+      gif2.classList.remove("gif2-shake-hit");
+      void gif2.offsetWidth;
+      gif2.classList.add("gif2-shake-hit");
+    }
+
     function triggerVerticalStretch2() {
       const area = document.getElementById("weebieArea");
       if (!area) return;
@@ -2967,6 +2997,7 @@
 
       registerComboTap();
       triggerWeebieCrazyShake();
+      triggerGif2SlightlyStrongerShake();
       triggerSubtleFovStretch();
       triggerVerticalStretch2();
 
