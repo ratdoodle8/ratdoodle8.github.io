@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Random Item</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #bcc8cc;
+      color: #0007E6;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #login {
+      text-align: center;
+    }
+
+    input {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      padding: 10px;
+      width: 260px;
+      box-sizing: border-box;
+    }
+
+    button {
+      display: block;
+      margin: 10px auto 0 auto;
+
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+
+    #message {
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    #result {
+      display: none;
+      text-align: center;
+    }
+
+    #result img {
+      display: block;
+      max-width: 250px;
+      max-height: 250px;
+      margin: 0 auto 15px auto;
+      image-rendering: auto;
+    }
+
+    #itemName {
+      font-size: 22px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="login">
+    <input
+      id="adminKey"
+      type="password"
+      placeholder="Admin Key"
+      autocomplete="off"
+    >
+
+    <button id="submitButton">
+      RANDOM ITEM
+    </button>
+
+    <div id="message"></div>
+  </div>
+
+
+  <div id="result">
+    <img id="itemImage" alt="">
+    <div id="itemName"></div>
+  </div>
+
+
+  <script>
+    const API =
+      "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
+    const SESSION_KEY =
+      "rd_session";
+
+
+    const adminKeyInput =
+      document.getElementById("adminKey");
+
+    const submitButton =
+      document.getElementById("submitButton");
+
+    const message =
+      document.getElementById("message");
+
+    const login =
+      document.getElementById("login");
+
+    const result =
+      document.getElementById("result");
+
+    const itemImage =
+      document.getElementById("itemImage");
+
+    const itemName =
+      document.getElementById("itemName");
+
+
+    submitButton.addEventListener(
+      "click",
+      giveRandomItem
+    );
+
+
+    adminKeyInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+          giveRandomItem();
+        }
+
+      }
+    );
+
+
+    async function giveRandomItem() {
+
+      const adminKey =
+        adminKeyInput.value.trim();
+
+      if (!adminKey) {
+
+        message.textContent =
+          "Enter admin key.";
+
+        return;
+      }
+
+
+      const sessionToken =
+        localStorage.getItem(
+          SESSION_KEY
+        );
+
+
+      if (!sessionToken) {
+
+        message.textContent =
+          "You are not logged in.";
+
+        return;
+      }
+
+
+      submitButton.disabled = true;
+
+      message.textContent =
+        "Loading...";
+
+
+      try {
+
+        const response =
+          await fetch(
+            API + "/inventory/random",
+            {
+              method: "POST",
+
+              credentials:
+                "include",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  "Bearer " +
+                  sessionToken,
+
+                "X-Admin-Key":
+                  adminKey
+              }
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          message.textContent =
+            data.error ||
+            "Request failed.";
+
+          submitButton.disabled =
+            false;
+
+          return;
+        }
+
+
+        login.style.display =
+          "none";
+
+        result.style.display =
+          "block";
+
+
+        itemName.textContent =
+          data.item.title;
+
+
+        itemImage.src =
+          data.item.image;
+
+        itemImage.alt =
+          data.item.title;
+
+      }
+
+      catch (error) {
+
+        message.textContent =
+          "Unable to contact server.";
+
+        submitButton.disabled =
+          false;
+
+      }
+
+    }
+  </script>
+
+</body>
+</html>
