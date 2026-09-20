@@ -1728,6 +1728,79 @@
 }
 
 </style>
+<style id="V38-TINY-LEFT-TITLE">
+
+/* v38: Weebie Training only — tiny and flush to phone/page left edge */
+#topTitle,
+#trainingTitle,
+#weebieTraining,
+.weebie-training,
+.training-title {
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+  font-size: 9px !important;
+  width: auto !important;
+  max-width: none !important;
+  text-align: left !important;
+  transform: translateY(-20px) !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+</style>
+<style id="V39-GIF1-ABOVE-COMBO">
+
+/* v39: GIF1 is anchored directly above the combo bubbles at every screen size.
+   Absolute positioning means nothing else is moved/reflowed. */
+#comboBars {
+  overflow: visible !important;
+}
+
+#gif1 {
+  position: absolute !important;
+  z-index: 20000 !important;
+  left: 50% !important;
+  top: auto !important;
+  bottom: 100% !important;
+  transform: translateX(-50%) !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+}
+
+</style>
+<style id="V40-TITLE-LOCKED-TO-GIF2">
+
+/* v40: lock Weebie Training to GIF2 */
+#gif2 {
+  position: relative !important;
+}
+
+/* Title: directly above GIF2, left edges locked together, width = half GIF2. */
+#topTitle,
+#trainingTitle,
+#weebieTraining,
+.weebie-training,
+.training-title {
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: 100% !important;
+  top: auto !important;
+  width: 50% !important;
+  max-width: 50% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  text-align: left !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  z-index: 20001 !important;
+  pointer-events: none !important;
+}
+
+</style>
 </head>
 
 
@@ -1754,14 +1827,15 @@
 
       <!-- LARGE / HIGH / RIGHT -->
 
-      <img
+      
+
+      <div id="comboBars">
+<img
         id="gif1"
         src="/shared/gif1.gif"
         alt=""
         draggable="false"
       >
-
-      <div id="comboBars">
 
         <div class="combo-stat-row">
           <div class="spike-stat">
@@ -2625,21 +2699,14 @@
 
     function getPower() {
 
-      return Math.min(
-        100,
-        Math.floor(combo / 10)
-      );
+      return Math.min(100, Math.floor(combo / 10) * 2);
 
     }
 
 
     function getMultiplier() {
 
-      return 1 +
-        (
-          getPower() /
-          50
-        );
+      return 1 + (getPower() / 10) * 0.5;
 
     }
 
