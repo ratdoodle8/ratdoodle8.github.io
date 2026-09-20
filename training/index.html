@@ -1961,6 +1961,20 @@
 }
 </style>
 
+
+<style id="V70-SHAKE-EVERYTHING-EXCEPT-GIF2-LAYER">
+/* Never transform the ancestor containing GIF2. */
+#page.combo-power-hit {
+  animation: none !important;
+  transform: none !important;
+}
+
+/* Apply the same shake to the other main page sections only. */
+#page.combo-power-hit > :not(#topSection) {
+  animation: comboPowerShake10X var(--st10,180ms) linear !important;
+}
+</style>
+
 </head>
 
 
