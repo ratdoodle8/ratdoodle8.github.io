@@ -1149,6 +1149,83 @@
   text-shadow: 2px 2px 0 #0007E6 !important;
 }
 
+
+#xpBoostLabel {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  color: #0007E6;
+  pointer-events: none;
+}
+
+
+/* Weebie name: all the way left, directly above Current Pushups block. */
+#weebieName {
+  left: 0 !important;
+  right: auto !important;
+  width: 52% !important;
+  text-align: left !important;
+}
+
+
+/* Current Pushups stats block: opaque solid filled background. */
+#pushupInfo {
+  background-color: #bcc8cc !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  isolation: isolate !important;
+}
+
+
+/* ===== COMBO POWER EFFECTS ===== */
+#comboBars .spike-stat,
+#comboBars .spike-number {
+  transition: background-color 90ms linear, color 90ms linear, filter 90ms linear;
+}
+@keyframes comboPowerShake {
+  0%,100% { transform:translate(0,0) rotate(0); }
+  15% { transform:translate(calc(var(--sx)*-1),var(--sy)) rotate(calc(var(--sr)*-1)); }
+  30% { transform:translate(var(--sx),calc(var(--sy)*-1)) rotate(var(--sr)); }
+  50% { transform:translate(calc(var(--sx)*-.8),calc(var(--sy)*-.6)) rotate(calc(var(--sr)*-.7)); }
+  70% { transform:translate(calc(var(--sx)*.7),calc(var(--sy)*.7)) rotate(calc(var(--sr)*.6)); }
+  85% { transform:translate(calc(var(--sx)*-.35),calc(var(--sy)*.3)) rotate(calc(var(--sr)*-.3)); }
+}
+#page.combo-power-hit { animation:comboPowerShake var(--st,120ms) linear; }
+
+@keyframes powerBarShake {
+  0%,100% { transform:translate(0,7px); }
+  25% { transform:translate(calc(var(--ps)*-1),7px); }
+  50% { transform:translate(var(--ps),7px); }
+  75% { transform:translate(calc(var(--ps)*-.55),7px); }
+}
+#comboBars .meter-block.power-shaking {
+  animation:powerBarShake 90ms linear infinite;
+}
+@media (prefers-reduced-motion:reduce) {
+  #page.combo-power-hit,
+  #comboBars .meter-block.power-shaking { animation:none !important; }
+}
+
+
+/* Big bottom button text: larger + more cartoony. */
+#trainingButtonText {
+  font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif !important;
+  font-size: clamp(25px, 7vw, 38px) !important;
+  line-height: .95 !important;
+  font-weight: 900 !important;
+  letter-spacing: -1px !important;
+  text-align: center !important;
+  text-shadow:
+    2px 2px 0 white,
+    -1px -1px 0 white !important;
+}
+
 </style>
 </head>
 
@@ -1322,6 +1399,7 @@
           </div>
 
           <div id="xpReward">+XP</div>
+          <div id="xpBoostLabel">pushups until xp boost</div>
 
         </div>
 
@@ -2085,6 +2163,8 @@
       comboNumber.textContent =
         combo.toLocaleString();
 
+
+      updateComboPowerEffects();
     }
 
 
@@ -2151,6 +2231,52 @@
     }
 
 
+
+    function updateComboPowerEffects() {
+      const comboStrength = Math.min(1, combo / 250);
+      const power = getPower();
+      const powerStrength = power / 100;
+
+      /* Gradually darken/red-shift BOTH bubbles and their numbers. */
+      const bubbleR = Math.round(255 - 45 * comboStrength);
+      const bubbleG = Math.round(255 - 220 * comboStrength);
+      const bubbleB = Math.round(255 - 225 * comboStrength);
+      const textR = Math.round(20 + 215 * comboStrength);
+      const textG = Math.round(7 - 5 * comboStrength);
+      const textB = Math.round(230 - 220 * comboStrength);
+
+      document.querySelectorAll("#comboBars .spike-stat").forEach((el) => {
+        el.style.backgroundColor = `rgb(${bubbleR},${bubbleG},${bubbleB})`;
+        el.style.filter = `saturate(${1 + comboStrength * 1.7}) contrast(${1 + comboStrength * .25})`;
+      });
+
+      document.querySelectorAll("#comboBars .spike-number").forEach((el) => {
+        el.style.color = `rgb(${textR},${textG},${textB})`;
+      });
+
+      const powerBlock = document.querySelector("#powerBar")?.closest(".meter-block");
+      if (powerBlock) {
+        powerBlock.style.setProperty("--ps", `${(powerStrength * 4.5).toFixed(2)}px`);
+        powerBlock.classList.toggle("power-shaking", power > 0);
+      }
+    }
+
+    function triggerComboPowerShake() {
+      const page = document.getElementById("page");
+      if (!page) return;
+
+      const strength = Math.min(1, combo / 200);
+      page.style.setProperty("--sx", `${(1 + strength * 9).toFixed(2)}px`);
+      page.style.setProperty("--sy", `${(.6 + strength * 6).toFixed(2)}px`);
+      page.style.setProperty("--sr", `${(.15 + strength * 2.5).toFixed(2)}deg`);
+      page.style.setProperty("--st", `${Math.round(105 + strength * 100)}ms`);
+
+      page.classList.remove("combo-power-hit");
+      void page.offsetWidth;
+      page.classList.add("combo-power-hit");
+    }
+
+
     function registerComboTap() {
 
       const now =
@@ -2169,6 +2295,9 @@
       else {
         combo = 1;
       }
+
+      updateComboPowerEffects();
+      triggerComboPowerShake();
 
       burstStartedAt =
         now;
