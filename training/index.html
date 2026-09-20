@@ -1045,6 +1045,110 @@
   align-items: center !important;
 }
 
+
+/* ===== LATEST REQUESTED VISUAL CHANGES ===== */
+
+/* Left pushup stats block: solid background. */
+#pushupInfo {
+  background: #bcc8cc !important;
+  opacity: 1 !important;
+}
+
+/* Weebie name: moved above left stats block and made HUGE.
+   Absolute positioning prevents it from moving anything else. */
+#weebieName {
+  position: absolute !important;
+  left: 4% !important;
+  top: 2px !important;
+  width: 48% !important;
+  margin: 0 !important;
+  transform: none !important;
+  z-index: 80 !important;
+  font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif !important;
+  font-size: clamp(38px, 11vw, 62px) !important;
+  line-height: .88 !important;
+  font-weight: 900 !important;
+  letter-spacing: -2px !important;
+  text-align: left !important;
+  color: #0007E6 !important;
+  text-shadow:
+    2px 2px 0 white,
+    -2px -2px 0 white,
+    2px -2px 0 white,
+    -2px 2px 0 white !important;
+  pointer-events: none !important;
+}
+
+/* Both bars: narrower and substantially taller, still identical. */
+#comboBars .meter-block {
+  width: 82% !important;
+  justify-self: center !important;
+}
+
+#burstBar,
+#powerBar {
+  width: 100% !important;
+  height: 30px !important;
+  min-height: 30px !important;
+}
+
+/* Bubbles: same position/shape, but taller. */
+#comboBars .spike-stat {
+  min-height: 108px !important;
+  height: 108px !important;
+}
+
+/* Bubble text only: bigger, rounder, more cartoon-like. */
+#comboBars .spike-label {
+  font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: .8px !important;
+  transform: rotate(-2deg);
+}
+
+#comboBars .spike-number {
+  font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif !important;
+  font-size: 30px !important;
+  line-height: .95 !important;
+  font-weight: 900 !important;
+  letter-spacing: -1px !important;
+  transform: rotate(2deg);
+  text-shadow: 1px 1px 0 white !important;
+}
+
+/* Button: gif3 appears behind the text only while physically pressed. */
+#trainingButton {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+#buttonGif3 {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#trainingButtonText {
+  position: relative;
+  z-index: 2;
+}
+
+#trainingButton:active #buttonGif3 {
+  display: block;
+}
+
+#trainingButton:active #trainingButtonText {
+  color: white !important;
+  text-shadow: 2px 2px 0 #0007E6 !important;
+}
+
 </style>
 </head>
 
@@ -1237,17 +1341,7 @@
         id="trainingButton"
         type="button"
         aria-label="Do pushup"
-      >
-
-        <div id="buttonText">
-          PUSH
-        </div>
-
-        <div id="buttonSubtext">
-          Hold or tap
-        </div>
-
-      </button>
+      ><img id="buttonGif3" src="/shared/gif3.gif" alt=""><span id="trainingButtonText">TAP HERE TO DO A PUSH UP</span></button>
 
     </section>
 
@@ -1443,6 +1537,9 @@
 
 
     let pendingPushups =
+      0;
+
+    let multiplierRemainder =
       0;
 
 
@@ -1961,7 +2058,7 @@
       return 1 +
         (
           getPower() /
-          1000
+          100
         );
 
     }
@@ -2114,13 +2211,31 @@
         displayedDailyPushups();
 
 
-      pendingPushups++;
-
       registerComboTap();
+
+      /*
+        Multiplier now affects ACTUAL pushups.
+        Fractional bonus is accumulated until it becomes
+        a whole pushup, so the server still receives integers.
+      */
+      const pushupValue =
+        getMultiplier() +
+        multiplierRemainder;
+
+      const pushupsEarned =
+        Math.floor(pushupValue);
+
+      multiplierRemainder =
+        pushupValue -
+        pushupsEarned;
+
+      pendingPushups +=
+        pushupsEarned;
 
 
       const after =
-        before + 1;
+        before +
+        pushupsEarned;
 
 
       renderPushups();
