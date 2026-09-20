@@ -2088,6 +2088,59 @@
 }
 </style>
 
+
+<style id="V74-GIF1-INSANE-FIRE-GLOW">
+#gif1 {
+  filter:
+    sepia(var(--g1-sepia, 0%))
+    saturate(var(--g1-sat, 100%))
+    hue-rotate(var(--g1-hue, 0deg))
+    contrast(var(--g1-contrast, 100%))
+    drop-shadow(0 0 5px #fff)
+    drop-shadow(0 0 10px #ffdf00)
+    drop-shadow(0 0 18px #ff8a00)
+    drop-shadow(0 0 30px #ff2a00) !important;
+}
+
+#gif1.gif1-fire-hit {
+  animation:
+    gif1ProgressiveDistortion var(--g1-time,1200ms) linear infinite,
+    gif1InsaneFireGlowV74 220ms ease-out !important;
+}
+
+@keyframes gif1InsaneFireGlowV74 {
+  0% {
+    filter:
+      sepia(100%) saturate(900%) hue-rotate(-25deg) contrast(180%)
+      drop-shadow(0 0 8px #fff)
+      drop-shadow(0 0 18px #fff200)
+      drop-shadow(0 0 35px #ff9d00)
+      drop-shadow(0 0 60px #ff3c00)
+      drop-shadow(0 0 90px #ff0000);
+  }
+  30% {
+    filter:
+      sepia(100%) saturate(1200%) hue-rotate(-35deg) contrast(210%)
+      drop-shadow(0 0 14px #fff)
+      drop-shadow(0 0 30px #ffff00)
+      drop-shadow(0 0 55px #ff9d00)
+      drop-shadow(0 0 90px #ff3c00)
+      drop-shadow(0 0 130px #ff0000);
+  }
+  100% {
+    filter:
+      sepia(var(--g1-sepia, 0%))
+      saturate(var(--g1-sat, 100%))
+      hue-rotate(var(--g1-hue, 0deg))
+      contrast(var(--g1-contrast, 100%))
+      drop-shadow(0 0 5px #fff)
+      drop-shadow(0 0 10px #ffdf00)
+      drop-shadow(0 0 18px #ff8a00)
+      drop-shadow(0 0 30px #ff2a00);
+  }
+}
+</style>
+
 </head>
 
 
@@ -4032,6 +4085,27 @@
 })();
 </script>
 
+
+
+<script id="V74-GIF1-FIRE-TAP">
+(function () {
+  const gif1 = document.getElementById("gif1");
+  if (!gif1) return;
+
+  /* Existing CSS had pointer-events:none; GIF1 must receive taps now. */
+  gif1.style.setProperty("pointer-events", "auto", "important");
+  gif1.style.setProperty("cursor", "pointer", "important");
+
+  function fireGlow() {
+    gif1.classList.remove("gif1-fire-hit");
+    void gif1.offsetWidth;
+    gif1.classList.add("gif1-fire-hit");
+    setTimeout(() => gif1.classList.remove("gif1-fire-hit"), 220);
+  }
+
+  gif1.addEventListener("pointerdown", fireGlow);
+})();
+</script>
 
 </body>
 </html>
