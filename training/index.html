@@ -111,6 +111,82 @@
     }
 
 
+    /* BURST + POWER BARS */
+
+    #comboBars {
+      position: absolute;
+      width: 58%;
+      max-width: 285px;
+      right: 3%;
+      top: 164px;
+      z-index: 20;
+    }
+
+    .combo-bar-row {
+      position: relative;
+      width: 100%;
+      margin: 0;
+    }
+
+    .combo-bar {
+      position: relative;
+      width: 100%;
+      height: 18px;
+      border: 2px solid #0007E6;
+      background: white;
+      overflow: hidden;
+    }
+
+    .combo-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: #0007E6;
+    }
+
+    .combo-bar-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: black;
+      font-size: 9px;
+      font-weight: bold;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    #multiplierBubble {
+      position: absolute;
+      right: -4px;
+      top: 18px;
+      transform: translate(50%, -50%);
+      min-width: 48px;
+      min-height: 34px;
+      padding: 8px 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 2px solid #0007E6;
+      color: #0007E6;
+      font-size: 11px;
+      font-weight: bold;
+      z-index: 4;
+      clip-path: polygon(
+        50% 0%, 59% 15%, 73% 5%, 77% 22%,
+        94% 19%, 88% 37%, 100% 50%, 88% 62%,
+        94% 81%, 77% 78%, 73% 95%, 59% 85%,
+        50% 100%, 41% 85%, 27% 95%, 23% 78%,
+        6% 81%, 12% 62%, 0% 50%, 12% 37%,
+        6% 19%, 23% 22%, 27% 5%, 41% 15%
+      );
+    }
+
+
     /* SMALL / LOW / LEFT */
 
     #gif2 {
@@ -496,6 +572,11 @@
         width: 53%;
       }
 
+      #comboBars {
+        width: 53%;
+        top: 151px;
+      }
+
       #weebieArea {
         width: 58%;
       }
@@ -533,6 +614,28 @@
         alt=""
         draggable="false"
       >
+
+      <div id="comboBars">
+
+        <div class="combo-bar-row">
+          <div id="burstBar" class="combo-bar">
+            <div id="burstFill" class="combo-fill"></div>
+            <div class="combo-bar-label">BURST</div>
+          </div>
+        </div>
+
+        <div class="combo-bar-row">
+          <div id="powerBar" class="combo-bar">
+            <div id="powerFill" class="combo-fill"></div>
+            <div class="combo-bar-label">POWER</div>
+          </div>
+
+          <div id="multiplierBubble">
+            1.00x
+          </div>
+        </div>
+
+      </div>
 
 
       <!-- SMALL / LOW / LEFT -->
@@ -679,6 +782,41 @@
 
     const PUSHUPS_REQUIRED =
       5000;
+
+    const BURST_DURATION_MS =
+      900;
+
+    const MAX_MULTIPLIER =
+      100;
+
+
+    const burstFill =
+      document.getElementById(
+        "burstFill"
+      );
+
+    const powerFill =
+      document.getElementById(
+        "powerFill"
+      );
+
+    const multiplierBubble =
+      document.getElementById(
+        "multiplierBubble"
+      );
+
+
+    let combo =
+      0;
+
+    let burstStartedAt =
+      0;
+
+    let burstActive =
+      false;
+
+    let burstAnimationFrame =
+      null;
 
 
     /* =====================================
@@ -1308,6 +1446,146 @@
 
 
     /* =====================================
+       BURST / COMBO / POWER
+    ====================================== */
+
+    function getMultiplier() {
+
+      return Math.min(
+        MAX_MULTIPLIER,
+        1 +
+        (
+          Math.floor(
+            combo / 100
+          ) / 100
+        )
+      );
+
+    }
+
+
+    function renderPowerBar() {
+
+      const multiplier =
+        getMultiplier();
+
+      const percentage =
+        Math.max(
+          0,
+          Math.min(
+            100,
+            (
+              (multiplier - 1) /
+              (MAX_MULTIPLIER - 1)
+            ) * 100
+          )
+        );
+
+      powerFill.style.width =
+        percentage + "%";
+
+      multiplierBubble.textContent =
+        multiplier.toFixed(2) +
+        "x";
+
+    }
+
+
+    function breakCombo() {
+
+      combo = 0;
+      burstActive = false;
+      burstStartedAt = 0;
+
+      burstFill.style.width =
+        "0%";
+
+      renderPowerBar();
+
+    }
+
+
+    function animateBurst(now) {
+
+      if (!burstActive) {
+        burstAnimationFrame = null;
+        return;
+      }
+
+      const elapsed =
+        now - burstStartedAt;
+
+      const remaining =
+        Math.max(
+          0,
+          1 -
+          (
+            elapsed /
+            BURST_DURATION_MS
+          )
+        );
+
+      burstFill.style.width =
+        (remaining * 100) +
+        "%";
+
+      if (remaining <= 0) {
+        breakCombo();
+        burstAnimationFrame = null;
+        return;
+      }
+
+      burstAnimationFrame =
+        requestAnimationFrame(
+          animateBurst
+        );
+
+    }
+
+
+    function registerComboTap() {
+
+      const now =
+        performance.now();
+
+      if (
+        burstActive &&
+        (
+          now - burstStartedAt
+        ) <
+        BURST_DURATION_MS
+      ) {
+        combo++;
+      }
+
+      else {
+        combo = 1;
+      }
+
+      burstStartedAt =
+        now;
+
+      burstActive =
+        true;
+
+      burstFill.style.width =
+        "100%";
+
+      renderPowerBar();
+
+      if (
+        burstAnimationFrame === null
+      ) {
+        burstAnimationFrame =
+          requestAnimationFrame(
+            animateBurst
+          );
+      }
+
+    }
+
+
+    /* =====================================
        ONE PUSHUP
     ====================================== */
 
@@ -1323,6 +1601,8 @@
 
 
       pendingPushups++;
+
+      registerComboTap();
 
 
       const after =
@@ -1976,6 +2256,8 @@
        START
     ====================================== */
 
+    renderPowerBar();
+    breakCombo();
     loadTraining();
 
   </script>
