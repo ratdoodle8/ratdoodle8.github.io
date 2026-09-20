@@ -2359,6 +2359,101 @@
 }
 </style>
 
+
+<style id="V81-DARK-BLUE-DUAL-FLARE">
+/* Keep the effect behind all normal page content. */
+#pushupLensFlare {
+  top: 50% !important;
+  right: auto !important;
+  left: 54% !important;
+  width: 400px !important;
+  height: 400px !important;
+  z-index: 0 !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+#pushupLensFlare .flareCore {
+  top: 137px !important;
+  right: 137px !important;
+  width: 126px !important;
+  height: 126px !important;
+  background: rgba(2, 10, 38, .94) !important;
+  box-shadow:
+    0 0 35px 18px rgba(4, 22, 75, .72),
+    0 0 95px 52px rgba(7, 38, 110, .30) !important;
+}
+#pushupLensFlare .flareRay {
+  top: 189px !important;
+  right: 5px !important;
+  background: rgba(4, 18, 60, .34) !important;
+}
+#pushupLensFlare .flareOrb {
+  background: rgba(5, 25, 78, .22) !important;
+  box-shadow: 0 0 18px rgba(7, 35, 100, .30) !important;
+}
+
+/* Mirrored bottom flare, slightly left. */
+#pushupLensFlare::after {
+  content: "";
+  position: fixed;
+  left: 38%;
+  bottom: -40px;
+  width: 400px;
+  height: 400px;
+  max-width: 400px;
+  max-height: 400px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%,
+      rgba(2,10,38,.92) 0 12%,
+      rgba(4,22,75,.55) 13% 20%,
+      rgba(7,38,110,.20) 28%,
+      rgba(7,38,110,0) 62%),
+    linear-gradient(28deg,
+      transparent 42%,
+      rgba(4,18,60,.25) 48%,
+      rgba(4,18,60,.25) 52%,
+      transparent 58%);
+  transform: translateX(-50%) scaleY(-1);
+}
+
+/* Slight blue tint over the background only. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 55, 110, 0);
+  pointer-events: none;
+  z-index: -1;
+}
+body.pushup-blue-wash::before {
+  animation: pushupBlueWashV81 1000ms ease-out forwards;
+}
+
+@keyframes pushupBlueWashV81 {
+  0%   { background: rgba(20,55,110,0); }
+  12%  { background: rgba(20,55,110,.075); }
+  100% { background: rgba(20,55,110,0); }
+}
+
+/* Override the old flare animation while preserving its one-second timing. */
+#pushupLensFlare.pushup-lens-flare-hit {
+  animation: darkDualFlareV81 1000ms ease-out forwards !important;
+}
+@keyframes darkDualFlareV81 {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  38%  { opacity: .82; }
+  100% { opacity: 0; }
+}
+
+/* Normal page content stays above the flare. */
+#page {
+  position: relative;
+  z-index: 1;
+}
+</style>
+
 </head>
 
 
@@ -3430,6 +3525,11 @@
         pushupLensFlareV80.classList.remove("pushup-lens-flare-hit");
         void pushupLensFlareV80.offsetWidth;
         pushupLensFlareV80.classList.add("pushup-lens-flare-hit");
+
+        document.body.classList.remove("pushup-blue-wash");
+        void document.body.offsetWidth;
+        document.body.classList.add("pushup-blue-wash");
+        setTimeout(() => document.body.classList.remove("pushup-blue-wash"), 1000);
         setTimeout(() => pushupLensFlareV80.classList.remove("pushup-lens-flare-hit"), 1000);
       }
 
