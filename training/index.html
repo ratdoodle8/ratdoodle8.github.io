@@ -2141,6 +2141,53 @@
 }
 </style>
 
+
+<style id="V75-MAKE-PUSHUP-STARS-VISIBLE">
+#gif2PushupStar,
+#weebiePushupStar {
+  color: #fff !important;
+  font-family: Arial, sans-serif !important;
+  font-size: 240px !important;
+  -webkit-text-stroke: 7px #000 !important;
+  paint-order: stroke fill !important;
+  text-shadow:
+    0 0 4px #000,
+    0 0 10px #000 !important;
+  visibility: visible !important;
+}
+
+/* Keep stars behind their corresponding artwork but above the plain page background. */
+#gif2PushupStar {
+  z-index: 5 !important;
+}
+#gif2ShakeContainer #gif2 {
+  z-index: 6 !important;
+}
+
+#weebiePushupStar {
+  z-index: 0 !important;
+}
+#weebieArt,
+#weebieLayers,
+#weebieEquippedLayers {
+  position: relative;
+  z-index: 1;
+}
+</style>
+
+
+<style id="V76-HALF-SCREEN-PUSHUP-STARS">
+#gif2PushupStar,
+#weebiePushupStar {
+  font-size: 50vmin !important;
+  width: 50vmin !important;
+  height: 50vmin !important;
+  line-height: 50vmin !important;
+  text-align: center !important;
+  -webkit-text-stroke: 8px #000 !important;
+}
+</style>
+
 </head>
 
 
