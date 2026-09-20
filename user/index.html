@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User | Ratdoodle</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; padding:30px 14px; background:#bcc8cc; color:#0007E6; font-family:Arial,sans-serif; text-align:center; }
+    .page { width:100%; max-width:420px; margin:0 auto; }
+    h1 { margin:0 0 8px; overflow-wrap:anywhere; }
+    .weebie-card { display:none; margin-top:22px; }
+    .weebie-image { position:relative; width:100%; max-width:350px; aspect-ratio:1/1; margin:10px auto 18px; }
+    .weebie-layer { position:absolute; inset:0; width:100%; height:100%; background-position:center; background-repeat:no-repeat; background-size:contain; -webkit-mask-position:center; -webkit-mask-repeat:no-repeat; -webkit-mask-size:contain; mask-position:center; mask-repeat:no-repeat; mask-size:contain; }
+    #color1 { z-index:1; -webkit-mask-image:url('/shared/Weebie-Color1.png'); mask-image:url('/shared/Weebie-Color1.png'); }
+    #color2 { z-index:2; }
+    #outline { z-index:3; }
+    .stats { width:100%; border:2px solid #0007E6; margin-top:18px; }
+    .stat { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid #0007E6; text-align:left; }
+    .stat:last-child { border-bottom:0; }
+    .stat > div { padding:10px; overflow-wrap:anywhere; }
+    .stat-label { font-weight:bold; border-right:1px solid #0007E6; }
+    #status { margin-top:20px; }
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1 id="username">User</h1>
+  <div id="weebieCard" class="weebie-card">
+    <h2 id="weebieName"></h2>
+    <div class="weebie-image" aria-label="Weebie">
+      <div id="color1" class="weebie-layer"></div>
+      <div id="color2" class="weebie-layer"></div>
+      <div id="outline" class="weebie-layer"></div>
+    </div>
+    <div id="stats" class="stats"></div>
+  </div>
+  <div id="status">Loading user...</div>
+</div>
+<script>
+const API = "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+const COLORS = {
+  "Teal":"#24B5A5", "Tan":"#C9A875", "Red":"#E04444", "Pink":"#ee89f0",
+  "Blue":"#4A8FE7", "Lime Green":"#8FD14F", "White":"#F5F5F5",
+  "Purple":"#ed15ff", "Silver":"#B8BEC4"
+};
+const usernameEl=document.getElementById("username");
+const card=document.getElementById("weebieCard");
+const weebieName=document.getElementById("weebieName");
+const color1=document.getElementById("color1");
+const color2=document.getElementById("color2");
+const outline=document.getElementById("outline");
+const statsEl=document.getElementById("stats");
+const statusEl=document.getElementById("status");
+
+function getUsernameFromPath() {
+  const parts=location.pathname.split("/").filter(Boolean);
+  if (parts[0] !== "user" || !parts[1]) return "";
+  try { return decodeURIComponent(parts[1]); } catch { return ""; }
+}
+
+function renderStats(weebie) {
+  statsEl.innerHTML="";
+  for (const definition of weebie.statDefinitions || []) {
+    if (weebie.stats?.[definition.id] === undefined) continue;
+    const row=document.createElement("div"); row.className="stat";
+    const label=document.createElement("div"); label.className="stat-label"; label.textContent=definition.label;
+    const value=document.createElement("div");
+    const raw=weebie.stats[definition.id];
+    value.textContent=definition.id === "xp" ? Number(raw || 0).toLocaleString() : String(raw);
+    row.append(label,value); statsEl.appendChild(row);
+  }
+}
+
+function renderWeebie(weebie) {
+  weebieName.textContent=weebie.name;
+  color1.style.backgroundColor=COLORS[weebie.primaryColor] || "transparent";
+  color2.style.backgroundColor=COLORS[weebie.secondaryColor] || "transparent";
+  if (weebie.eyelashes === "No") {
+    color2.style.webkitMaskImage="url('/shared/Weebie-Color2a.png')";
+    color2.style.maskImage="url('/shared/Weebie-Color2a.png')";
+    outline.style.backgroundImage="url('/shared/Weebie-Outline2.png')";
+  } else {
+    color2.style.webkitMaskImage="url('/shared/Weebie-Color2.png')";
+    color2.style.maskImage="url('/shared/Weebie-Color2.png')";
+    outline.style.backgroundImage="url('/shared/Weebie-Outline.png')";
+  }
+  renderStats(weebie);
+  card.style.display="block";
+}
+
+async function loadUser() {
+  const username=getUsernameFromPath();
+  if (!username) { statusEl.textContent="User not found."; return; }
+  try {
+    const response=await fetch(API+"/user/"+encodeURIComponent(username));
+    const data=await response.json();
+    if (!response.ok) throw new Error(data.error || "Unable to load user.");
+    usernameEl.textContent=data.username;
+    document.title=data.username+" | Ratdoodle";
+    if (data.weebie) { renderWeebie(data.weebie); statusEl.textContent=""; }
+    else { statusEl.textContent="This user does not have a Weebie."; }
+  } catch (error) { statusEl.textContent=error.message || "Unable to load user."; }
+}
+loadUser();
+</script>
+</body>
+</html>

@@ -474,8 +474,22 @@ function renderRows(weebies) {
     const ownerCell =
       makeCell("owner");
 
-    ownerCell.textContent =
+    const ownerLink =
+      document.createElement("a");
+
+    ownerLink.href =
+      "/user/" +
+      encodeURIComponent(weebie.owner);
+
+    ownerLink.textContent =
       weebie.owner;
+
+    ownerLink.style.color =
+      "inherit";
+
+    ownerCell.appendChild(
+      ownerLink
+    );
 
 
     row.appendChild(
