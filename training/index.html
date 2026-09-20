@@ -1502,7 +1502,7 @@
   100% { transform:translateY(-14px) translate(0,0) rotate(0deg) scale(1); }
 }
 #weebieImage.weebie-crazy-hit {
-  animation:weebieCrazyHitShake10X 310ms linear !important;
+  animation:weebieCrazyHitShake10X 930ms linear !important;
 }
 
 /* Whole-game tap impact becomes dramatically stronger as combo rises. */
@@ -1528,7 +1528,7 @@
   80% { transform:translate(calc(var(--ps10)*.7),9px) rotate(1.5deg); }
 }
 #comboBars .meter-block.power-shaking {
-  animation:powerBarShake10X 55ms linear infinite !important;
+  animation:powerBarShake10X 165ms linear infinite !important;
 }
 
 </style>
@@ -1609,6 +1609,53 @@
   80%  { transform:translateY(-14px) translate(7px,-4px) rotate(3deg) scale(.98); }
   90%  { transform:translateY(-14px) translate(-3px,2px) rotate(-2deg) scale(1.02); }
   100% { transform:translateY(-14px) translate(0,0) rotate(0deg) scale(1); }
+}
+
+</style>
+<style id="POSITION-SHAKE-FOV-FIX">
+
+/* ===== LEFT PANEL: CORRECT ANCHOR + POSITION ===== */
+#middleSection {
+  position: relative !important;
+}
+
+#weebieName {
+  position: absolute !important;
+  left: 18px !important;
+  top: 8px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 180px !important;
+  max-width: 180px !important;
+  margin: 0 !important;
+  transform: none !important;
+  text-align: left !important;
+  z-index: 10001 !important;
+}
+
+#pushupInfo {
+  position: absolute !important;
+  left: 24px !important;
+  top: 72px !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: 138px !important;
+  height: 166px !important;
+  margin: 0 !important;
+  transform: none !important;
+  background: #fff !important;
+  background-color: #fff !important;
+  z-index: 10000 !important;
+}
+
+/* Subtle impact FOV/stretch. Strength is supplied by JS and rises with combo. */
+@keyframes weebieFovPulse {
+  0%,100% { scale: 1 1; }
+  45% { scale: var(--fov-x,1.002) var(--fov-y,.998); }
+}
+#weebieArea.fov-hit {
+  animation: weebieFovPulse var(--fov-time,180ms) ease-out !important;
+  transform-origin: 50% 55% !important;
 }
 
 </style>
@@ -2642,7 +2689,7 @@
 
       const powerBlock = document.querySelector("#powerBar")?.closest(".meter-block");
       if (powerBlock) {
-        powerBlock.style.setProperty("--ps10", `${(1 + powerStrength * 11.67).toFixed(2)}px`);
+        powerBlock.style.setProperty("--ps10", `${(.33 + powerStrength * 3.89).toFixed(2)}px`);
         powerBlock.classList.toggle("power-shaking", power > 0);
       }
     }
@@ -2652,10 +2699,10 @@
       if (!page) return;
 
       const strength = Math.min(1, combo / 200);
-      page.style.setProperty("--sx10", `${(3.3 + strength * 15).toFixed(2)}px`);
-      page.style.setProperty("--sy10", `${(2 + strength * 10).toFixed(2)}px`);
-      page.style.setProperty("--sr10", `${(.5 + strength * 3.33).toFixed(2)}deg`);
-      page.style.setProperty("--st10", `${Math.round(150 + strength * 180)}ms`);
+      page.style.setProperty("--sx10", `${(1.1 + strength * 5).toFixed(2)}px`);
+      page.style.setProperty("--sy10", `${(.67 + strength * 3.33).toFixed(2)}px`);
+      page.style.setProperty("--sr10", `${(.17 + strength * 1.11).toFixed(2)}deg`);
+      page.style.setProperty("--st10", `${Math.round(450 + strength * 540)}ms`);
 
       page.classList.remove("combo-power-hit");
       void page.offsetWidth;
@@ -2716,6 +2763,21 @@
     ====================================== */
 
 
+
+    function triggerSubtleFovStretch() {
+      const area = document.getElementById("weebieArea");
+      if (!area) return;
+
+      const strength = Math.min(1, combo / 500);
+      area.style.setProperty("--fov-x", (1.002 + strength * 0.010).toFixed(4));
+      area.style.setProperty("--fov-y", (0.998 - strength * 0.006).toFixed(4));
+      area.style.setProperty("--fov-time", Math.round(180 + strength * 80) + "ms");
+
+      area.classList.remove("fov-hit");
+      void area.offsetWidth;
+      area.classList.add("fov-hit");
+    }
+
     function triggerWeebieCrazyShake() {
       const art = document.getElementById("weebieImage");
       if (!art) return;
@@ -2737,6 +2799,7 @@
 
       registerComboTap();
       triggerWeebieCrazyShake();
+      triggerSubtleFovStretch();
 
       /*
         Multiplier now affects ACTUAL pushups.
