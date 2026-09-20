@@ -214,6 +214,135 @@
       );
     }
 
+    /* EXTRA LIGHTWEIGHT GAME-BAR VISUALS */
+
+    #burstBar,
+    #powerBar {
+      overflow: visible;
+      border-width: 3px;
+      box-shadow:
+        2px 2px 0 #0007E6,
+        -1px -1px 0 white;
+    }
+
+    #burstBar::before,
+    #powerBar::before {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      z-index: 3;
+      pointer-events: none;
+      border-radius: 999px;
+      border-top: 2px solid rgba(255,255,255,.85);
+    }
+
+    #burstBar::after,
+    #powerBar::after {
+      content: "✦";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      z-index: 6;
+      transform: translateY(-50%) rotate(12deg);
+      color: #0007E6;
+      background: white;
+      border: 2px solid #0007E6;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      clip-path: polygon(
+        50% 0%, 61% 28%, 85% 15%, 72% 39%,
+        100% 50%, 72% 61%, 85% 85%, 61% 72%,
+        50% 100%, 39% 72%, 15% 85%, 28% 61%,
+        0% 50%, 28% 39%, 15% 15%, 39% 28%
+      );
+    }
+
+    #burstFill,
+    #powerFill {
+      height: 100%;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    #burstFill::after,
+    #powerFill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          rgba(255,255,255,.35) 0 5px,
+          transparent 5px 10px
+        );
+      animation: barStripeSlide 500ms linear infinite;
+    }
+
+    #burstBar {
+      transform: rotate(-1deg);
+    }
+
+    #powerBar {
+      transform: rotate(1deg);
+    }
+
+    #burstBar .combo-fill {
+      background:
+        linear-gradient(
+          90deg,
+          #0007E6 0%,
+          #5260ff 65%,
+          #ffffff 100%
+        );
+    }
+
+    #powerBar .combo-fill {
+      background:
+        linear-gradient(
+          90deg,
+          #0007E6 0%,
+          #8c39ff 55%,
+          #ff4fd8 100%
+        );
+    }
+
+    #powerTicks {
+      overflow: hidden;
+      border-radius: 999px;
+    }
+
+    .meter-heading {
+      position: relative;
+      z-index: 8;
+      text-shadow:
+        1px 1px 0 white,
+        -1px -1px 0 white,
+        1px -1px 0 white,
+        -1px 1px 0 white;
+    }
+
+    @keyframes barStripeSlide {
+      from {
+        background-position: 0 0;
+      }
+      to {
+        background-position: 14px 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #burstFill::after,
+      #powerFill::after {
+        animation: none;
+      }
+    }
+
     /* SMALL / LOW / LEFT */
 
     #gif2 {
