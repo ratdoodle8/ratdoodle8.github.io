@@ -111,28 +111,82 @@
     }
 
 
-    /* BURST + POWER BARS */
+    /* BURST + POWER HUD */
 
     #comboBars {
       position: absolute;
-      width: 58%;
-      max-width: 285px;
-      right: 3%;
-      top: 164px;
-      z-index: 20;
+      width: 48%;
+      max-width: 235px;
+      right: 8%;
+      top: 132px;
+      z-index: 40;
+      font-family: "Comic Sans MS", "Arial Rounded MT Bold", Arial, sans-serif;
     }
 
-    .combo-bar-row {
-      position: relative;
-      width: 100%;
-      margin: 0;
+    .combo-stat-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 5px;
+    }
+
+    .spike-stat {
+      flex: 1;
+      min-width: 0;
+      min-height: 48px;
+      padding: 8px 7px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      color: #0007E6;
+      text-align: center;
+      clip-path: polygon(
+        50% 0%, 58% 10%, 68% 3%, 73% 15%,
+        85% 10%, 87% 23%, 100% 25%, 93% 38%,
+        100% 50%, 92% 59%, 98% 73%, 85% 75%,
+        82% 90%, 69% 84%, 59% 100%, 50% 90%,
+        40% 100%, 31% 84%, 18% 90%, 15% 75%,
+        2% 73%, 8% 59%, 0% 50%, 7% 38%,
+        0% 25%, 13% 23%, 15% 10%, 27% 15%,
+        32% 3%, 42% 10%
+      );
+    }
+
+    .spike-number {
+      font-size: 19px;
+      line-height: 0.95;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .spike-label {
+      margin-top: 3px;
+      font-size: 8px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .4px;
+    }
+
+    .meter-block {
+      margin-top: 4px;
+    }
+
+    .meter-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 0 2px 2px;
+      font-size: 10px;
+      font-weight: 900;
     }
 
     .combo-bar {
       position: relative;
       width: 100%;
-      height: 18px;
+      height: 15px;
       border: 2px solid #0007E6;
+      border-radius: 8px;
       background: white;
       overflow: hidden;
     }
@@ -146,46 +200,19 @@
       background: #0007E6;
     }
 
-    .combo-bar-label {
+    #powerTicks {
       position: absolute;
       inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: black;
-      font-size: 9px;
-      font-weight: bold;
-      pointer-events: none;
       z-index: 2;
-    }
-
-    #multiplierBubble {
-      position: absolute;
-      right: -4px;
-      top: 18px;
-      transform: translate(50%, -50%);
-      min-width: 48px;
-      min-height: 34px;
-      padding: 8px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: white;
-      border: 2px solid #0007E6;
-      color: #0007E6;
-      font-size: 11px;
-      font-weight: bold;
-      z-index: 4;
-      clip-path: polygon(
-        50% 0%, 59% 15%, 73% 5%, 77% 22%,
-        94% 19%, 88% 37%, 100% 50%, 88% 62%,
-        94% 81%, 77% 78%, 73% 95%, 59% 85%,
-        50% 100%, 41% 85%, 27% 95%, 23% 78%,
-        6% 81%, 12% 62%, 0% 50%, 12% 37%,
-        6% 19%, 23% 22%, 27% 5%, 41% 15%
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to right,
+        transparent 0,
+        transparent calc(10% - 1px),
+        rgba(0,0,0,.45) calc(10% - 1px),
+        rgba(0,0,0,.45) 10%
       );
     }
-
 
     /* SMALL / LOW / LEFT */
 
@@ -573,8 +600,18 @@
       }
 
       #comboBars {
-        width: 53%;
-        top: 151px;
+        width: 46%;
+        right: 9%;
+        top: 122px;
+      }
+
+      .spike-stat {
+        min-height: 44px;
+        padding: 7px 5px;
+      }
+
+      .spike-number {
+        font-size: 17px;
       }
 
       #weebieArea {
@@ -617,21 +654,36 @@
 
       <div id="comboBars">
 
-        <div class="combo-bar-row">
-          <div id="burstBar" class="combo-bar">
-            <div id="burstFill" class="combo-fill"></div>
-            <div class="combo-bar-label">BURST</div>
+        <div class="combo-stat-row">
+          <div class="spike-stat">
+            <div id="comboNumber" class="spike-number">0</div>
+            <div class="spike-label">COMBO</div>
+          </div>
+
+          <div class="spike-stat">
+            <div id="multiplierBubble" class="spike-number">1.00x</div>
+            <div class="spike-label">MULTIPLIER</div>
           </div>
         </div>
 
-        <div class="combo-bar-row">
+        <div class="meter-block">
+          <div class="meter-heading">
+            <span>BURST</span>
+            <span id="burstNumber">0%</span>
+          </div>
+          <div id="burstBar" class="combo-bar">
+            <div id="burstFill" class="combo-fill"></div>
+          </div>
+        </div>
+
+        <div class="meter-block">
+          <div class="meter-heading">
+            <span>POWER</span>
+            <span id="powerNumber">0 / 100</span>
+          </div>
           <div id="powerBar" class="combo-bar">
             <div id="powerFill" class="combo-fill"></div>
-            <div class="combo-bar-label">POWER</div>
-          </div>
-
-          <div id="multiplierBubble">
-            1.00x
+            <div id="powerTicks"></div>
           </div>
         </div>
 
@@ -784,7 +836,7 @@
       5000;
 
     const BURST_DURATION_MS =
-      900;
+      630;
 
     const MAX_MULTIPLIER =
       100;
@@ -803,6 +855,22 @@
     const multiplierBubble =
       document.getElementById(
         "multiplierBubble"
+      );
+
+
+    const comboNumber =
+      document.getElementById(
+        "comboNumber"
+      );
+
+    const burstNumber =
+      document.getElementById(
+        "burstNumber"
+      );
+
+    const powerNumber =
+      document.getElementById(
+        "powerNumber"
       );
 
 
@@ -1449,44 +1517,47 @@
        BURST / COMBO / POWER
     ====================================== */
 
-    function getMultiplier() {
+    function getPower() {
 
       return Math.min(
-        MAX_MULTIPLIER,
-        1 +
-        (
-          Math.floor(
-            combo / 100
-          ) / 100
-        )
+        100,
+        Math.floor(combo / 10)
       );
+
+    }
+
+
+    function getMultiplier() {
+
+      return 1 +
+        (
+          getPower() /
+          1000
+        );
 
     }
 
 
     function renderPowerBar() {
 
+      const power =
+        getPower();
+
       const multiplier =
         getMultiplier();
 
-      const percentage =
-        Math.max(
-          0,
-          Math.min(
-            100,
-            (
-              (multiplier - 1) /
-              (MAX_MULTIPLIER - 1)
-            ) * 100
-          )
-        );
-
       powerFill.style.width =
-        percentage + "%";
+        power + "%";
+
+      powerNumber.textContent =
+        power + " / 100";
 
       multiplierBubble.textContent =
         multiplier.toFixed(2) +
         "x";
+
+      comboNumber.textContent =
+        combo.toLocaleString();
 
     }
 
@@ -1498,6 +1569,9 @@
       burstStartedAt = 0;
 
       burstFill.style.width =
+        "0%";
+
+      burstNumber.textContent =
         "0%";
 
       renderPowerBar();
@@ -1525,9 +1599,17 @@
           )
         );
 
+      const burstPercent =
+        Math.ceil(
+          remaining * 100
+        );
+
       burstFill.style.width =
         (remaining * 100) +
         "%";
+
+      burstNumber.textContent =
+        burstPercent + "%";
 
       if (remaining <= 0) {
         breakCombo();
@@ -1569,6 +1651,9 @@
         true;
 
       burstFill.style.width =
+        "100%";
+
+      burstNumber.textContent =
         "100%";
 
       renderPowerBar();
