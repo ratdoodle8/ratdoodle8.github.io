@@ -177,6 +177,17 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+    /* INVENTORY */
+    .inventory-panel { margin-top: 20px; }
+    .inventory-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:15px; }
+    .inventory-card { min-width:0; border:2px solid #0007E6; padding:10px; background:#bcc8cc; text-align:center; }
+    .inventory-card img { display:block; width:100%; aspect-ratio:1/1; object-fit:contain; margin:0 auto 8px; }
+    .inventory-title { margin:5px 0; font-weight:bold; overflow-wrap:anywhere; }
+    .inventory-type,.inventory-quantity { margin:4px 0; font-size:14px; }
+    .inventory-card button { margin-top:8px; font-size:14px; padding:8px 5px; }
+    #inventoryEmpty,#inventoryMessage { margin:12px 0 0; }
+    @media (max-width:360px) { .inventory-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 
@@ -480,6 +491,13 @@
 
     </div>
 
+    <div id="inventoryPanel" class="panel inventory-panel" style="display:none;">
+      <h2>Inventory</h2>
+      <p id="inventoryEmpty" style="display:none;">Your inventory is empty.</p>
+      <div id="inventoryGrid" class="inventory-grid"></div>
+      <p id="inventoryMessage" class="message"></p>
+    </div>
+
     <a
       class="training-link"
       href="/training"
@@ -546,6 +564,12 @@ const displayDynamicStats =
 
 let currentWeebie = null;
 let statDefinitions = [];
+
+const inventoryPanel = document.getElementById("inventoryPanel");
+const inventoryGrid = document.getElementById("inventoryGrid");
+const inventoryEmpty = document.getElementById("inventoryEmpty");
+const inventoryMessage = document.getElementById("inventoryMessage");
+let currentInventory = [];
 
 
 /* AUTH */
@@ -845,6 +869,8 @@ async function loadAccount() {
       weebieSetup.style.display =
         "block";
     }
+
+    await loadInventory();
   }
 
   catch (error) {
@@ -1269,6 +1295,60 @@ document.getElementById(
   }
 );
 
+
+/* INVENTORY */
+async function loadInventory() {
+  inventoryMessage.textContent = "";
+  try {
+    const response = await fetch(API + "/inventory", { method:"GET", credentials:"include", headers:authHeaders() });
+    const data = await response.json();
+    inventoryPanel.style.display = "block";
+    if (!response.ok) { inventoryMessage.textContent = data.error || "Unable to load inventory."; return; }
+    currentInventory = Array.isArray(data.inventory) ? data.inventory : [];
+    renderInventory();
+  } catch (error) {
+    console.error(error);
+    inventoryPanel.style.display = "block";
+    inventoryMessage.textContent = "Unable to load inventory.";
+  }
+}
+
+function renderInventory() {
+  inventoryGrid.innerHTML = "";
+  inventoryMessage.textContent = "";
+  if (currentInventory.length === 0) { inventoryEmpty.style.display = "block"; return; }
+  inventoryEmpty.style.display = "none";
+  for (const item of currentInventory) {
+    const card=document.createElement("div"); card.className="inventory-card";
+    const image=document.createElement("img"); image.src=item.image||""; image.alt=item.title||"Item"; card.appendChild(image);
+    const title=document.createElement("p"); title.className="inventory-title"; title.textContent=item.title||item.id; card.appendChild(title);
+    const type=document.createElement("p"); type.className="inventory-type"; type.textContent=item.type==="swag"?"Swag":item.type==="food"?"Food":String(item.type||""); card.appendChild(type);
+    const quantity=document.createElement("p"); quantity.className="inventory-quantity"; quantity.textContent="Quantity: "+Number(item.quantity||0); card.appendChild(quantity);
+    const button=document.createElement("button"); button.type="button";
+    if (item.type === "swag") {
+      const paint=item.placement === "paintbrush";
+      button.textContent=paint?(item.equipped?"UNPAINT":"PAINT"):(item.equipped?"TAKE OFF":"WEAR");
+      button.addEventListener("click",()=>toggleInventoryItem(item,button));
+    } else if (item.type === "food") {
+      button.textContent="USE"; button.addEventListener("click",()=>useFoodItem(item));
+    } else { button.textContent="UNAVAILABLE"; button.disabled=true; }
+    card.appendChild(button); inventoryGrid.appendChild(card);
+  }
+}
+
+async function toggleInventoryItem(item,button) {
+  button.disabled=true; inventoryMessage.textContent="";
+  try {
+    const response=await fetch(API+"/inventory/equip",{method:"POST",credentials:"include",headers:authHeaders(true),body:JSON.stringify({itemId:item.id})});
+    const data=await response.json();
+    if(!response.ok){inventoryMessage.textContent=data.error||"Unable to update item.";button.disabled=false;return;}
+    await loadInventory();
+  } catch(error){console.error(error);inventoryMessage.textContent="Unable to update item.";button.disabled=false;}
+}
+
+function useFoodItem(item) {
+  inventoryMessage.textContent=item.title+" cannot be used yet.";
+}
 
 /* FORCED PASSWORD RESET */
 
