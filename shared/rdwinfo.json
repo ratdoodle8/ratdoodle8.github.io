@@ -22,10 +22,11 @@
     "number": "A3",
     "name": "Durodemon",
     "subname": "Grubble the Demon",
-    "description": "Durodemon is a demon. His friends call him by his nickname, Grubble. Very standoff in nature, Durodemon might not be the most polite, or academically honored, he sure can make a car go from A to B ! <br> When Durodemon can escape from the hellish nightmare of a desk covered in piled up paperwork at his Scrapyard, youll find him out and about in the truck he made from scratch out of scrap material. <br> Durodemon spends a lot of time in his truck listening to his space scanner to track down new crash sites and scope it out for scrap material to repurpose or sell from the strange space pods that keep crashing into his home planet of Dulrow.",
+    "description": "Durodemon is a demon. His friends call him by his nickname, Grubble. Very standoffish in nature, Durodemon might not be the most polite, or academically honored, but he sure can make a car go from A to B ! \nWhen Durodemon can escape from the hellish nightmare of a desk covered in piled up paperwork at his Scrapyard, youll find him out and about in the truck he made from scratch out of scrap material. \nDurodemon spends a lot of time in his truck listening to his space scanner to track down new crash sites and scope it out for scrap material to repurpose or sell from the strange space pods that keep crashing into his home planet of Dulrow.",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "editdate": "2026-09-20T04:39:30.394Z"
   },
   "A4": {
     "number": "A4",
