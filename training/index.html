@@ -1787,18 +1787,22 @@
 }
 
 </style>
-<style id="V46-TITLE-LOCKED-TO-GIF2">
+<style id="V47-DOUBLE-TITLE-SIZE">
 
-/* v46: Weebie Training locked to GIF2's TOP-LEFT, without moving GIF2 */
 #weebieTrainingActual {
-  position: fixed !important;
+  font-size: 18px !important;
+}
+
+</style>
+<style id="V49-TITLE-ABOVE-GIF2">
+
+/* v49: title stays inside topSection and is positioned from GIF2 itself */
+#weebieTrainingActual {
+  position: absolute !important;
   margin: 0 !important;
   padding: 0 !important;
   transform: none !important;
-  width: auto !important;
-  max-width: none !important;
-  text-align: left !important;
-  font-size: 9px !important;
+  font-size: 18px !important;
   line-height: 1 !important;
   white-space: nowrap !important;
   z-index: 30000 !important;
@@ -1806,10 +1810,15 @@
 }
 
 </style>
-<style id="V47-DOUBLE-TITLE-SIZE">
+<style id="V50-TITLE-LEFT">
 
+/* v50: Weebie Training stays LEFT. Only its vertical position follows GIF2. */
 #weebieTrainingActual {
-  font-size: 18px !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: auto !important;
+  margin-left: 0 !important;
+  text-align: left !important;
 }
 
 </style>
@@ -3655,32 +3664,32 @@
 </script>
 
 
-<script id="V46-TITLE-GIF2-LOCK">
+
+
+
+<script id="V51-PARENT-TITLE-MOVEMENT-TO-GIF2-LAYER">
 (function () {
-  function lockTrainingTitleToGif2() {
-    const gif2 = document.getElementById("gif2");
-    const title = document.getElementById("weebieTrainingActual");
-    if (!gif2 || !title) return;
+  const title = document.getElementById("weebieTrainingActual");
+  const gif2 = document.getElementById("gif2");
+  if (!title || !gif2) return;
 
-    const r = gif2.getBoundingClientRect();
+  const gif2Layer = gif2.parentElement;
+  if (!gif2Layer) return;
 
-    /* Left edge EXACTLY matches GIF2.
-       Title sits directly above GIF2. */
-    title.style.left = r.left + "px";
-    title.style.top = Math.max(0, r.top - title.offsetHeight) + "px";
-  }
+  /* Preserve the title's CURRENT rendered position exactly. */
+  const titleRect = title.getBoundingClientRect();
+  const layerRect = gif2Layer.getBoundingClientRect();
 
-  window.addEventListener("load", lockTrainingTitleToGif2);
-  window.addEventListener("resize", lockTrainingTitleToGif2);
-  window.addEventListener("orientationchange", lockTrainingTitleToGif2);
+  /* Reparent only. GIF2 is not touched or moved. */
+  gif2Layer.appendChild(title);
 
-  if (document.readyState !== "loading") {
-    requestAnimationFrame(lockTrainingTitleToGif2);
-  } else {
-    document.addEventListener("DOMContentLoaded", function () {
-      requestAnimationFrame(lockTrainingTitleToGif2);
-    });
-  }
+  title.style.position = "absolute";
+  title.style.left = (titleRect.left - layerRect.left + gif2Layer.scrollLeft) + "px";
+  title.style.top = (titleRect.top - layerRect.top + gif2Layer.scrollTop) + "px";
+  title.style.right = "auto";
+  title.style.bottom = "auto";
+  title.style.margin = "0";
+  title.style.transform = "none";
 })();
 </script>
 
