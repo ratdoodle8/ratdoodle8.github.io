@@ -2005,6 +2005,89 @@
 }
 </style>
 
+
+<style id="V72-GIF2-PUSHUP-STAR">
+#gif2PushupStar {
+  position: absolute;
+  left: 22%;
+  top: 52%;
+  font-size: 190px;
+  line-height: 1;
+  color: white;
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+  user-select: none;
+  transform: translate(-50%, -50%) scale(.45);
+  text-shadow: none;
+}
+
+#gif2ShakeContainer #gif2 {
+  z-index: 6 !important;
+}
+
+#gif2PushupStar.gif2-star-hit {
+  animation: gif2StarFadeV72 220ms ease-out forwards !important;
+}
+
+@keyframes gif2StarFadeV72 {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(.45);
+  }
+  35% {
+    opacity: .9;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+</style>
+
+
+<style id="V73-WEEBIE-PUSHUP-STAR">
+#weebiePushupStar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 190px;
+  line-height: 1;
+  color: white;
+  opacity: 0;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  transform: translate(-50%, -50%) scale(.45);
+  text-shadow: none;
+}
+
+#weebieArt {
+  position: relative;
+  z-index: 1;
+}
+
+#weebiePushupStar.weebie-star-hit {
+  animation: weebieStarFadeV73 220ms ease-out forwards !important;
+}
+
+@keyframes weebieStarFadeV73 {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(.45);
+  }
+  35% {
+    opacity: .9;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+</style>
+
 </head>
 
 
@@ -2077,6 +2160,7 @@
 
       <!-- SMALL / LOW / LEFT -->
       <div id="gif2ShakeContainer">
+        <div id="gif2PushupStar" aria-hidden="true">★</div>
 
       <img
         id="gif2"
@@ -2138,6 +2222,7 @@
       <!-- LARGE / HIGH / RIGHT -->
 
       <div id="weebieArea">
+        <div id="weebiePushupStar" aria-hidden="true">★</div>
 
         <div id="weebieName">
         </div>
@@ -3066,6 +3151,22 @@
         void gif2ShakeContainerV71.offsetWidth;
         gif2ShakeContainerV71.classList.add("gif2-wrapper-hit");
         setTimeout(() => gif2ShakeContainerV71.classList.remove("gif2-wrapper-hit"), 220);
+
+        const gif2PushupStarV72 = document.getElementById("gif2PushupStar");
+        if (gif2PushupStarV72) {
+          gif2PushupStarV72.classList.remove("gif2-star-hit");
+          void gif2PushupStarV72.offsetWidth;
+          gif2PushupStarV72.classList.add("gif2-star-hit");
+          setTimeout(() => gif2PushupStarV72.classList.remove("gif2-star-hit"), 220);
+        }
+
+        const weebiePushupStarV73 = document.getElementById("weebiePushupStar");
+        if (weebiePushupStarV73) {
+          weebiePushupStarV73.classList.remove("weebie-star-hit");
+          void weebiePushupStarV73.offsetWidth;
+          weebiePushupStarV73.classList.add("weebie-star-hit");
+          setTimeout(() => weebiePushupStarV73.classList.remove("weebie-star-hit"), 220);
+        }
       }
 
 
