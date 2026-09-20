@@ -60,7 +60,7 @@
       display: grid;
 
       grid-template-rows:
-        minmax(195px, 0.78fr)
+        minmax(225px, 0.88fr)
         minmax(255px, 1fr)
         minmax(220px, 0.9fr);
     }
@@ -72,8 +72,8 @@
 
     #topSection {
       position: relative;
-      min-height: 195px;
-      overflow: hidden;
+      min-height: 225px;
+      overflow: visible;
     }
 
     h1 {
@@ -351,13 +351,48 @@
       mix-blend-mode: multiply;
     }
 
+    /*
+      Dedicated HUD strip.
+      It no longer shares the GIF's absolute-positioned space,
+      so the bars cannot sit behind the image.
+    */
     #comboBars {
-      top: 142px;
-      right: 8%;
+      top: auto;
+      right: auto;
+      left: 4%;
+      bottom: 2px;
+      width: 92%;
+      max-width: none;
+      z-index: 100;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 10px;
+      row-gap: 2px;
+      align-items: end;
+    }
+
+    #comboBars .combo-stat-row {
+      grid-column: 1 / -1;
+      width: 52%;
+      max-width: 245px;
+      justify-self: end;
+      margin-right: 3%;
+      margin-bottom: 0;
+    }
+
+    #comboBars .meter-block {
+      width: 100%;
+      min-width: 0;
+      margin-top: 0;
+    }
+
+    #comboBars .combo-bar {
+      width: 100%;
+      min-width: 0;
     }
 
     #weebieName {
-      transform: translateY(8px);
+      transform: translateY(12px);
     }
 
     /* SMALL / LOW / LEFT */
@@ -708,17 +743,18 @@
 
       #page {
         grid-template-rows:
-          180px
-          235px
+          215px
+          220px
           minmax(205px, 1fr);
       }
 
       #topSection {
-        min-height: 180px;
+        min-height: 215px;
+        overflow: visible;
       }
 
       #middleSection {
-        min-height: 235px;
+        min-height: 220px;
         overflow: visible;
       }
 
@@ -746,9 +782,16 @@
       }
 
       #comboBars {
-        width: 46%;
-        right: 9%;
-        top: 132px;
+        left: 3%;
+        bottom: 2px;
+        width: 94%;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 8px;
+      }
+
+      #comboBars .combo-stat-row {
+        width: 50%;
+        margin-right: 2%;
       }
 
       .spike-stat {
