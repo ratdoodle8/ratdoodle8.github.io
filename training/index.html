@@ -2271,10 +2271,107 @@
 }
 </style>
 
+
+<style id="V79-COMBO-MULTIPLIER-TINY-BOUNCE">
+#comboNumber.tap-tiny-bounce,
+#multiplierBubble.tap-tiny-bounce {
+  animation: tinyHudBounceV79 150ms ease-out !important;
+}
+
+@keyframes tinyHudBounceV79 {
+  0%   { transform: translateY(0) scale(1); }
+  42%  { transform: translateY(-3px) scale(1.035); }
+  72%  { transform: translateY(1px) scale(.995); }
+  100% { transform: translateY(0) scale(1); }
+}
+</style>
+
+
+<style id="V80-YELLOW-PUSHUP-LENS-FLARE">
+#pushupLensFlare {
+  position: fixed;
+  top: -110px;
+  right: -110px;
+  width: 400px;
+  height: 400px;
+  max-width: 400px;
+  max-height: 400px;
+  z-index: 999999;
+  pointer-events: none;
+  opacity: 0;
+  overflow: visible;
+}
+
+#pushupLensFlare .flareCore {
+  position: absolute;
+  top: 70px;
+  right: 70px;
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  background: rgba(255, 245, 80, .95);
+  box-shadow:
+    0 0 35px 18px rgba(255, 225, 0, .8),
+    0 0 90px 48px rgba(255, 190, 0, .45);
+}
+
+#pushupLensFlare .flareRay {
+  position: absolute;
+  top: 126px;
+  right: -20px;
+  width: 390px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 225, 0, .45);
+  transform-origin: 82% 50%;
+}
+#pushupLensFlare .flareRay1 { transform: rotate(43deg); }
+#pushupLensFlare .flareRay2 { transform: rotate(-18deg); }
+
+#pushupLensFlare .flareOrb {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 235, 70, .25);
+  box-shadow: 0 0 18px rgba(255, 215, 0, .45);
+}
+#pushupLensFlare .flareOrb1 {
+  width: 55px;
+  height: 55px;
+  top: 225px;
+  right: 220px;
+}
+#pushupLensFlare .flareOrb2 {
+  width: 30px;
+  height: 30px;
+  top: 305px;
+  right: 310px;
+}
+
+#pushupLensFlare.pushup-lens-flare-hit {
+  animation: pushupLensFlareV80 1000ms ease-out forwards !important;
+}
+
+@keyframes pushupLensFlareV80 {
+  0%   { opacity: 0; transform: scale(.8); }
+  10%  { opacity: 1; transform: scale(1); }
+  38%  { opacity: .85; }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+</style>
+
 </head>
 
 
 <body>
+
+<div id="pushupLensFlare" aria-hidden="true">
+  <div class="flareCore"></div>
+  <div class="flareRay flareRay1"></div>
+  <div class="flareRay flareRay2"></div>
+  <div class="flareOrb flareOrb1"></div>
+  <div class="flareOrb flareOrb2"></div>
+</div>
+
 
   <div id="loading">
     Loading...
@@ -3327,6 +3424,25 @@
 
     function registerComboTap() {
       sessionPushups += 1;
+
+      const pushupLensFlareV80 = document.getElementById("pushupLensFlare");
+      if (pushupLensFlareV80) {
+        pushupLensFlareV80.classList.remove("pushup-lens-flare-hit");
+        void pushupLensFlareV80.offsetWidth;
+        pushupLensFlareV80.classList.add("pushup-lens-flare-hit");
+        setTimeout(() => pushupLensFlareV80.classList.remove("pushup-lens-flare-hit"), 1000);
+      }
+
+
+      ["comboNumber", "multiplierBubble"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove("tap-tiny-bounce");
+        void el.offsetWidth;
+        el.classList.add("tap-tiny-bounce");
+        setTimeout(() => el.classList.remove("tap-tiny-bounce"), 170);
+      });
+
 
       const gif2ShakeContainerV71 = document.getElementById("gif2ShakeContainer");
       if (gif2ShakeContainerV71) {
