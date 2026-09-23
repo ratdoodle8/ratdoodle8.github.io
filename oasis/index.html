@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oasis</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}body{background:#bcc8cc;color:#0007E6;font-family:Arial,sans-serif}
+.page{width:min(900px,calc(100% - 24px));margin:24px auto}.game{position:relative;width:100%;aspect-ratio:16/9;min-height:360px;overflow:hidden;background:#fff;border:2px solid #0007E6}
+.msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-weight:bold}.world{display:none;position:absolute;inset:0}
+.ground{position:absolute;left:0;right:0;bottom:20%;height:3px;background:#0007E6}
+.unit{position:absolute;left:50%;bottom:20%;transform:translateX(-50%);width:min(34%,260px);display:flex;flex-direction:column;align-items:center}
+.name{width:100%;margin-bottom:8px;text-align:center;font-size:clamp(18px,3vw,30px);font-weight:bold;line-height:1;overflow-wrap:anywhere}
+.weebie{position:relative;width:100%;aspect-ratio:1}.layer{position:absolute;inset:0;background-repeat:no-repeat;background-position:center bottom;background-size:contain}
+.color{-webkit-mask-repeat:no-repeat;-webkit-mask-position:center bottom;-webkit-mask-size:contain;mask-repeat:no-repeat;mask-position:center bottom;mask-size:contain}
+#c1{-webkit-mask-image:url("/shared/Weebie-Color1.png");mask-image:url("/shared/Weebie-Color1.png")}
+@media(max-width:600px){.page{margin:12px auto}.game{min-height:300px}.unit{width:min(48%,230px)}}
+</style></head><body>
+<div class="page"><div class="game"><div class="msg" id="msg">Loading Oasis...</div><div class="world" id="world">
+<div class="ground"></div><div class="unit"><div class="name" id="name"></div><div class="weebie">
+<div class="layer color" id="c1"></div><div class="layer color" id="c2"></div><div class="layer" id="outline"></div>
+</div></div></div></div></div>
+<script>
+const API="https://ratdoodle-accounts.ratdoodle8.workers.dev";
+function authHeaders(){const h={},t=localStorage.getItem("rd_session");if(t)h.Authorization="Bearer "+t;return h}
+function color(v){const m={"teal":"#39c5bb","tan":"#d2b48c","red":"#ff4b4b","pink":"#ff8fc7","blue":"#5b8cff","lime green":"#9eea55","white":"#fff","purple":"#a675ff","silver":"#c0c0c0"};if(!v)return"#fff";v=String(v).trim();return m[v.toLowerCase()]||v}
+function lashes(w){return String(w.eyelashes??w.stats?.eyelashes??"Yes").toLowerCase()==="yes"}
+function render(w){
+ name.textContent=w.name||"Weebie";
+ c1.style.backgroundColor=color(w.primary_color??w.primaryColor);
+ c2.style.backgroundColor=color(w.secondary_color??w.secondaryColor);
+ if(lashes(w)){
+  c2.style.webkitMaskImage='url("/shared/Weebie-Color2.png")';c2.style.maskImage='url("/shared/Weebie-Color2.png")';
+  outline.style.backgroundImage='url("/shared/Weebie-Outline.png")';
+ }else{
+  c2.style.webkitMaskImage='url("/shared/Weebie-Color2a.png")';c2.style.maskImage='url("/shared/Weebie-Color2a.png")';
+  outline.style.backgroundImage='url("/shared/Weebie-Outline2.png")';
+ }
+ msg.style.display="none";world.style.display="block";
+}
+(async()=>{
+ try{
+  const r=await fetch(API+"/account",{method:"GET",credentials:"include",headers:authHeaders()});
+  const d=await r.json();
+  if(!d.loggedIn||r.status===401){localStorage.removeItem("rd_session");location.href="/login/";return}
+  if(d.passwordResetRequired||!d.weebie){location.href="/account/";return}
+  render(d.weebie);
+ }catch(e){console.error(e);msg.textContent="Unable to load Oasis."}
+})();
+</script></body></html>
