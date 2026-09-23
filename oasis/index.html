@@ -1,47 +1,1272 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Oasis</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%}body{background:#bcc8cc;color:#0007E6;font-family:Arial,sans-serif}
-.page{width:min(900px,calc(100% - 24px));margin:24px auto}.game{position:relative;width:100%;aspect-ratio:16/9;min-height:360px;overflow:hidden;background:#fff;border:2px solid #0007E6}
-.msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font-weight:bold}.world{display:none;position:absolute;inset:0}
-.ground{position:absolute;left:0;right:0;bottom:20%;height:3px;background:#0007E6}
-.unit{position:absolute;left:50%;bottom:20%;transform:translateX(-50%);width:min(34%,260px);display:flex;flex-direction:column;align-items:center}
-.name{width:100%;margin-bottom:8px;text-align:center;font-size:clamp(18px,3vw,30px);font-weight:bold;line-height:1;overflow-wrap:anywhere}
-.weebie{position:relative;width:100%;aspect-ratio:1}.layer{position:absolute;inset:0;background-repeat:no-repeat;background-position:center bottom;background-size:contain}
-.color{-webkit-mask-repeat:no-repeat;-webkit-mask-position:center bottom;-webkit-mask-size:contain;mask-repeat:no-repeat;mask-position:center bottom;mask-size:contain}
-#c1{-webkit-mask-image:url("/shared/Weebie-Color1.png");mask-image:url("/shared/Weebie-Color1.png")}
-@media(max-width:600px){.page{margin:12px auto}.game{min-height:300px}.unit{width:min(48%,230px)}}
-</style></head><body>
-<div class="page"><div class="game"><div class="msg" id="msg">Loading Oasis...</div><div class="world" id="world">
-<div class="ground"></div><div class="unit"><div class="name" id="name"></div><div class="weebie">
-<div class="layer color" id="c1"></div><div class="layer color" id="c2"></div><div class="layer" id="outline"></div>
-</div></div></div></div></div>
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Arial, sans-serif;
+    background: #bcc8cc;
+    color: #0007E6;
+  }
+
+  body {
+    text-align: center;
+    padding: 20px;
+  }
+
+  h1 {
+    margin: 10px 0 6px;
+  }
+
+  #status {
+    min-height: 22px;
+    margin: 8px 0;
+  }
+
+  #releaseButton {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    padding: 10px 16px;
+    cursor: pointer;
+    margin-bottom: 15px;
+  }
+
+  #releaseButton:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  #oasis {
+    position: relative;
+    width: min(100%, 1000px);
+    height: 560px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 2px solid #0007E6;
+    background: #bcc8cc;
+  }
+
+  #ground {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 16%;
+    background: #8aa06e;
+    border-top: 2px solid #0007E6;
+    pointer-events: none;
+  }
+
+  .weebie {
+    position: absolute;
+    width: 120px;
+    height: 160px;
+    left: 50%;
+    bottom: 16%;
+    transform: translateX(-50%);
+    transform-origin: center bottom;
+    pointer-events: none;
+    will-change: left, transform;
+  }
+
+  .weebie-info {
+    position: absolute;
+    left: 50%;
+    bottom: 122px;
+    transform: translateX(-50%);
+    width: 170px;
+    z-index: 20;
+    font-size: 14px;
+    line-height: 1.15;
+    text-shadow:
+      1px 1px 0 #bcc8cc,
+      -1px -1px 0 #bcc8cc,
+      1px -1px 0 #bcc8cc,
+      -1px 1px 0 #bcc8cc;
+  }
+
+  .weebie-name {
+    font-weight: bold;
+  }
+
+  .weebie-timer {
+    font-size: 12px;
+    margin-top: 3px;
+  }
+
+  .weebie-body {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 10px;
+    bottom: 0;
+    transform-origin: center bottom;
+  }
+
+  .weebie-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .color-layer {
+    -webkit-mask-size: contain;
+    -webkit-mask-position: center;
+    -webkit-mask-repeat: no-repeat;
+
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+  }
+
+  .color1 {
+    position: absolute;
+    inset: 0;
+  }
+
+  .color2 {
+    position: absolute;
+    inset: 0;
+  }
+
+  .meet .weebie-body {
+    animation: meetAnimation 400ms ease-in-out;
+  }
+
+  @keyframes meetAnimation {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    35% {
+      transform: translateY(-13px) rotate(-5deg);
+    }
+
+    70% {
+      transform: translateY(-5px) rotate(5deg);
+    }
+
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  @media (max-width: 600px) {
+    body {
+      padding: 10px;
+    }
+
+    #oasis {
+      height: 480px;
+    }
+
+    .weebie {
+      width: 90px;
+      height: 130px;
+    }
+
+    .weebie-body {
+      width: 78px;
+      height: 78px;
+      left: 6px;
+    }
+
+    .weebie-info {
+      bottom: 96px;
+      width: 130px;
+      font-size: 12px;
+    }
+
+    .weebie-timer {
+      font-size: 11px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Oasis</h1>
+
+<button id="releaseButton" type="button">
+  Release your Weebie into the Oasis!
+</button>
+
+<div id="status"></div>
+
+<div id="oasis">
+  <div id="ground"></div>
+</div>
+
 <script>
-const API="https://ratdoodle-accounts.ratdoodle8.workers.dev";
-function authHeaders(){const h={},t=localStorage.getItem("rd_session");if(t)h.Authorization="Bearer "+t;return h}
-function color(v){const m={"teal":"#39c5bb","tan":"#d2b48c","red":"#ff4b4b","pink":"#ff8fc7","blue":"#5b8cff","lime green":"#9eea55","white":"#fff","purple":"#a675ff","silver":"#c0c0c0"};if(!v)return"#fff";v=String(v).trim();return m[v.toLowerCase()]||v}
-function lashes(w){return String(w.eyelashes??w.stats?.eyelashes??"Yes").toLowerCase()==="yes"}
-function render(w){
- name.textContent=w.name||"Weebie";
- c1.style.backgroundColor=color(w.primary_color??w.primaryColor);
- c2.style.backgroundColor=color(w.secondary_color??w.secondaryColor);
- if(lashes(w)){
-  c2.style.webkitMaskImage='url("/shared/Weebie-Color2.png")';c2.style.maskImage='url("/shared/Weebie-Color2.png")';
-  outline.style.backgroundImage='url("/shared/Weebie-Outline.png")';
- }else{
-  c2.style.webkitMaskImage='url("/shared/Weebie-Color2a.png")';c2.style.maskImage='url("/shared/Weebie-Color2a.png")';
-  outline.style.backgroundImage='url("/shared/Weebie-Outline2.png")';
- }
- msg.style.display="none";world.style.display="block";
+const API =
+  "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
+
+const COLORS = {
+  "Teal": "#24B5A5",
+  "Tan": "#C9A875",
+  "Red": "#E04444",
+  "Pink": "#ee89f0",
+  "Blue": "#4A8FE7",
+  "Lime Green": "#8FD14F",
+  "White": "#F5F5F5",
+  "Purple": "#ed15ff",
+  "Silver": "#B8BEC4"
+};
+
+
+const oasis =
+  document.getElementById("oasis");
+
+const releaseButton =
+  document.getElementById("releaseButton");
+
+const statusText =
+  document.getElementById("status");
+
+
+const actors =
+  new Map();
+
+
+let serverOffset = 0;
+
+let loggedIn = false;
+
+let hasWeebie = false;
+
+let pollRunning = false;
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+function getSessionToken() {
+
+  return localStorage.getItem(
+    "rd_session"
+  );
+
 }
-(async()=>{
- try{
-  const r=await fetch(API+"/account",{method:"GET",credentials:"include",headers:authHeaders()});
-  const d=await r.json();
-  if(!d.loggedIn||r.status===401){localStorage.removeItem("rd_session");location.href="/login/";return}
-  if(d.passwordResetRequired||!d.weebie){location.href="/account/";return}
-  render(d.weebie);
- }catch(e){console.error(e);msg.textContent="Unable to load Oasis."}
-})();
-</script></body></html>
+
+
+function authHeaders(
+  includeJson = false
+) {
+
+  const headers = {};
+
+  const token =
+    getSessionToken();
+
+
+  if (token) {
+
+    headers.Authorization =
+      `Bearer ${token}`;
+
+  }
+
+
+  if (includeJson) {
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+
+  return headers;
+
+}
+
+
+/* =====================================================
+   ACCOUNT CHECK
+===================================================== */
+
+async function loadAccount() {
+
+  try {
+
+    const response =
+      await fetch(
+        `${API}/account`,
+        {
+          method: "GET",
+
+          credentials:
+            "include",
+
+          headers:
+            authHeaders()
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!data.loggedIn) {
+
+      window.location.href =
+        "/login/";
+
+      return;
+
+    }
+
+
+    loggedIn = true;
+
+    hasWeebie =
+      !!data.weebie;
+
+
+    if (!hasWeebie) {
+
+      releaseButton.disabled =
+        true;
+
+      statusText.textContent =
+        "You do not have a Weebie.";
+
+      return;
+
+    }
+
+
+    statusText.textContent =
+      "";
+
+    await loadOasis();
+
+    startPolling();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    statusText.textContent =
+      "Unable to load account.";
+
+  }
+
+}
+
+
+/* =====================================================
+   RELEASE
+===================================================== */
+
+releaseButton.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      !loggedIn ||
+      !hasWeebie
+    ) {
+      return;
+    }
+
+
+    releaseButton.disabled =
+      true;
+
+    statusText.textContent =
+      "Releasing...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${API}/oasis/release`,
+          {
+            method: "POST",
+
+            credentials:
+              "include",
+
+            headers:
+              authHeaders(true),
+
+            body:
+              JSON.stringify({})
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Release failed."
+        );
+
+      }
+
+
+      statusText.textContent =
+        "Weebie released!";
+
+
+      await loadOasis();
+
+
+      setTimeout(
+        () => {
+
+          if (
+            statusText.textContent ===
+            "Weebie released!"
+          ) {
+
+            statusText.textContent =
+              "";
+
+          }
+
+        },
+        1800
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      statusText.textContent =
+        error.message ||
+        "Release failed.";
+
+    }
+
+    finally {
+
+      releaseButton.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   LOAD SHARED OASIS
+===================================================== */
+
+async function loadOasis() {
+
+  try {
+
+    const response =
+      await fetch(
+        `${API}/oasis`,
+        {
+          method: "GET",
+
+          credentials:
+            "include",
+
+          headers:
+            authHeaders()
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Unable to load Oasis."
+      );
+
+    }
+
+
+    if (data.serverTime) {
+
+      serverOffset =
+        new Date(
+          data.serverTime
+        ).getTime() -
+        Date.now();
+
+    }
+
+
+    syncWeebies(
+      data.weebies || []
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Oasis update failed:",
+      error
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   POLLING
+===================================================== */
+
+function startPolling() {
+
+  if (pollRunning) {
+    return;
+  }
+
+
+  pollRunning = true;
+
+
+  setInterval(
+    () => {
+
+      loadOasis();
+
+    },
+    2000
+  );
+
+}
+
+
+/* =====================================================
+   CREATE / UPDATE WEEBIES
+===================================================== */
+
+function syncWeebies(
+  weebies
+) {
+
+  const activeIds =
+    new Set();
+
+
+  for (
+    const weebie
+    of weebies
+  ) {
+
+    const id =
+      String(
+        weebie.id
+      );
+
+
+    activeIds.add(id);
+
+
+    if (!actors.has(id)) {
+
+      createActor(
+        weebie
+      );
+
+    }
+
+
+    const actor =
+      actors.get(id);
+
+
+    actor.data =
+      weebie;
+
+
+    updateActorAppearance(
+      actor,
+      weebie
+    );
+
+  }
+
+
+  for (
+    const [id, actor]
+    of actors
+  ) {
+
+    if (
+      !activeIds.has(id)
+    ) {
+
+      actor.element.remove();
+
+      actors.delete(id);
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   WEEBIE GRAPHICS
+===================================================== */
+
+function createActor(
+  weebie
+) {
+
+  const element =
+    document.createElement(
+      "div"
+    );
+
+
+  element.className =
+    "weebie";
+
+
+  const info =
+    document.createElement(
+      "div"
+    );
+
+  info.className =
+    "weebie-info";
+
+
+  const name =
+    document.createElement(
+      "div"
+    );
+
+  name.className =
+    "weebie-name";
+
+
+  const timer =
+    document.createElement(
+      "div"
+    );
+
+  timer.className =
+    "weebie-timer";
+
+
+  info.appendChild(name);
+
+  info.appendChild(timer);
+
+
+  const body =
+    document.createElement(
+      "div"
+    );
+
+  body.className =
+    "weebie-body";
+
+
+  const color1 =
+    document.createElement(
+      "div"
+    );
+
+  color1.className =
+    "color-layer color1";
+
+
+  const color2 =
+    document.createElement(
+      "div"
+    );
+
+  color2.className =
+    "color-layer color2";
+
+
+  const outline =
+    document.createElement(
+      "img"
+    );
+
+  outline.className =
+    "weebie-layer";
+
+
+  body.appendChild(color1);
+
+  body.appendChild(color2);
+
+  body.appendChild(outline);
+
+
+  element.appendChild(info);
+
+  element.appendChild(body);
+
+
+  oasis.appendChild(
+    element
+  );
+
+
+  actors.set(
+    String(weebie.id),
+    {
+      element,
+      body,
+      name,
+      timer,
+      color1,
+      color2,
+      outline,
+      data: weebie,
+      interactionUntil: 0
+    }
+  );
+
+}
+
+
+function updateActorAppearance(
+  actor,
+  weebie
+) {
+
+  actor.name.textContent =
+    weebie.name || "Weebie";
+
+
+  const primary =
+    COLORS[
+      weebie.primaryColor
+    ] ||
+    weebie.primaryColor ||
+    "#F5F5F5";
+
+
+  const secondary =
+    COLORS[
+      weebie.secondaryColor
+    ] ||
+    weebie.secondaryColor ||
+    "#F5F5F5";
+
+
+  const eyelashes =
+    String(
+      weebie.eyelashes || "Yes"
+    ).toLowerCase() ===
+    "yes";
+
+
+  actor.color1.style.background =
+    primary;
+
+
+  actor.color1.style.webkitMaskImage =
+    'url("/shared/Weebie-Color1.png")';
+
+  actor.color1.style.maskImage =
+    'url("/shared/Weebie-Color1.png")';
+
+
+  const color2Image =
+    eyelashes
+      ? "/shared/Weebie-Color2.png"
+      : "/shared/Weebie-Color2a.png";
+
+
+  actor.color2.style.background =
+    secondary;
+
+  actor.color2.style.webkitMaskImage =
+    `url("${color2Image}")`;
+
+  actor.color2.style.maskImage =
+    `url("${color2Image}")`;
+
+
+  actor.outline.src =
+    eyelashes
+      ? "/shared/Weebie-Outline.png"
+      : "/shared/Weebie-Outline2.png";
+
+}
+
+
+/* =====================================================
+   DETERMINISTIC MOVEMENT
+
+   Movement is calculated from:
+   - Weebie ID
+   - server-synchronized time
+
+   This means different viewers see approximately
+   the same movement instead of every browser
+   inventing unrelated movement.
+===================================================== */
+
+function hash(
+  number
+) {
+
+  const x =
+    Math.sin(
+      Number(number) *
+      12.9898
+    ) *
+    43758.5453;
+
+
+  return (
+    x -
+    Math.floor(x)
+  );
+
+}
+
+
+function getHorizontalPosition(
+  weebie,
+  time
+) {
+
+  const phase =
+    hash(
+      weebie.id
+    ) *
+    Math.PI *
+    2;
+
+
+  const speed =
+    0.00022 +
+    (
+      hash(
+        Number(weebie.id) +
+        77
+      ) *
+      0.00018
+    );
+
+
+  return (
+    10 +
+    (
+      80 *
+      (
+        (
+          Math.sin(
+            time * speed +
+            phase
+          ) +
+          1
+        ) /
+        2
+      )
+    )
+  );
+
+}
+
+
+function getJumpHeight(
+  weebie,
+  time
+) {
+
+  const id =
+    Number(
+      weebie.id
+    );
+
+
+  const cycleLength =
+    2300 +
+    (
+      hash(
+        id + 150
+      ) *
+      2600
+    );
+
+
+  const offset =
+    hash(
+      id + 300
+    ) *
+    cycleLength;
+
+
+  const cycle =
+    (
+      time +
+      offset
+    ) %
+    cycleLength;
+
+
+  const jumpDuration =
+    620;
+
+
+  if (
+    cycle >
+    jumpDuration
+  ) {
+
+    return 0;
+
+  }
+
+
+  const progress =
+    cycle /
+    jumpDuration;
+
+
+  return (
+    Math.sin(
+      progress *
+      Math.PI
+    ) *
+    38
+  );
+
+}
+
+
+/* =====================================================
+   COUNTDOWN
+===================================================== */
+
+function updateTimer(
+  actor,
+  now
+) {
+
+  const expires =
+    new Date(
+      actor.data.expiresAt
+    ).getTime();
+
+
+  const remaining =
+    Math.max(
+      0,
+      expires - now
+    );
+
+
+  const totalSeconds =
+    Math.ceil(
+      remaining /
+      1000
+    );
+
+
+  const minutes =
+    Math.floor(
+      totalSeconds /
+      60
+    );
+
+
+  const seconds =
+    totalSeconds %
+    60;
+
+
+  actor.timer.textContent =
+    `${minutes}:${String(seconds).padStart(2, "0")}`;
+
+
+  if (
+    remaining <= 0
+  ) {
+
+    actor.element.remove();
+
+    actors.delete(
+      String(
+        actor.data.id
+      )
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   INTERACTIONS
+===================================================== */
+
+function checkInteractions(
+  positions,
+  now
+) {
+
+  positions.sort(
+    (a, b) =>
+      a.x - b.x
+  );
+
+
+  for (
+    let i = 0;
+    i < positions.length - 1;
+    i++
+  ) {
+
+    const first =
+      positions[i];
+
+    const second =
+      positions[i + 1];
+
+
+    const distance =
+      Math.abs(
+        first.x -
+        second.x
+      );
+
+
+    if (
+      distance > 7
+    ) {
+
+      continue;
+
+    }
+
+
+    const interactionWindow =
+      Math.floor(
+        now /
+        2200
+      );
+
+
+    const pairSeed =
+      (
+        Number(
+          first.actor.data.id
+        ) *
+        31
+      ) +
+      (
+        Number(
+          second.actor.data.id
+        ) *
+        17
+      ) +
+      interactionWindow;
+
+
+    const shouldInteract =
+      hash(pairSeed) >
+      0.70;
+
+
+    if (!shouldInteract) {
+
+      continue;
+
+    }
+
+
+    if (
+      now <
+      first.actor.interactionUntil ||
+      now <
+      second.actor.interactionUntil
+    ) {
+
+      continue;
+
+    }
+
+
+    first.actor.interactionUntil =
+      now + 1800;
+
+    second.actor.interactionUntil =
+      now + 1800;
+
+
+    playInteraction(
+      first.actor
+    );
+
+    playInteraction(
+      second.actor
+    );
+
+  }
+
+}
+
+
+function playInteraction(
+  actor
+) {
+
+  actor.element.classList.remove(
+    "meet"
+  );
+
+
+  void actor.element.offsetWidth;
+
+
+  actor.element.classList.add(
+    "meet"
+  );
+
+
+  setTimeout(
+    () => {
+
+      actor.element.classList.remove(
+        "meet"
+      );
+
+    },
+    400
+  );
+
+}
+
+
+/* =====================================================
+   ANIMATION LOOP
+===================================================== */
+
+function animate() {
+
+  const now =
+    Date.now() +
+    serverOffset;
+
+
+  const positions = [];
+
+
+  for (
+    const actor
+    of actors.values()
+  ) {
+
+    const weebie =
+      actor.data;
+
+
+    const x =
+      getHorizontalPosition(
+        weebie,
+        now
+      );
+
+
+    const jump =
+      getJumpHeight(
+        weebie,
+        now
+      );
+
+
+    actor.element.style.left =
+      `${x}%`;
+
+
+    actor.element.style.transform =
+      `translateX(-50%) translateY(${-jump}px)`;
+
+
+    updateTimer(
+      actor,
+      now
+    );
+
+
+    if (
+      actors.has(
+        String(weebie.id)
+      )
+    ) {
+
+      positions.push({
+        actor,
+        x
+      });
+
+    }
+
+  }
+
+
+  checkInteractions(
+    positions,
+    now
+  );
+
+
+  requestAnimationFrame(
+    animate
+  );
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadAccount();
+
+requestAnimationFrame(
+  animate
+);
+</script>
+
+</body>
+</html>
