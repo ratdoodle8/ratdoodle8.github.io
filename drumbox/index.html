@@ -24,14 +24,14 @@ body {
 
 main {
   width: 100%;
-  max-width: 850px;
+  max-width: 950px;
   text-align: center;
 }
 
 #drumbox {
   display: block;
   max-width: 90vw;
-  max-height: 48vh;
+  max-height: 45vh;
   margin: 0 auto 20px;
   image-rendering: pixelated;
   transform: scale(1);
@@ -121,6 +121,7 @@ input[type="range"] {
   <!-- MASTER -->
 
   <div class="box">
+
     <h2>MASTER</h2>
 
     <div class="control">
@@ -130,9 +131,15 @@ input[type="range"] {
     </div>
 
     <div class="control">
-      <label>SPEED</label>
+      <label>DRUM SPEED</label>
       <input id="speed" type="range" min="0" max="1" step="0.01" value="0.5">
       <div id="speedValue" class="value">50%</div>
+    </div>
+
+    <div class="control">
+      <label>BEAT SWITCH SPEED</label>
+      <input id="beatSwitchSpeed" type="range" min="0" max="1" step="0.01" value="0.5">
+      <div id="beatSwitchSpeedValue" class="value">50%</div>
     </div>
 
     <div class="control">
@@ -140,12 +147,14 @@ input[type="range"] {
       <input id="randomness" type="range" min="0" max="1" step="0.01" value="0">
       <div id="randomnessValue" class="value">0%</div>
     </div>
+
   </div>
 
 
   <!-- DRUM MIX -->
 
   <div class="box">
+
     <h2>DRUM MIX</h2>
 
     <div class="control">
@@ -165,13 +174,48 @@ input[type="range"] {
       <input id="hatVolume" type="range" min="0" max="1.5" step="0.01" value="1">
       <div id="hatVolumeValue" class="value">100%</div>
     </div>
+
   </div>
 
 
-  <!-- EFFECTS -->
+  <!-- TONES -->
 
   <div class="box">
-    <h2>EFFECTS</h2>
+
+    <h2>TONES</h2>
+
+    <div class="control">
+      <label>TONE</label>
+      <input id="tone" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="toneValue" class="value">0%</div>
+    </div>
+
+    <div class="control">
+      <label>TONE SPEED</label>
+      <input id="toneSpeed" type="range" min="0" max="1" step="0.01" value="0.4">
+      <div id="toneSpeedValue" class="value">40%</div>
+    </div>
+
+    <div class="control">
+      <label>TONE 2</label>
+      <input id="tone2" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="tone2Value" class="value">0%</div>
+    </div>
+
+    <div class="control">
+      <label>TONE 2 SPEED</label>
+      <input id="tone2Speed" type="range" min="0" max="1" step="0.01" value="0.6">
+      <div id="tone2SpeedValue" class="value">60%</div>
+    </div>
+
+  </div>
+
+
+  <!-- ATMOSPHERE -->
+
+  <div class="box">
+
+    <h2>ATMOSPHERE</h2>
 
     <div class="control">
       <label>UNDERWATER</label>
@@ -186,16 +230,24 @@ input[type="range"] {
     </div>
 
     <div class="control">
-      <label>TONE</label>
-      <input id="tone" type="range" min="0" max="1" step="0.01" value="0">
-      <div id="toneValue" class="value">0%</div>
+      <label>AIR</label>
+      <input id="air" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="airValue" class="value">0%</div>
     </div>
+
+    <div class="control">
+      <label>PENTAGRAM</label>
+      <input id="pentagram" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="pentagramValue" class="value">0%</div>
+    </div>
+
   </div>
 
 
   <!-- EQ -->
 
   <div class="box">
+
     <h2>EQ</h2>
 
     <div class="control">
@@ -215,6 +267,7 @@ input[type="range"] {
       <input id="high" type="range" min="-36" max="36" step="1" value="0">
       <div id="highValue" class="value">0 dB</div>
     </div>
+
   </div>
 
 </div>
@@ -225,14 +278,15 @@ input[type="range"] {
 
 <script>
 
-const $ = id => document.getElementById(id);
+const $ =
+  id =>
+    document.getElementById(id);
 
-const gif = $("drumbox");
-const startButton = $("start");
-const speedControl = $("speed");
-const randomnessControl = $("randomness");
-const toneControl = $("tone");
-const beatInfo = $("beatInfo");
+const gif =
+  $("drumbox");
+
+const startButton =
+  $("start");
 
 let audio;
 
@@ -240,8 +294,11 @@ let drumBus;
 let lowEQ;
 let midEQ;
 let highEQ;
+
 let underwaterFilter;
-let wroblyFilter;
+let wobbleFilter;
+let airFilter;
+
 let compressor;
 let masterGain;
 
@@ -249,66 +306,106 @@ let toneBus;
 let toneFilter;
 let toneDelay;
 let toneFeedback;
-let toneWet;
-let toneDry;
+
+let tone2Bus;
+let tone2Filter;
+let tone2Delay;
+let tone2Feedback;
 
 let toneOscillators = [];
 
-let wobblePhase = 0;
-let visualTimer = null;
+let visualTimer;
 
-let step = 0;
+let drumStep = 0;
+
 let currentPattern = 0;
+
 let nextPatternChange = 0;
+
+let toneStep = 0;
+let tone2Step = 0;
+
+let nextToneChange = 0;
+let nextTone2Change = 0;
+
+let wobblePhase = 0;
 
 
 /* =====================================================
-   20 DRUM BEATS
+   20 BEATS
 ===================================================== */
 
 const BEATS = [
 
-  { k:[0,8], s:[4,12], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,6,8,11], s:[4,12], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,3,8,10], s:[4,12], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,7,10], s:[4,12], h:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] },
-
-  { k:[0,5,8,14], s:[4,12], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,2,7,8,10,15], s:[4,12], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,8], s:[6,14], h:[0,3,6,9,12,15] },
-
-  { k:[0,4,8,12], s:[2,6,10,14], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,3,6,9,12,15], s:[4,12], h:[1,5,9,13] },
-
-  { k:[0,10], s:[4,12], h:[0,4,8,12] },
-
-  { k:[0,2,8,9], s:[4,12,15], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,5,7,11,14], s:[4,12], h:[1,3,5,7,9,11,13,15] },
-
-  { k:[0,8,11,15], s:[4,12], h:[0,1,4,5,8,9,12,13] },
-
-  { k:[0,3,8,13], s:[6,14], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,1,7,8,9,15], s:[4,12], h:[2,6,10,14] },
-
-  { k:[0,5,10,15], s:[3,7,11], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,6,10,13], s:[4,9,12], h:[1,3,5,7,9,11,13,15] },
-
-  { k:[0,2,4,8,10,12], s:[6,14], h:[0,4,8,12] },
-
-  { k:[0,7,8,15], s:[3,5,11,13], h:[0,2,4,6,8,10,12,14] },
-
-  { k:[0,3,5,8,11,14], s:[4,12], h:[0,1,3,4,6,7,9,10,12,13,15] }
+ {k:[0,8],s:[4,12],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,6,8,11],s:[4,12],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,3,8,10],s:[4,12],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,7,10],s:[4,12],h:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},
+ {k:[0,5,8,14],s:[4,12],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,2,7,8,10,15],s:[4,12],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,8],s:[6,14],h:[0,3,6,9,12,15]},
+ {k:[0,4,8,12],s:[2,6,10,14],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,3,6,9,12,15],s:[4,12],h:[1,5,9,13]},
+ {k:[0,10],s:[4,12],h:[0,4,8,12]},
+ {k:[0,2,8,9],s:[4,12,15],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,5,7,11,14],s:[4,12],h:[1,3,5,7,9,11,13,15]},
+ {k:[0,8,11,15],s:[4,12],h:[0,1,4,5,8,9,12,13]},
+ {k:[0,3,8,13],s:[6,14],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,1,7,8,9,15],s:[4,12],h:[2,6,10,14]},
+ {k:[0,5,10,15],s:[3,7,11],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,6,10,13],s:[4,9,12],h:[1,3,5,7,9,11,13,15]},
+ {k:[0,2,4,8,10,12],s:[6,14],h:[0,4,8,12]},
+ {k:[0,7,8,15],s:[3,5,11,13],h:[0,2,4,6,8,10,12,14]},
+ {k:[0,3,5,8,11,14],s:[4,12],h:[0,1,3,4,6,7,9,10,12,13,15]}
 
 ];
+
+
+/* =====================================================
+   HARMONIC MATERIAL
+
+   The pentagram control progressively
+   favors movement around the circle
+   of fifths.
+
+   C -> G -> D -> A -> E -> B ->
+   F# -> C# -> G# -> D# -> A# -> F
+===================================================== */
+
+const FIFTHS = [
+  130.81,
+  196.00,
+  293.66,
+  220.00,
+  164.81,
+  246.94,
+  185.00,
+  138.59,
+  207.65,
+  155.56,
+  233.08,
+  174.61
+];
+
+const FREE_NOTES = [
+  110.00,
+  116.54,
+  123.47,
+  130.81,
+  138.59,
+  146.83,
+  155.56,
+  164.81,
+  174.61,
+  185.00,
+  196.00,
+  207.65,
+  220.00,
+  233.08,
+  246.94
+];
+
+let fifthIndex = 0;
 
 
 /* =====================================================
@@ -317,150 +414,545 @@ const BEATS = [
 
 function buildAudio() {
 
-  audio = new (
-    window.AudioContext ||
-    window.webkitAudioContext
-  )();
+  audio =
+    new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )();
 
-  drumBus = audio.createGain();
+  drumBus =
+    audio.createGain();
 
-  lowEQ = audio.createBiquadFilter();
-  lowEQ.type = "lowshelf";
-  lowEQ.frequency.value = 220;
+  lowEQ =
+    audio.createBiquadFilter();
 
-  midEQ = audio.createBiquadFilter();
-  midEQ.type = "peaking";
-  midEQ.frequency.value = 1100;
-  midEQ.Q.value = 1.3;
+  lowEQ.type =
+    "lowshelf";
 
-  highEQ = audio.createBiquadFilter();
-  highEQ.type = "highshelf";
-  highEQ.frequency.value = 4200;
+  lowEQ.frequency.value =
+    220;
 
-  underwaterFilter = audio.createBiquadFilter();
-  underwaterFilter.type = "lowpass";
-  underwaterFilter.frequency.value = 20000;
 
-  wroblyFilter = audio.createBiquadFilter();
-  wroblyFilter.type = "lowpass";
-  wroblyFilter.frequency.value = 20000;
+  midEQ =
+    audio.createBiquadFilter();
 
-  compressor = audio.createDynamicsCompressor();
-  compressor.threshold.value = -14;
-  compressor.knee.value = 18;
-  compressor.ratio.value = 5;
-  compressor.attack.value = 0.003;
-  compressor.release.value = 0.18;
+  midEQ.type =
+    "peaking";
 
-  masterGain = audio.createGain();
+  midEQ.frequency.value =
+    1100;
+
+  midEQ.Q.value =
+    1.3;
+
+
+  highEQ =
+    audio.createBiquadFilter();
+
+  highEQ.type =
+    "highshelf";
+
+  highEQ.frequency.value =
+    4200;
+
+
+  underwaterFilter =
+    audio.createBiquadFilter();
+
+  underwaterFilter.type =
+    "lowpass";
+
+  underwaterFilter.frequency.value =
+    20000;
+
+
+  wobbleFilter =
+    audio.createBiquadFilter();
+
+  wobbleFilter.type =
+    "lowpass";
+
+  wobbleFilter.frequency.value =
+    20000;
+
+
+  airFilter =
+    audio.createBiquadFilter();
+
+  airFilter.type =
+    "highshelf";
+
+  airFilter.frequency.value =
+    3000;
+
+
+  compressor =
+    audio.createDynamicsCompressor();
+
+  compressor.threshold.value =
+    -14;
+
+  compressor.knee.value =
+    18;
+
+  compressor.ratio.value =
+    5;
+
+  compressor.attack.value =
+    0.003;
+
+  compressor.release.value =
+    0.18;
+
+
+  masterGain =
+    audio.createGain();
+
 
   drumBus.connect(lowEQ);
+
   lowEQ.connect(midEQ);
+
   midEQ.connect(highEQ);
+
   highEQ.connect(underwaterFilter);
-  underwaterFilter.connect(wroblyFilter);
-  wroblyFilter.connect(compressor);
+
+  underwaterFilter.connect(wobbleFilter);
+
+  wobbleFilter.connect(airFilter);
+
+  airFilter.connect(compressor);
+
   compressor.connect(masterGain);
-  masterGain.connect(audio.destination);
+
+  masterGain.connect(
+    audio.destination
+  );
+
 
   buildTone();
+
+  buildTone2();
+
   updateEffects();
-  wobbleLoop();
+
+  modulationLoop();
+
 }
 
 
 /* =====================================================
-   SPACEY TONE
+   TONE 1
 ===================================================== */
 
 function buildTone() {
 
-  toneBus = audio.createGain();
-  toneBus.gain.value = 0;
+  toneBus =
+    audio.createGain();
 
-  toneFilter = audio.createBiquadFilter();
-  toneFilter.type = "lowpass";
-  toneFilter.frequency.value = 1400;
-  toneFilter.Q.value = 7;
+  toneBus.gain.value =
+    0;
 
-  toneDelay = audio.createDelay(2);
-  toneDelay.delayTime.value = 0.38;
 
-  toneFeedback = audio.createGain();
-  toneFeedback.gain.value = 0.58;
+  toneFilter =
+    audio.createBiquadFilter();
 
-  toneWet = audio.createGain();
-  toneWet.gain.value = 0.7;
+  toneFilter.type =
+    "lowpass";
 
-  toneDry = audio.createGain();
-  toneDry.gain.value = 0.45;
+  toneFilter.frequency.value =
+    1600;
 
-  toneBus.connect(toneFilter);
+  toneFilter.Q.value =
+    7;
 
-  toneFilter.connect(toneDry);
-  toneDry.connect(compressor);
 
-  toneFilter.connect(toneDelay);
-  toneDelay.connect(toneWet);
-  toneWet.connect(compressor);
+  toneDelay =
+    audio.createDelay(2);
 
-  toneDelay.connect(toneFeedback);
-  toneFeedback.connect(toneDelay);
+  toneDelay.delayTime.value =
+    0.4;
 
-  const frequencies = [
-    110,
-    164.81,
-    220
-  ];
 
-  frequencies.forEach((frequency, index) => {
+  toneFeedback =
+    audio.createGain();
 
-    const osc = audio.createOscillator();
-    const gain = audio.createGain();
+  toneFeedback.gain.value =
+    0.55;
 
-    osc.type =
-      index === 1
-        ? "triangle"
-        : "sawtooth";
 
-    osc.frequency.value = frequency;
+  toneBus.connect(
+    toneFilter
+  );
 
-    osc.detune.value =
-      (index - 1) * 7;
+  toneFilter.connect(
+    compressor
+  );
 
-    gain.gain.value =
-      index === 1
-        ? 0.15
-        : 0.09;
+  toneFilter.connect(
+    toneDelay
+  );
 
-    osc.connect(gain);
-    gain.connect(toneBus);
+  toneDelay.connect(
+    compressor
+  );
 
-    osc.start();
+  toneDelay.connect(
+    toneFeedback
+  );
 
-    toneOscillators.push({
-      osc,
-      gain,
-      base: frequency
-    });
-  });
+  toneFeedback.connect(
+    toneDelay
+  );
+
+
+  [1, 1.5, 2].forEach(
+    (ratio, index) => {
+
+      const osc =
+        audio.createOscillator();
+
+      const gain =
+        audio.createGain();
+
+      osc.type =
+        index === 1
+          ? "triangle"
+          : "sawtooth";
+
+      gain.gain.value =
+        index === 1
+          ? 0.13
+          : 0.07;
+
+      osc.frequency.value =
+        130.81 *
+        ratio;
+
+      osc.connect(
+        gain
+      );
+
+      gain.connect(
+        toneBus
+      );
+
+      osc.start();
+
+      toneOscillators.push({
+        osc,
+        ratio,
+        type: 1
+      });
+
+    }
+  );
+
 }
 
 
 /* =====================================================
-   VISUAL HIT
+   TONE 2
+
+   Higher, fast arpeggiated tone.
 ===================================================== */
 
-function hitAnimation(amount) {
+function buildTone2() {
+
+  tone2Bus =
+    audio.createGain();
+
+  tone2Bus.gain.value =
+    0;
+
+
+  tone2Filter =
+    audio.createBiquadFilter();
+
+  tone2Filter.type =
+    "bandpass";
+
+  tone2Filter.frequency.value =
+    1800;
+
+  tone2Filter.Q.value =
+    3;
+
+
+  tone2Delay =
+    audio.createDelay(1);
+
+  tone2Delay.delayTime.value =
+    0.18;
+
+
+  tone2Feedback =
+    audio.createGain();
+
+  tone2Feedback.gain.value =
+    0.48;
+
+
+  tone2Bus.connect(
+    tone2Filter
+  );
+
+  tone2Filter.connect(
+    compressor
+  );
+
+  tone2Filter.connect(
+    tone2Delay
+  );
+
+  tone2Delay.connect(
+    compressor
+  );
+
+  tone2Delay.connect(
+    tone2Feedback
+  );
+
+  tone2Feedback.connect(
+    tone2Delay
+  );
+
+}
+
+
+/* =====================================================
+   TONE NOTE SELECTION
+===================================================== */
+
+function getToneFrequency(
+  octaveMultiplier = 1
+) {
+
+  const pentagram =
+    Number(
+      $("pentagram").value
+    );
+
+
+  /*
+    At 0%:
+    free chromatic wandering.
+
+    As Pentagram rises:
+    increasingly favor sequential
+    movement through fifths.
+
+    At 100%:
+    all movement comes from the
+    fifths sequence.
+  */
+
+  if (
+    Math.random() <
+    pentagram
+  ) {
+
+    const direction =
+      Math.random() <
+      0.78
+        ? 1
+        : -1;
+
+
+    fifthIndex =
+      (
+        fifthIndex +
+        direction +
+        FIFTHS.length
+      ) %
+      FIFTHS.length;
+
+
+    return (
+      FIFTHS[
+        fifthIndex
+      ] *
+      octaveMultiplier
+    );
+
+  }
+
+
+  return (
+    FREE_NOTES[
+      Math.floor(
+        Math.random() *
+        FREE_NOTES.length
+      )
+    ] *
+    octaveMultiplier
+  );
+
+}
+
+
+/* =====================================================
+   CHANGE TONE 1
+===================================================== */
+
+function changeTone1() {
+
+  const root =
+    getToneFrequency(1);
+
+
+  toneOscillators
+    .filter(
+      item =>
+        item.type === 1
+    )
+    .forEach(
+      (item, index) => {
+
+        const ratios =
+          [1, 1.5, 2];
+
+
+        item.osc.frequency
+          .setTargetAtTime(
+            root *
+            ratios[index],
+            audio.currentTime,
+            0.3
+          );
+
+      }
+    );
+
+}
+
+
+/* =====================================================
+   TONE 2 ARPEGGIO
+===================================================== */
+
+function playTone2Note() {
+
+  const volume =
+    Number(
+      $("tone2").value
+    );
+
+
+  if (
+    volume <= 0
+  ) {
+
+    return;
+  }
+
+
+  const root =
+    getToneFrequency(
+      2 +
+      (
+        tone2Step %
+        3
+      ) *
+      0.5
+    );
+
+
+  const osc =
+    audio.createOscillator();
+
+
+  const gain =
+    audio.createGain();
+
+
+  osc.type =
+    Math.random() <
+    0.5
+      ? "triangle"
+      : "sine";
+
+
+  osc.frequency.value =
+    root;
+
+
+  const now =
+    audio.currentTime;
+
+
+  gain.gain.setValueAtTime(
+    0.001,
+    now
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.17 *
+    volume,
+    now + 0.012
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 0.22
+  );
+
+
+  osc.connect(
+    gain
+  );
+
+
+  gain.connect(
+    tone2Bus
+  );
+
+
+  osc.start(
+    now
+  );
+
+
+  osc.stop(
+    now + 0.24
+  );
+
+
+  tone2Step++;
+
+}
+
+
+/* =====================================================
+   GIF
+===================================================== */
+
+function hitAnimation(
+  amount
+) {
 
   gif.style.transform =
     `scale(${amount})`;
 
-  clearTimeout(visualTimer);
 
-  visualTimer = setTimeout(() => {
-    gif.style.transform = "scale(1)";
-  }, 45);
+  clearTimeout(
+    visualTimer
+  );
+
+
+  visualTimer =
+    setTimeout(
+      () => {
+
+        gif.style.transform =
+          "scale(1)";
+
+      },
+      45
+    );
+
 }
 
 
@@ -468,57 +960,87 @@ function hitAnimation(amount) {
    KICK
 ===================================================== */
 
-function kick(strength = 1) {
+function kick(
+  strength = 1
+) {
 
-  const instrumentVolume =
-    Number($("kickVolume").value);
+  const volume =
+    Number(
+      $("kickVolume").value
+    );
 
-  if (instrumentVolume <= 0) {
+
+  if (
+    volume <= 0
+  ) {
+
     return;
   }
 
-  const now = audio.currentTime;
+
+  const now =
+    audio.currentTime;
+
 
   const osc =
     audio.createOscillator();
 
+
   const gain =
     audio.createGain();
 
-  osc.type = "sine";
+
+  osc.type =
+    "sine";
+
 
   osc.frequency.setValueAtTime(
     165,
     now
   );
 
+
   osc.frequency.exponentialRampToValueAtTime(
     42,
     now + 0.14
   );
 
+
   gain.gain.setValueAtTime(
     1.05 *
     strength *
-    instrumentVolume,
+    volume,
     now
   );
+
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 0.24
   );
 
-  osc.connect(gain);
-  gain.connect(drumBus);
+
+  osc.connect(
+    gain
+  );
+
+
+  gain.connect(
+    drumBus
+  );
+
 
   osc.start(now);
-  osc.stop(now + 0.25);
+
+  osc.stop(
+    now + 0.25
+  );
+
 
   hitAnimation(
-    1.09 +
-    strength * 0.04
+    1.1
   );
+
 }
 
 
@@ -526,21 +1048,34 @@ function kick(strength = 1) {
    SNARE
 ===================================================== */
 
-function snare(strength = 1) {
+function snare(
+  strength = 1
+) {
 
-  const instrumentVolume =
-    Number($("snareVolume").value);
+  const volume =
+    Number(
+      $("snareVolume").value
+    );
 
-  if (instrumentVolume <= 0) {
+
+  if (
+    volume <= 0
+  ) {
+
     return;
   }
 
-  const now = audio.currentTime;
+
+  const now =
+    audio.currentTime;
+
 
   const length =
     Math.floor(
-      audio.sampleRate * 0.18
+      audio.sampleRate *
+      0.18
     );
+
 
   const buffer =
     audio.createBuffer(
@@ -549,54 +1084,89 @@ function snare(strength = 1) {
       audio.sampleRate
     );
 
+
   const data =
-    buffer.getChannelData(0);
+    buffer.getChannelData(
+      0
+    );
+
 
   for (
     let i = 0;
     i < length;
     i++
   ) {
+
     data[i] =
-      Math.random() * 2 - 1;
+      Math.random() *
+      2 -
+      1;
+
   }
+
 
   const source =
     audio.createBufferSource();
 
+
   const filter =
     audio.createBiquadFilter();
+
 
   const gain =
     audio.createGain();
 
-  source.buffer = buffer;
 
-  filter.type = "highpass";
-  filter.frequency.value = 700;
+  source.buffer =
+    buffer;
+
+
+  filter.type =
+    "highpass";
+
+
+  filter.frequency.value =
+    700;
+
 
   gain.gain.setValueAtTime(
     0.72 *
     strength *
-    instrumentVolume,
+    volume,
     now
   );
+
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 0.18
   );
 
-  source.connect(filter);
-  filter.connect(gain);
-  gain.connect(drumBus);
 
-  source.start(now);
+  source.connect(
+    filter
+  );
+
+
+  filter.connect(
+    gain
+  );
+
+
+  gain.connect(
+    drumBus
+  );
+
+
+  source.start(
+    now
+  );
+
 
   hitAnimation(
-    1.06 +
-    strength * 0.025
+    1.06
   );
+
 }
 
 
@@ -604,21 +1174,34 @@ function snare(strength = 1) {
    HI-HAT
 ===================================================== */
 
-function hihat(strength = 1) {
+function hihat(
+  strength = 1
+) {
 
-  const instrumentVolume =
-    Number($("hatVolume").value);
+  const volume =
+    Number(
+      $("hatVolume").value
+    );
 
-  if (instrumentVolume <= 0) {
+
+  if (
+    volume <= 0
+  ) {
+
     return;
   }
 
-  const now = audio.currentTime;
+
+  const now =
+    audio.currentTime;
+
 
   const length =
     Math.floor(
-      audio.sampleRate * 0.055
+      audio.sampleRate *
+      0.055
     );
+
 
   const buffer =
     audio.createBuffer(
@@ -627,64 +1210,103 @@ function hihat(strength = 1) {
       audio.sampleRate
     );
 
+
   const data =
-    buffer.getChannelData(0);
+    buffer.getChannelData(
+      0
+    );
+
 
   for (
     let i = 0;
     i < length;
     i++
   ) {
+
     data[i] =
-      Math.random() * 2 - 1;
+      Math.random() *
+      2 -
+      1;
+
   }
+
 
   const source =
     audio.createBufferSource();
 
+
   const filter =
     audio.createBiquadFilter();
+
 
   const gain =
     audio.createGain();
 
-  source.buffer = buffer;
 
-  filter.type = "highpass";
-  filter.frequency.value = 5200;
+  source.buffer =
+    buffer;
+
+
+  filter.type =
+    "highpass";
+
+
+  filter.frequency.value =
+    5200;
+
 
   gain.gain.setValueAtTime(
     0.32 *
     strength *
-    instrumentVolume,
+    volume,
     now
   );
+
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 0.06
   );
 
-  source.connect(filter);
-  filter.connect(gain);
-  gain.connect(drumBus);
 
-  source.start(now);
+  source.connect(
+    filter
+  );
 
-  hitAnimation(1.025);
+
+  filter.connect(
+    gain
+  );
+
+
+  gain.connect(
+    drumBus
+  );
+
+
+  source.start(
+    now
+  );
+
+
+  hitAnimation(
+    1.025
+  );
+
 }
 
 
 /* =====================================================
-   SPEED
+   DRUM BPM
 ===================================================== */
 
 function getBPM() {
 
   const value =
     Number(
-      speedControl.value
+      $("speed").value
     );
+
 
   return (
     20 *
@@ -693,11 +1315,107 @@ function getBPM() {
       value
     )
   );
+
 }
 
 
 /* =====================================================
-   CHANGE BEAT
+   BEAT SWITCH SPEED
+
+   0%:
+   10 minutes -> 2 hours
+
+   50%:
+   10 seconds -> ~15 minutes
+
+   100%:
+   1 second -> 10 seconds
+===================================================== */
+
+function getBeatSwitchDuration() {
+
+  const speed =
+    Number(
+      $("beatSwitchSpeed").value
+    );
+
+
+  let minimum;
+  let maximum;
+
+
+  if (
+    speed < 0.5
+  ) {
+
+    const t =
+      speed /
+      0.5;
+
+
+    minimum =
+      600000 +
+      (
+        10000 -
+        600000
+      ) *
+      t;
+
+
+    maximum =
+      7200000 +
+      (
+        900000 -
+        7200000
+      ) *
+      t;
+
+  }
+
+  else {
+
+    const t =
+      (
+        speed -
+        0.5
+      ) /
+      0.5;
+
+
+    minimum =
+      10000 +
+      (
+        1000 -
+        10000
+      ) *
+      t;
+
+
+    maximum =
+      900000 +
+      (
+        10000 -
+        900000
+      ) *
+      t;
+
+  }
+
+
+  return (
+    minimum +
+    Math.random() *
+    (
+      maximum -
+      minimum
+    )
+  );
+
+}
+
+
+/* =====================================================
+   CHOOSE BEAT
 ===================================================== */
 
 function chooseNextPattern() {
@@ -708,98 +1426,98 @@ function chooseNextPattern() {
       BEATS.length
     );
 
+
   if (
-    BEATS.length > 1 &&
-    next === currentPattern
+    next ===
+    currentPattern
   ) {
+
     next =
-      (next + 1) %
+      (
+        next + 1
+      ) %
       BEATS.length;
+
   }
 
-  currentPattern = next;
 
-  const minimum =
-    10 * 1000;
+  currentPattern =
+    next;
 
-  const maximum =
-    2 *
-    60 *
-    60 *
-    1000;
 
   nextPatternChange =
     Date.now() +
-    minimum +
-    Math.random() *
-    (maximum - minimum);
+    getBeatSwitchDuration();
 
-  beatInfo.textContent =
-    `BEAT ${currentPattern + 1}`;
+
+  $("beatInfo").textContent =
+    `BEAT ${
+      currentPattern + 1
+    }`;
+
 }
 
 
 /* =====================================================
-   VELOCITY
+   DRUM STEP
 ===================================================== */
 
-function velocity(base, randomness) {
-
-  const variation =
-    (
-      Math.random() * 2 - 1
-    ) *
-    randomness *
-    0.75;
-
-  return Math.max(
-    0.12,
-    base + variation
-  );
-}
-
-
-/* =====================================================
-   PLAY STEP
-===================================================== */
-
-function playStep() {
+function playDrumStep() {
 
   if (
     Date.now() >=
     nextPatternChange
   ) {
+
     chooseNextPattern();
+
   }
+
 
   const randomness =
     Number(
-      randomnessControl.value
+      $("randomness").value
     );
+
 
   const pattern =
-    BEATS[currentPattern];
+    BEATS[
+      currentPattern
+    ];
 
-  let plannedKick =
-    pattern.k.includes(step);
 
-  let plannedSnare =
-    pattern.s.includes(step);
+  let k =
+    pattern.k.includes(
+      drumStep
+    );
 
-  let plannedHat =
-    pattern.h.includes(step);
 
+  let s =
+    pattern.s.includes(
+      drumStep
+    );
+
+
+  let h =
+    pattern.h.includes(
+      drumStep
+    );
+
+
+  /*
+    Increasing randomness progressively
+    replaces preset decisions.
+  */
 
   if (
     Math.random() <
     randomness
   ) {
-    plannedKick =
+
+    k =
       Math.random() <
-      (
-        0.5 +
-        randomness * 0.15
-      );
+      0.5;
+
   }
 
 
@@ -807,12 +1525,11 @@ function playStep() {
     Math.random() <
     randomness
   ) {
-    plannedSnare =
+
+    s =
       Math.random() <
-      (
-        0.38 +
-        randomness * 0.22
-      );
+      0.4;
+
   }
 
 
@@ -820,176 +1537,244 @@ function playStep() {
     Math.random() <
     randomness
   ) {
-    plannedHat =
+
+    h =
       Math.random() <
-      (
-        0.45 +
-        randomness * 0.35
-      );
+      0.65;
+
   }
 
 
-  if (plannedKick) {
+  const randomStrength =
+    () =>
+      0.45 +
+      Math.random() *
+      0.7;
+
+
+  if (k) {
     kick(
-      velocity(
-        0.9,
-        randomness
-      )
+      randomStrength()
     );
   }
 
 
-  if (plannedSnare) {
+  if (s) {
     snare(
-      velocity(
-        0.82,
-        randomness
-      )
+      randomStrength()
     );
   }
 
 
-  if (plannedHat) {
+  if (h) {
     hihat(
-      velocity(
-        0.65,
-        randomness
-      )
+      randomStrength()
     );
   }
 
 
   /*
-    RANDOM EXTRA HIT
+    Fully independent chaos.
   */
 
   if (
     Math.random() <
-    randomness * 0.55
+    randomness *
+    0.55
   ) {
 
-    const choice =
+    const instrument =
       Math.floor(
-        Math.random() * 3
-      );
-
-    const strength =
-      0.2 +
-      Math.random() * 1.2;
-
-    if (choice === 0) {
-      kick(strength);
-    }
-
-    else if (choice === 1) {
-      snare(strength);
-    }
-
-    else {
-      hihat(strength);
-    }
-  }
-
-
-  /*
-    RANDOM FLAM
-  */
-
-  if (
-    Math.random() <
-    randomness * 0.32
-  ) {
-
-    const delay =
-      15 +
-      Math.random() * 180;
-
-    setTimeout(() => {
-
-      const r =
-        Math.random();
-
-      if (r < 0.34) {
-        kick(Math.random());
-      }
-
-      else if (r < 0.67) {
-        snare(Math.random());
-      }
-
-      else {
-        hihat(Math.random());
-      }
-
-    }, delay);
-  }
-
-
-  step =
-    (step + 1) % 16;
-}
-
-
-/* =====================================================
-   RHYTHM SCHEDULER
-===================================================== */
-
-function scheduleNextStep() {
-
-  const bpm =
-    getBPM();
-
-  const beatMilliseconds =
-    60000 / bpm;
-
-  let stepMilliseconds =
-    beatMilliseconds / 4;
-
-  const randomness =
-    Number(
-      randomnessControl.value
-    );
-
-
-  if (randomness > 0) {
-
-    const variation =
-      (
-        Math.random() * 2 - 1
-      ) *
-      randomness *
-      0.55;
-
-    stepMilliseconds *=
-      Math.max(
-        0.15,
-        1 + variation
+        Math.random() *
+        3
       );
 
 
     if (
-      Math.random() <
-      randomness *
-      randomness *
-      0.16
+      instrument === 0
     ) {
 
-      stepMilliseconds *=
-        0.08 +
-        Math.random() * 5;
+      kick(
+        Math.random() *
+        1.2
+      );
+
     }
+
+    else if (
+      instrument === 1
+    ) {
+
+      snare(
+        Math.random() *
+        1.2
+      );
+
+    }
+
+    else {
+
+      hihat(
+        Math.random() *
+        1.2
+      );
+
+    }
+
   }
 
 
-  setTimeout(() => {
+  drumStep =
+    (
+      drumStep + 1
+    ) %
+    16;
 
-    playStep();
-    scheduleNextStep();
+}
 
-  }, Math.max(
-    18,
-    stepMilliseconds
-  ));
+
+/* =====================================================
+   DRUM SCHEDULER
+===================================================== */
+
+function scheduleDrums() {
+
+  const bpm =
+    getBPM();
+
+
+  let delay =
+    (
+      60000 /
+      bpm
+    ) /
+    4;
+
+
+  const randomness =
+    Number(
+      $("randomness").value
+    );
+
+
+  if (
+    randomness >
+    0
+  ) {
+
+    delay *=
+      Math.max(
+        0.12,
+        1 +
+        (
+          Math.random() *
+          2 -
+          1
+        ) *
+        randomness *
+        0.6
+      );
+
+  }
+
+
+  setTimeout(
+    () => {
+
+      playDrumStep();
+
+      scheduleDrums();
+
+    },
+    Math.max(
+      18,
+      delay
+    )
+  );
+
+}
+
+
+/* =====================================================
+   TONE 1 SPEED
+===================================================== */
+
+function scheduleTone1() {
+
+  const speed =
+    Number(
+      $("toneSpeed").value
+    );
+
+
+  /*
+    0% = approximately every 30 sec
+    100% = approximately every 0.4 sec
+  */
+
+  const delay =
+    30000 *
+    Math.pow(
+      0.4 /
+      30,
+      speed
+    );
+
+
+  setTimeout(
+    () => {
+
+      changeTone1();
+
+      scheduleTone1();
+
+    },
+    delay
+  );
+
+}
+
+
+/* =====================================================
+   TONE 2 SPEED
+===================================================== */
+
+function scheduleTone2() {
+
+  const speed =
+    Number(
+      $("tone2Speed").value
+    );
+
+
+  /*
+    Designed to be the quicker,
+    arpeggiated layer.
+
+    0% = 2 seconds
+    100% = 45 ms
+  */
+
+  const delay =
+    2000 *
+    Math.pow(
+      45 /
+      2000,
+      speed
+    );
+
+
+  setTimeout(
+    () => {
+
+      playTone2Note();
+
+      scheduleTone2();
+
+    },
+    delay
+  );
+
 }
 
 
@@ -1003,46 +1788,60 @@ function updateEffects() {
     return;
   }
 
+
   const volume =
-    Number($("volume").value);
+    Number(
+      $("volume").value
+    );
+
 
   const underwater =
-    Number($("underwater").value);
+    Number(
+      $("underwater").value
+    );
+
+
+  const air =
+    Number(
+      $("air").value
+    );
+
 
   const tone =
-    Number($("tone").value);
-
-  const low =
-    Number($("low").value);
-
-  const mid =
-    Number($("mid").value);
-
-  const high =
-    Number($("high").value);
+    Number(
+      $("tone").value
+    );
 
 
-  masterGain.gain.setTargetAtTime(
-    volume * 1.65,
-    audio.currentTime,
-    0.02
-  );
+  const tone2 =
+    Number(
+      $("tone2").value
+    );
+
+
+  masterGain.gain
+    .setTargetAtTime(
+      volume *
+      1.65,
+      audio.currentTime,
+      0.02
+    );
 
 
   /*
-    EXTREME UNDERWATER
+    UNDERWATER
   */
 
   const underwaterFrequency =
     20000 *
     Math.pow(
-      80 / 20000,
+      80 /
+      20000,
       underwater
     );
 
 
-  underwaterFilter
-    .frequency
+  underwaterFilter.frequency
     .setTargetAtTime(
       underwaterFrequency,
       audio.currentTime,
@@ -1050,69 +1849,137 @@ function updateEffects() {
     );
 
 
-  underwaterFilter
-    .Q
+  underwaterFilter.Q
     .setTargetAtTime(
       1 +
-      underwater * 22,
+      underwater *
+      22,
       audio.currentTime,
       0.025
     );
 
 
-  lowEQ.gain.setTargetAtTime(
-    low,
-    audio.currentTime,
-    0.02
-  );
+  /*
+    AIR
 
-  midEQ.gain.setTargetAtTime(
-    mid,
-    audio.currentTime,
-    0.02
-  );
+    Strongly boosts high frequencies
+    across drums and both synth layers.
+  */
 
-  highEQ.gain.setTargetAtTime(
-    high,
-    audio.currentTime,
-    0.02
-  );
+  airFilter.gain
+    .setTargetAtTime(
+      air *
+      32,
+      audio.currentTime,
+      0.03
+    );
+
+
+  $("low") &&
+    lowEQ.gain
+      .setTargetAtTime(
+        Number(
+          $("low").value
+        ),
+        audio.currentTime,
+        0.02
+      );
+
+
+  midEQ.gain
+    .setTargetAtTime(
+      Number(
+        $("mid").value
+      ),
+      audio.currentTime,
+      0.02
+    );
+
+
+  highEQ.gain
+    .setTargetAtTime(
+      Number(
+        $("high").value
+      ),
+      audio.currentTime,
+      0.02
+    );
 
 
   /*
-    TONE = VOLUME ONLY
+    TONE VOLUMES
   */
 
-  toneBus.gain.setTargetAtTime(
-    tone * 0.55,
-    audio.currentTime,
-    0.08
-  );
+  toneBus.gain
+    .setTargetAtTime(
+      tone *
+      0.55,
+      audio.currentTime,
+      0.08
+    );
+
+
+  tone2Bus.gain
+    .setTargetAtTime(
+      tone2 *
+      0.75,
+      audio.currentTime,
+      0.05
+    );
+
+
+  /*
+    AIR ALSO MAKES THE TONES
+    BRIGHTER / MORE OPEN.
+  */
+
+  toneFilter.frequency
+    .setTargetAtTime(
+      1500 +
+      air *
+      6500,
+      audio.currentTime,
+      0.08
+    );
+
+
+  tone2Filter.frequency
+    .setTargetAtTime(
+      1800 +
+      air *
+      8000,
+      audio.currentTime,
+      0.08
+    );
+
 }
 
 
 /* =====================================================
-   WROBLY + SYNTH MOTION
+   MODULATION
 ===================================================== */
 
-function wobbleLoop() {
+function modulationLoop() {
 
   if (!audio) {
     return;
   }
+
+
+  const now =
+    audio.currentTime;
+
 
   const wrobly =
     Number(
       $("wrobly").value
     );
 
-  const time =
-    audio.currentTime;
-
 
   wobblePhase +=
     0.012 +
-    wrobly * 0.19;
+    wrobly *
+    0.19;
 
 
   const wave =
@@ -1121,10 +1988,11 @@ function wobbleLoop() {
         wobblePhase
       ) +
       1
-    ) / 2;
+    ) /
+    2;
 
 
-  const wobbleMinimum =
+  const minimum =
     100 +
     (
       1 -
@@ -1133,132 +2001,176 @@ function wobbleLoop() {
     15000;
 
 
-  const wobbleFrequency =
-    wobbleMinimum +
-    (
-      20000 -
-      wobbleMinimum
-    ) *
-    wave;
-
-
-  wroblyFilter
-    .frequency
+  wobbleFilter.frequency
     .setTargetAtTime(
-      wobbleFrequency,
-      time,
+      minimum +
+      (
+        20000 -
+        minimum
+      ) *
+      wave,
+      now,
       0.025
     );
 
 
-  wroblyFilter
-    .Q
+  wobbleFilter.Q
     .setTargetAtTime(
       1 +
-      wrobly * 28,
-      time,
+      wrobly *
+      28,
+      now,
       0.025
     );
 
 
   /*
-    PSYCHEDELIC TONE MOVEMENT
+    TONE 1 PHASEY MOVEMENT
   */
 
-  const slowWave =
+  const toneWave =
     (
       Math.sin(
-        time * 0.37
+        now *
+        0.37
       ) +
       1
-    ) / 2;
+    ) /
+    2;
 
 
-  const secondWave =
-    Math.sin(
-      time * 0.113
+  const air =
+    Number(
+      $("air").value
     );
 
 
-  toneFilter
-    .frequency
+  toneFilter.frequency
     .setTargetAtTime(
       380 +
-      slowWave * 2100,
-      time,
+      toneWave *
+      (
+        2100 +
+        air *
+        6000
+      ),
+      now,
       0.08
     );
 
 
-  toneFilter
-    .Q
+  toneFilter.Q
     .setTargetAtTime(
       4 +
-      slowWave * 15,
-      time,
+      toneWave *
+      15,
+      now,
       0.08
     );
 
+
+  toneDelay.delayTime
+    .setTargetAtTime(
+      0.12 +
+      toneWave *
+      0.55,
+      now,
+      0.08
+    );
+
+
+  /*
+    TONE 2 QUICKER SHIMMER
+  */
+
+  const highWave =
+    (
+      Math.sin(
+        now *
+        1.7
+      ) +
+      1
+    ) /
+    2;
+
+
+  tone2Filter.frequency
+    .setTargetAtTime(
+      900 +
+      highWave *
+      (
+        3800 +
+        air *
+        7000
+      ),
+      now,
+      0.04
+    );
+
+
+  tone2Delay.delayTime
+    .setTargetAtTime(
+      0.07 +
+      highWave *
+      0.24,
+      now,
+      0.04
+    );
+
+
+  /*
+    Slow detuning of Tone 1.
+  */
 
   toneOscillators.forEach(
     (item, index) => {
 
       const drift =
         Math.sin(
-          time *
+          now *
           (
             0.08 +
-            index * 0.027
-          ) +
-          index * 2.1
+            index *
+            0.027
+          )
         ) *
-        18;
+        20;
 
 
-      const psychicDrift =
-        secondWave *
-        (
-          3 +
-          index * 2
+      item.osc.detune
+        .setTargetAtTime(
+          drift,
+          now,
+          0.1
         );
 
-
-      item.osc.detune.setTargetAtTime(
-        drift +
-        psychicDrift,
-        time,
-        0.1
-      );
     }
   );
 
 
-  toneDelay.delayTime.setTargetAtTime(
-    0.12 +
-    slowWave * 0.55,
-    time,
-    0.08
-  );
-
-
   requestAnimationFrame(
-    wobbleLoop
+    modulationLoop
   );
+
 }
 
 
 /* =====================================================
-   PERCENT CONTROLS
+   UI
 ===================================================== */
 
 function percentDisplay(
   inputId,
-  outputId,
-  multiplier = 100
+  outputId
 ) {
 
-  const input = $(inputId);
-  const output = $(outputId);
+  const input =
+    $(inputId);
+
+
+  const output =
+    $(outputId);
+
 
   input.addEventListener(
     "input",
@@ -1266,103 +2178,94 @@ function percentDisplay(
 
       output.textContent =
         Math.round(
-          Number(input.value) *
-          multiplier
+          Number(
+            input.value
+          ) *
+          100
         ) +
         "%";
 
+
       updateEffects();
+
     }
   );
+
 }
 
-
-/* =====================================================
-   DB CONTROLS
-===================================================== */
 
 function dbDisplay(
   inputId,
   outputId
 ) {
 
-  const input = $(inputId);
-  const output = $(outputId);
+  const input =
+    $(inputId);
+
+
+  const output =
+    $(outputId);
+
 
   input.addEventListener(
     "input",
     () => {
 
       const value =
-        Number(input.value);
+        Number(
+          input.value
+        );
+
 
       output.textContent =
         (
-          value > 0
+          value >
+          0
             ? "+"
             : ""
         ) +
         value +
         " dB";
 
+
       updateEffects();
+
     }
   );
+
 }
 
 
 /* =====================================================
-   CONNECT CONTROLS
+   CONNECT UI
 ===================================================== */
 
-percentDisplay(
-  "volume",
-  "volumeValue"
-);
+[
+  ["volume", "volumeValue"],
+  ["speed", "speedValue"],
+  ["beatSwitchSpeed", "beatSwitchSpeedValue"],
+  ["randomness", "randomnessValue"],
 
-percentDisplay(
-  "speed",
-  "speedValue"
-);
+  ["kickVolume", "kickVolumeValue"],
+  ["snareVolume", "snareVolumeValue"],
+  ["hatVolume", "hatVolumeValue"],
 
-percentDisplay(
-  "randomness",
-  "randomnessValue"
-);
+  ["tone", "toneValue"],
+  ["toneSpeed", "toneSpeedValue"],
+  ["tone2", "tone2Value"],
+  ["tone2Speed", "tone2SpeedValue"],
 
-percentDisplay(
-  "underwater",
-  "underwaterValue"
-);
+  ["underwater", "underwaterValue"],
+  ["wrobly", "wroblyValue"],
+  ["air", "airValue"],
+  ["pentagram", "pentagramValue"]
 
-percentDisplay(
-  "wrobly",
-  "wroblyValue"
-);
-
-percentDisplay(
-  "tone",
-  "toneValue"
-);
-
-
-/*
-  Instrument knobs go to 150%.
-*/
-
-percentDisplay(
-  "kickVolume",
-  "kickVolumeValue"
-);
-
-percentDisplay(
-  "snareVolume",
-  "snareVolumeValue"
-);
-
-percentDisplay(
-  "hatVolume",
-  "hatVolumeValue"
+].forEach(
+  pair =>
+    percentDisplay(
+      pair[0],
+      pair[1]
+    )
 );
 
 
@@ -1392,7 +2295,9 @@ startButton.addEventListener(
 
     buildAudio();
 
+
     await audio.resume();
+
 
     startButton.remove();
 
@@ -1404,26 +2309,34 @@ startButton.addEventListener(
       );
 
 
-    beatInfo.textContent =
-      `BEAT ${currentPattern + 1}`;
+    $("beatInfo").textContent =
+      `BEAT ${
+        currentPattern + 1
+      }`;
 
 
     nextPatternChange =
       Date.now() +
-      10000 +
-      Math.random() *
-      (
-        2 *
-        60 *
-        60 *
-        1000 -
-        10000
-      );
+      getBeatSwitchDuration();
 
 
-    playStep();
+    /*
+      Give Tone 1 an initial
+      harmonic position.
+    */
 
-    scheduleNextStep();
+    changeTone1();
+
+
+    playDrumStep();
+
+
+    scheduleDrums();
+
+    scheduleTone1();
+
+    scheduleTone2();
+
   }
 );
 
