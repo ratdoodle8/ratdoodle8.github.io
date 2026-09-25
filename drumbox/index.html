@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Drumbox</title>
 
 <style>
-* { box-sizing: border-box; }
 
-html, body {
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
   margin: 0;
   min-height: 100%;
   background: black;
@@ -34,7 +39,9 @@ main {
   max-width: 90vw;
   max-height: 52vh;
   margin: 0 auto 20px;
+
   image-rendering: pixelated;
+
   transform: scale(1);
   transition: transform 0.035s linear;
 }
@@ -71,47 +78,62 @@ input[type="range"] {
 
 .value {
   font-size: 11px;
-  opacity: .75;
+  opacity: 0.75;
 }
 
 #start {
   position: fixed;
   inset: 0;
   z-index: 1000;
+
   border: 0;
+
   background: black;
   color: white;
+
   font: bold 20px Arial, sans-serif;
+
   cursor: pointer;
 }
 
 @media (max-width: 650px) {
+
   .controls {
     grid-template-columns: repeat(2, 1fr);
   }
+
 }
 
 @media (max-width: 400px) {
+
   .controls {
     grid-template-columns: 1fr;
   }
+
 }
+
 </style>
 </head>
 
+
 <body>
 
-<button id="start">CLICK TO START</button>
+<button id="start">
+  CLICK TO START
+</button>
+
 
 <main>
 
 <img
   id="drumbox"
-  src="gifdrumbox.gif"
+  src="/shared/gifdrumbox.gif"
   alt="Drumbox"
 >
 
+
 <div class="controls">
+
 
   <!-- MASTER -->
 
@@ -121,7 +143,9 @@ input[type="range"] {
 
     <div class="control">
 
-      <label>VOLUME</label>
+      <label>
+        VOLUME
+      </label>
 
       <input
         id="volume"
@@ -129,14 +153,14 @@ input[type="range"] {
         min="0"
         max="1"
         step="0.01"
-        value="0.7"
+        value="0.8"
       >
 
       <div
         id="volumeValue"
         class="value"
       >
-        70%
+        80%
       </div>
 
     </div>
@@ -144,7 +168,8 @@ input[type="range"] {
   </div>
 
 
-  <!-- SPEED -->
+
+  <!-- RHYTHM -->
 
   <div class="box">
 
@@ -152,7 +177,9 @@ input[type="range"] {
 
     <div class="control">
 
-      <label>SPEED</label>
+      <label>
+        SPEED
+      </label>
 
       <input
         id="speed"
@@ -175,15 +202,19 @@ input[type="range"] {
   </div>
 
 
+
   <!-- EFFECTS -->
 
   <div class="box">
 
     <h2>EFFECTS</h2>
 
+
     <div class="control">
 
-      <label>UNDERWATER</label>
+      <label>
+        UNDERWATER
+      </label>
 
       <input
         id="underwater"
@@ -206,7 +237,9 @@ input[type="range"] {
 
     <div class="control">
 
-      <label>WROBLY</label>
+      <label>
+        WROBLY
+      </label>
 
       <input
         id="wrobly"
@@ -229,15 +262,19 @@ input[type="range"] {
   </div>
 
 
+
   <!-- EQ -->
 
   <div class="box">
 
     <h2>EQ</h2>
 
+
     <div class="control">
 
-      <label>LOW</label>
+      <label>
+        LOW
+      </label>
 
       <input
         id="low"
@@ -260,7 +297,9 @@ input[type="range"] {
 
     <div class="control">
 
-      <label>MID</label>
+      <label>
+        MID
+      </label>
 
       <input
         id="mid"
@@ -283,7 +322,9 @@ input[type="range"] {
 
     <div class="control">
 
-      <label>HIGH</label>
+      <label>
+        HIGH
+      </label>
 
       <input
         id="high"
@@ -305,6 +346,7 @@ input[type="range"] {
 
   </div>
 
+
 </div>
 
 </main>
@@ -313,32 +355,45 @@ input[type="range"] {
 <script>
 
 const gif =
-  document.getElementById("drumbox");
+  document.getElementById(
+    "drumbox"
+  );
+
 
 const start =
-  document.getElementById("start");
+  document.getElementById(
+    "start"
+  );
+
 
 const speedControl =
-  document.getElementById("speed");
+  document.getElementById(
+    "speed"
+  );
 
 
 let audio;
 
 let inputBus;
+
 let lowEQ;
 let midEQ;
 let highEQ;
+
 let underwaterFilter;
 let wroblyFilter;
+
 let masterGain;
 
 let wobblePhase = 0;
 
+let visualTimer = null;
 
 
-/* ==========================
-   AUDIO
-========================== */
+
+/* =====================================================
+   AUDIO SYSTEM
+===================================================== */
 
 function buildAudio() {
 
@@ -353,6 +408,9 @@ function buildAudio() {
     audio.createGain();
 
 
+
+  /* LOW EQ */
+
   lowEQ =
     audio.createBiquadFilter();
 
@@ -362,6 +420,9 @@ function buildAudio() {
   lowEQ.frequency.value =
     250;
 
+
+
+  /* MID EQ */
 
   midEQ =
     audio.createBiquadFilter();
@@ -376,6 +437,9 @@ function buildAudio() {
     0.8;
 
 
+
+  /* HIGH EQ */
+
   highEQ =
     audio.createBiquadFilter();
 
@@ -386,6 +450,9 @@ function buildAudio() {
     4500;
 
 
+
+  /* UNDERWATER */
+
   underwaterFilter =
     audio.createBiquadFilter();
 
@@ -395,6 +462,12 @@ function buildAudio() {
   underwaterFilter.frequency.value =
     20000;
 
+  underwaterFilter.Q.value =
+    1;
+
+
+
+  /* WROBLY */
 
   wroblyFilter =
     audio.createBiquadFilter();
@@ -405,19 +478,34 @@ function buildAudio() {
   wroblyFilter.frequency.value =
     20000;
 
+  wroblyFilter.Q.value =
+    1;
+
+
+
+  /* MASTER */
 
   masterGain =
     audio.createGain();
 
   masterGain.gain.value =
-    0.7;
+    1;
 
 
-  inputBus.connect(lowEQ);
 
-  lowEQ.connect(midEQ);
+  /* AUDIO ROUTING */
 
-  midEQ.connect(highEQ);
+  inputBus.connect(
+    lowEQ
+  );
+
+  lowEQ.connect(
+    midEQ
+  );
+
+  midEQ.connect(
+    highEQ
+  );
 
   highEQ.connect(
     underwaterFilter
@@ -443,14 +531,13 @@ function buildAudio() {
 
 
 
-/* ==========================
-   VISUAL HIT
-========================== */
+/* =====================================================
+   GIF MOVEMENT
+===================================================== */
 
-let visualTimer = null;
-
-
-function hitAnimation(amount) {
+function hitAnimation(
+  amount
+) {
 
   gif.style.transform =
     `scale(${amount})`;
@@ -469,15 +556,16 @@ function hitAnimation(amount) {
           "scale(1)";
 
       },
+
       45
     );
 }
 
 
 
-/* ==========================
+/* =====================================================
    KICK
-========================== */
+===================================================== */
 
 function kick(
   strength = 1
@@ -486,12 +574,19 @@ function kick(
   const osc =
     audio.createOscillator();
 
+
   const gain =
     audio.createGain();
 
 
-  osc.connect(gain);
-  gain.connect(inputBus);
+  osc.connect(
+    gain
+  );
+
+
+  gain.connect(
+    inputBus
+  );
 
 
   const now =
@@ -499,19 +594,19 @@ function kick(
 
 
   osc.frequency.setValueAtTime(
-    145,
+    155,
     now
   );
 
 
   osc.frequency.exponentialRampToValueAtTime(
-    43,
+    42,
     now + 0.15
   );
 
 
   gain.gain.setValueAtTime(
-    0.75 * strength,
+    0.9 * strength,
     now
   );
 
@@ -522,7 +617,10 @@ function kick(
   );
 
 
-  osc.start(now);
+  osc.start(
+    now
+  );
+
 
   osc.stop(
     now + 0.23
@@ -537,9 +635,9 @@ function kick(
 
 
 
-/* ==========================
+/* =====================================================
    SNARE
-========================== */
+===================================================== */
 
 function snare(
   strength = 1
@@ -559,7 +657,9 @@ function snare(
 
 
   const data =
-    buffer.getChannelData(0);
+    buffer.getChannelData(
+      0
+    );
 
 
   for (
@@ -597,11 +697,19 @@ function snare(
     850;
 
 
-  noise.connect(filter);
+  noise.connect(
+    filter
+  );
 
-  filter.connect(gain);
 
-  gain.connect(inputBus);
+  filter.connect(
+    gain
+  );
+
+
+  gain.connect(
+    inputBus
+  );
 
 
   const now =
@@ -609,7 +717,7 @@ function snare(
 
 
   gain.gain.setValueAtTime(
-    0.45 * strength,
+    0.55 * strength,
     now
   );
 
@@ -620,7 +728,9 @@ function snare(
   );
 
 
-  noise.start(now);
+  noise.start(
+    now
+  );
 
 
   hitAnimation(
@@ -631,9 +741,9 @@ function snare(
 
 
 
-/* ==========================
-   HI HAT
-========================== */
+/* =====================================================
+   HI-HAT
+===================================================== */
 
 function hihat(
   strength = 1
@@ -653,7 +763,9 @@ function hihat(
 
 
   const data =
-    buffer.getChannelData(0);
+    buffer.getChannelData(
+      0
+    );
 
 
   for (
@@ -691,11 +803,19 @@ function hihat(
     6000;
 
 
-  noise.connect(filter);
+  noise.connect(
+    filter
+  );
 
-  filter.connect(gain);
 
-  gain.connect(inputBus);
+  filter.connect(
+    gain
+  );
+
+
+  gain.connect(
+    inputBus
+  );
 
 
   const now =
@@ -703,7 +823,7 @@ function hihat(
 
 
   gain.gain.setValueAtTime(
-    0.20 * strength,
+    0.25 * strength,
     now
   );
 
@@ -714,7 +834,9 @@ function hihat(
   );
 
 
-  noise.start(now);
+  noise.start(
+    now
+  );
 
 
   hitAnimation(
@@ -725,24 +847,9 @@ function hihat(
 
 
 
-/* ==========================
-   ORGANIC RANDOM RHYTHM
-========================== */
-
-/*
-  There is deliberately NO repeating
-  drum pattern here.
-
-  The system only biases randomness
-  toward rainfall-like behavior:
-
-  - lots of small events
-  - occasional heavier drops
-  - occasional silence
-  - occasional little clusters
-  - uneven spacing
-*/
-
+/* =====================================================
+   RANDOM DRUM CHOICE
+===================================================== */
 
 function chooseDrum() {
 
@@ -751,44 +858,55 @@ function chooseDrum() {
 
 
   /*
-    Hats happen most often, like
-    smaller rain droplets.
+    Loose psychedelic-rock weighting.
 
-    Kicks are least common.
+    Kick:   40%
+    Hi-hat: 35%
+    Snare:  25%
+
+    There is still no fixed sequence.
   */
 
-  if (r < 0.51) {
+
+  if (
+    r < 0.40
+  ) {
+
+    return kick;
+  }
+
+
+  if (
+    r < 0.75
+  ) {
 
     return hihat;
   }
 
 
-  if (r < 0.82) {
-
-    return snare;
-  }
-
-
-  return kick;
+  return snare;
 }
 
 
 
+/* =====================================================
+   RANDOM HIT STRENGTH
+===================================================== */
+
 function randomStrength() {
-
-  /*
-    Most hits stay gentle.
-
-    Strong hits can happen,
-    but are less common.
-  */
 
   const random =
     Math.random();
 
 
+  /*
+    Most hits are moderate.
+
+    Occasional hits are much stronger.
+  */
+
   return (
-    0.35 +
+    0.40 +
     random *
     random *
     0.75
@@ -796,6 +914,10 @@ function randomStrength() {
 }
 
 
+
+/* =====================================================
+   RANDOM TIMING
+===================================================== */
 
 function getRandomDelay() {
 
@@ -806,27 +928,50 @@ function getRandomDelay() {
 
 
   /*
-    Overall timing range.
+    EXTREME SPEED RANGE
 
-    Slow:
-    roughly 250–1800ms
+    0% speed:
+    approximately 500–3600 ms
 
-    Fast:
-    roughly 55–500ms
+    100% speed:
+    approximately 28–250 ms
+
+    This makes the slowest setting
+    roughly twice as slow as before
+    and the fastest roughly twice
+    as fast.
   */
 
+
   const slowMinimum =
-    250;
+    500;
+
 
   const slowMaximum =
-    1800;
+    3600;
 
 
   const fastMinimum =
-    55;
+    28;
+
 
   const fastMaximum =
-    500;
+    250;
+
+
+
+  /*
+    Curved knob response.
+
+    This leaves more usable territory
+    around the middle of the knob.
+  */
+
+  const speedCurve =
+    Math.pow(
+      speed,
+      1.15
+    );
 
 
   const minimum =
@@ -835,7 +980,7 @@ function getRandomDelay() {
       fastMinimum -
       slowMinimum
     ) *
-    speed;
+    speedCurve;
 
 
   const maximum =
@@ -844,13 +989,14 @@ function getRandomDelay() {
       fastMaximum -
       slowMaximum
     ) *
-    speed;
+    speedCurve;
+
 
 
   /*
-    Squaring the random number makes
-    shorter gaps somewhat more common
-    without quantizing anything to a beat.
+    Shorter spaces are favored,
+    but every event receives a
+    new random delay.
   */
 
   const random =
@@ -863,25 +1009,46 @@ function getRandomDelay() {
       maximum -
       minimum
     ) *
-    random *
-    random;
+    Math.pow(
+      random,
+      2.4
+    );
+
 
 
   /*
-    Occasionally leave a larger pocket
-    of silence.
-
-    Similar to rainfall thinning out
-    briefly.
+    Occasional breathing space.
   */
 
   if (
-    Math.random() < 0.09
+    Math.random() <
+    0.065
   ) {
 
     delay *=
       1.5 +
-      Math.random() * 2;
+      Math.random() *
+      1.8;
+  }
+
+
+
+  /*
+    Occasional abrupt quick hit.
+
+    This helps create loose fills
+    without locking into a pattern.
+  */
+
+  if (
+    Math.random() <
+    0.10
+  ) {
+
+    delay *=
+      0.35 +
+      Math.random() *
+      0.30;
   }
 
 
@@ -889,6 +1056,10 @@ function getRandomDelay() {
 }
 
 
+
+/* =====================================================
+   RANDOM PSYCHEDELIC RHYTHM
+===================================================== */
 
 function randomDrum() {
 
@@ -901,30 +1072,33 @@ function randomDrum() {
   );
 
 
-  /*
-    Sometimes another independent
-    droplet lands close to this one.
+  const speed =
+    Number(
+      speedControl.value
+    );
 
-    It is NOT guaranteed and the
-    instrument is randomized again.
+
+
+  /*
+    SECONDARY HIT
+
+    Roughly one fifth of primary hits
+    produce another nearby hit.
+
+    Timing and instrument remain random.
   */
 
   if (
-    Math.random() < 0.16
+    Math.random() <
+    0.22
   ) {
 
-    const speed =
-      Number(
-        speedControl.value
-      );
-
-
     const clusterDelay =
-      55 +
+      45 +
       Math.random() *
       (
-        190 -
-        speed * 90
+        210 -
+        speed * 130
       );
 
 
@@ -933,62 +1107,166 @@ function randomDrum() {
 
         chooseDrum()(
           randomStrength() *
-          0.75
+          0.72
         );
 
       },
+
       clusterDelay
     );
   }
 
 
+
   /*
-    Very occasionally three sounds
-    collect into a tiny irregular
-    rain-like cluster.
+    RANDOM FILL
+
+    Occasionally creates a group
+    of 2–4 additional hits.
+
+    The fill does not use a stored
+    or repeating pattern.
   */
 
   if (
-    Math.random() < 0.035
+    Math.random() <
+    0.055
   ) {
 
-    const first =
-      70 +
-      Math.random() * 100;
+    const hits =
+      2 +
+      Math.floor(
+        Math.random() *
+        3
+      );
 
 
-    const second =
-      first +
+    let position =
       60 +
-      Math.random() * 150;
+      Math.random() *
+      80;
+
+
+    for (
+      let i = 0;
+      i < hits;
+      i++
+    ) {
+
+      position +=
+        45 +
+        Math.random() *
+        (
+          150 -
+          speed * 70
+        );
+
+
+      const hitTime =
+        position;
+
+
+      setTimeout(
+        () => {
+
+          /*
+            Fills favor kick and snare
+            slightly more than hats.
+          */
+
+          const r =
+            Math.random();
+
+
+          let fillDrum;
+
+
+          if (
+            r < 0.42
+          ) {
+
+            fillDrum =
+              kick;
+          }
+
+
+          else if (
+            r < 0.76
+          ) {
+
+            fillDrum =
+              snare;
+          }
+
+
+          else {
+
+            fillDrum =
+              hihat;
+          }
+
+
+          fillDrum(
+            randomStrength() *
+            (
+              0.55 +
+              Math.random() *
+              0.35
+            )
+          );
+
+        },
+
+        hitTime
+      );
+    }
+  }
+
+
+
+  /*
+    OCCASIONAL EXTRA KICK
+
+    This gives the generator more of
+    the grounded pulse associated with
+    a rock kit without establishing a
+    repeating kick pattern.
+  */
+
+  if (
+    Math.random() <
+    0.08
+  ) {
+
+    const kickDelay =
+      80 +
+      Math.random() *
+      (
+        260 -
+        speed * 120
+      );
 
 
     setTimeout(
       () => {
 
-        chooseDrum()(
+        kick(
           randomStrength() *
-          0.6
+          0.75
         );
 
       },
-      first
-    );
 
-
-    setTimeout(
-      () => {
-
-        chooseDrum()(
-          randomStrength() *
-          0.5
-        );
-
-      },
-      second
+      kickDelay
     );
   }
 
+
+
+  /*
+    Schedule the next completely
+    independent primary hit.
+  */
 
   setTimeout(
     randomDrum,
@@ -998,13 +1276,14 @@ function randomDrum() {
 
 
 
-/* ==========================
-   EFFECTS
-========================== */
+/* =====================================================
+   EFFECT SETTINGS
+===================================================== */
 
 function updateEffects() {
 
   if (!audio) {
+
     return;
   }
 
@@ -1049,12 +1328,28 @@ function updateEffects() {
     );
 
 
+
+  /*
+    LOUDER MASTER
+
+    Maximum volume now reaches
+    1.5x gain.
+  */
+
   masterGain.gain.setTargetAtTime(
-    volume,
+    volume * 1.5,
     audio.currentTime,
     0.02
   );
 
+
+
+  /*
+    UNDERWATER
+
+    Progressively closes the
+    low-pass filter.
+  */
 
   const underwaterFrequency =
     20000 *
@@ -1083,6 +1378,9 @@ function updateEffects() {
     );
 
 
+
+  /* EQ */
+
   lowEQ.gain.setTargetAtTime(
     low,
     audio.currentTime,
@@ -1106,13 +1404,14 @@ function updateEffects() {
 
 
 
-/* ==========================
-   WROBLY
-========================== */
+/* =====================================================
+   WROBLY EFFECT
+===================================================== */
 
 function wobbleLoop() {
 
   if (!audio) {
+
     return;
   }
 
@@ -1127,15 +1426,18 @@ function wobbleLoop() {
 
   wobblePhase +=
     0.05 +
-    amount * 0.13;
+    amount *
+    0.13;
 
 
   const movement =
     (
       Math.sin(
         wobblePhase
-      ) + 1
-    ) / 2;
+      ) +
+      1
+    ) /
+    2;
 
 
   const minimum =
@@ -1169,7 +1471,8 @@ function wobbleLoop() {
     .Q
     .setTargetAtTime(
       1 +
-      amount * 8,
+      amount *
+      8,
       audio.currentTime,
       0.03
     );
@@ -1182,9 +1485,9 @@ function wobbleLoop() {
 
 
 
-/* ==========================
-   CONTROL DISPLAYS
-========================== */
+/* =====================================================
+   PERCENT CONTROL
+===================================================== */
 
 function percentDisplay(
   inputId,
@@ -1223,6 +1526,10 @@ function percentDisplay(
 }
 
 
+
+/* =====================================================
+   DB CONTROL
+===================================================== */
 
 function dbDisplay(
   inputId,
@@ -1267,20 +1574,28 @@ function dbDisplay(
 }
 
 
+
+/* =====================================================
+   CONNECT CONTROLS
+===================================================== */
+
 percentDisplay(
   "volume",
   "volumeValue"
 );
+
 
 percentDisplay(
   "speed",
   "speedValue"
 );
 
+
 percentDisplay(
   "underwater",
   "underwaterValue"
 );
+
 
 percentDisplay(
   "wrobly",
@@ -1293,10 +1608,12 @@ dbDisplay(
   "lowValue"
 );
 
+
 dbDisplay(
   "mid",
   "midValue"
 );
+
 
 dbDisplay(
   "high",
@@ -1305,9 +1622,9 @@ dbDisplay(
 
 
 
-/* ==========================
+/* =====================================================
    START
-========================== */
+===================================================== */
 
 start.addEventListener(
   "click",
@@ -1315,9 +1632,12 @@ start.addEventListener(
 
     buildAudio();
 
+
     await audio.resume();
 
+
     start.remove();
+
 
     randomDrum();
   }

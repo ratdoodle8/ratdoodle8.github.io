@@ -111,6 +111,7 @@
         id="weebieImage"
         class="weebie-image"
       >
+
         <div
           id="primaryLayer"
           class="weebie-layer"
@@ -125,6 +126,7 @@
           id="outlineLayer"
           class="weebie-layer"
         ></div>
+
       </div>
 
       <p class="stat">
@@ -145,6 +147,7 @@
 
 
   <script>
+
     const API =
       "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
@@ -162,6 +165,43 @@
     };
 
 
+
+    /* ==========================
+       SESSION
+    ========================== */
+
+    function getSessionToken() {
+
+      return localStorage.getItem(
+        "rd_session"
+      );
+    }
+
+
+    function authHeaders() {
+
+      const headers = {};
+
+      const token =
+        getSessionToken();
+
+
+      if (token) {
+
+        headers["Authorization"] =
+          "Bearer " + token;
+      }
+
+
+      return headers;
+    }
+
+
+
+    /* ==========================
+       USERNAME
+    ========================== */
+
     function getUsername() {
 
       const params =
@@ -177,7 +217,6 @@
       if (profile) {
 
         return profile.trim();
-
       }
 
 
@@ -203,16 +242,18 @@
         catch (error) {
 
           return "";
-
         }
-
       }
 
 
       return "";
-
     }
 
+
+
+    /* ==========================
+       CLEAN URL
+    ========================== */
 
     function cleanVisibleURL(
       username
@@ -237,11 +278,14 @@
             username
           )
         );
-
       }
-
     }
 
+
+
+    /* ==========================
+       MASK
+    ========================== */
 
     function setMask(
       element,
@@ -251,11 +295,16 @@
       element.style.webkitMaskImage =
         `url("${image}")`;
 
+
       element.style.maskImage =
         `url("${image}")`;
-
     }
 
+
+
+    /* ==========================
+       WEEBIE
+    ========================== */
 
     function renderWeebie(
       weebie
@@ -266,10 +315,12 @@
           "primaryLayer"
         );
 
+
       const secondaryLayer =
         document.getElementById(
           "secondaryLayer"
         );
+
 
       const outlineLayer =
         document.getElementById(
@@ -302,9 +353,9 @@
           "/shared/Weebie-Color2a.png"
         );
 
+
         outlineLayer.style.backgroundImage =
           'url("/shared/Weebie-Outline2.png")';
-
       }
 
       else {
@@ -314,9 +365,9 @@
           "/shared/Weebie-Color2.png"
         );
 
+
         outlineLayer.style.backgroundImage =
           'url("/shared/Weebie-Outline.png")';
-
       }
 
 
@@ -324,9 +375,13 @@
         COLORS[
           weebie.secondaryColor
         ] || "#FFFFFF";
-
     }
 
+
+
+    /* ==========================
+       PUBLIC STATS
+    ========================== */
 
     function renderPublicStats(
       weebie
@@ -359,7 +414,6 @@
         ) {
 
           continue;
-
         }
 
 
@@ -376,7 +430,6 @@
         ) {
 
           continue;
-
         }
 
 
@@ -422,11 +475,61 @@
         container.appendChild(
           paragraph
         );
-
       }
-
     }
 
+
+
+    /* ==========================
+       PRIVATE / ERROR PAGE
+    ========================== */
+
+    function showPrivateError() {
+
+      const status =
+        document.getElementById(
+          "status"
+        );
+
+
+      const profile =
+        document.getElementById(
+          "profile"
+        );
+
+
+      /*
+        Make absolutely sure that none
+        of the profile elements render.
+      */
+
+      profile.style.display =
+        "none";
+
+
+      document.getElementById(
+        "pageTitle"
+      ).textContent =
+        "User";
+
+
+      document.title =
+        "User | Ratdoodle";
+
+
+      status.style.display =
+        "block";
+
+
+      status.textContent =
+        "We're sorry, there seems to be an error.";
+    }
+
+
+
+    /* ==========================
+       LOAD PROFILE
+    ========================== */
 
     async function loadProfile() {
 
@@ -434,6 +537,7 @@
         document.getElementById(
           "status"
         );
+
 
       const profile =
         document.getElementById(
@@ -451,7 +555,6 @@
           "User not found.";
 
         return;
-
       }
 
 
@@ -463,13 +566,64 @@
             "/user/" +
             encodeURIComponent(
               username
-            )
+            ),
+            {
+              method: "GET",
+
+              credentials:
+                "include",
+
+              headers:
+                authHeaders()
+            }
           );
 
 
-        const data =
-          await response.json();
+        let data = {};
 
+
+        try {
+
+          data =
+            await response.json();
+        }
+
+        catch (error) {
+
+          showPrivateError();
+
+          return;
+        }
+
+
+        /*
+          PRIVATE ACCOUNT
+
+          The Worker should return the
+          private/error response WITHOUT
+          returning the user's profile,
+          Weebie, XP, colors, stats, etc.
+
+          These checks simply tell the
+          page to show the generic error.
+        */
+
+        if (
+          response.status === 403 ||
+          data.private === true ||
+          data.isPrivate === true ||
+          data.code === "PRIVATE_ACCOUNT"
+        ) {
+
+          showPrivateError();
+
+          return;
+        }
+
+
+        /*
+          OTHER UNSUCCESSFUL PROFILE
+        */
 
         if (
           !response.ok ||
@@ -481,9 +635,12 @@
             "User not found.";
 
           return;
-
         }
 
+
+        /*
+          SUCCESSFUL PUBLIC PROFILE
+        */
 
         cleanVisibleURL(
           data.username
@@ -543,7 +700,6 @@
 
 
           return;
-
         }
 
 
@@ -573,20 +729,23 @@
         renderPublicStats(
           weebie
         );
-
       }
 
       catch (error) {
 
         status.textContent =
           "Unable to load user.";
-
       }
-
     }
 
 
+
+    /* ==========================
+       START
+    ========================== */
+
     loadProfile();
+
   </script>
 
 </body>
