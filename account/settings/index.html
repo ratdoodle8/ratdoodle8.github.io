@@ -1,555 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account | Ratdoodle</title>
+<meta charset="UTF-8">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-    body {
-      margin: 0;
-      padding: 30px 15px;
-      background: #bcc8cc;
-      color: #0007E6;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+<title>Account Settings</title>
 
-    .page {
-      width: 100%;
-      max-width: 420px;
-      margin: 0 auto;
-    }
+<style>
 
-    h1,
-    h2 {
-      margin-top: 0;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    form,
-    .panel {
-      border: 2px solid #0007E6;
-      padding: 20px;
-      margin-top: 20px;
-      background: #bcc8cc;
-    }
+body {
+  margin: 0;
+  padding: 30px 15px;
 
-    label {
-      display: block;
-      text-align: left;
-      margin-top: 14px;
-      margin-bottom: 5px;
-    }
+  background: #bcc8cc;
 
-    input,
-    select,
-    button {
-      width: 100%;
-      font-family: Arial, sans-serif;
-      font-size: 16px;
-      padding: 10px;
-    }
+  font-family: Arial, sans-serif;
+  color: #0007E6;
+}
 
-    input,
-    select {
-      border: 2px solid #0007E6;
-      background: white;
-      color: black;
-    }
+main {
+  width: 100%;
+  max-width: 500px;
 
-    button {
-      margin-top: 18px;
-      border: 2px solid #0007E6;
-      background: #bcc8cc;
-      color: #0007E6;
-      cursor: pointer;
-      font-weight: bold;
-    }
+  margin: 0 auto;
+}
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: default;
-    }
+h1 {
+  text-align: center;
+  margin-top: 0;
+}
 
-    a {
-      color: #0007E6;
-    }
+.box {
+  background: white;
 
-    .message {
-      min-height: 22px;
-      margin-top: 12px;
-    }
+  border: 2px solid #0007E6;
 
-    .stat {
-      margin: 8px 0;
-    }
+  padding: 15px;
+  margin-bottom: 15px;
+}
 
-    #loading {
-      margin-top: 20px;
-    }
+.setting {
+  padding: 12px 0;
 
+  border-bottom: 1px solid #0007E6;
+}
 
-    /* WEEBIE IMAGE */
+.setting:last-child {
+  border-bottom: none;
+}
 
-    .weebie-image {
-      position: relative;
-      width: 100%;
-      max-width: 350px;
-      aspect-ratio: 1 / 1;
-      margin: 20px auto;
-    }
+.settingTop {
+  display: flex;
 
-    .weebie-layer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      top: 0;
+  align-items: center;
+  justify-content: space-between;
 
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: contain;
+  gap: 15px;
+}
 
-      -webkit-mask-position: center;
-      -webkit-mask-repeat: no-repeat;
-      -webkit-mask-size: contain;
+.settingName {
+  font-weight: bold;
+}
 
-      mask-position: center;
-      mask-repeat: no-repeat;
-      mask-size: contain;
-    }
+.description {
+  margin-top: 6px;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+button {
+  font-family: Arial, sans-serif;
+
+  border: 2px solid #0007E6;
+
+  background: white;
+  color: #0007E6;
+
+  padding: 7px 12px;
+
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0007E6;
+  color: white;
+}
 
 
-    /* BOTTOM LAYER */
+/* TOGGLE */
 
-    #weebieColor1 {
-      z-index: 1;
+.toggle {
+  position: relative;
 
-      -webkit-mask-image:
-        url("/shared/Weebie-Color1.png");
+  width: 52px;
+  height: 28px;
 
-      mask-image:
-        url("/shared/Weebie-Color1.png");
-    }
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+
+  cursor: pointer;
+
+  inset: 0;
+
+  background: #999;
+
+  border: 2px solid #0007E6;
+}
+
+.slider::before {
+  content: "";
+
+  position: absolute;
+
+  width: 20px;
+  height: 20px;
+
+  left: 2px;
+  top: 2px;
+
+  background: white;
+
+  transition: 0.15s;
+}
+
+.toggle input:checked + .slider {
+  background: #0007E6;
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(24px);
+}
 
 
-    /* MIDDLE LAYER */
+/* STATUS */
 
-    #weebieColor2 {
-      z-index: 2;
-    }
+#status {
+  min-height: 20px;
 
+  margin: 10px 0;
 
-    /* TOP LAYER */
-
-    #weebieOutline {
-      z-index: 3;
-    }
-
-    #weebieEquippedLayers {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .weebie-equipped-layer {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      top: 0;
-      object-fit: contain;
-      pointer-events: none;
-    }
+  text-align: center;
+  font-size: 13px;
+}
 
 
-    /* NEW STAT PROMPT */
+/* DELETE */
 
-    #missingStats {
-      display: none;
-      margin-top: 20px;
-      border: 2px solid #0007E6;
-      padding: 20px;
-    }
+.danger {
+  color: #c00000;
+  border-color: #c00000;
+}
 
-    /* TRAINING BUTTON */
+.danger h2 {
+  margin-top: 0;
+}
 
-    .training-link {
-      display: block;
-      width: 100%;
-      margin-top: 20px;
-      padding: 14px 10px;
-      border: 2px solid #0007E6;
-      background: #bcc8cc;
-      color: #0007E6;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-      font-weight: bold;
-      text-align: center;
-      text-decoration: none;
-      cursor: pointer;
-    }
+.deleteButton {
+  color: #c00000;
+  border-color: #c00000;
+}
 
-    /* INVENTORY */
-    .inventory-panel { margin-top: 20px; }
-    .inventory-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:15px; }
-    .inventory-card { min-width:0; border:2px solid #0007E6; padding:10px; background:#bcc8cc; text-align:center; }
-    .inventory-card img { display:block; width:100%; aspect-ratio:1/1; object-fit:contain; margin:0 auto 8px; }
-    .inventory-title { margin:5px 0; font-weight:bold; overflow-wrap:anywhere; }
-    .inventory-type,.inventory-quantity { margin:4px 0; font-size:14px; }
-    .inventory-card button { margin-top:8px; font-size:14px; padding:8px 5px; }
-    #inventoryEmpty,#inventoryMessage { margin:12px 0 0; }
-    @media (max-width:360px) { .inventory-grid { grid-template-columns:1fr; } }
-  </style>
+.deleteButton:hover {
+  color: white;
+  background: #c00000;
+}
+
+
+/* NAV */
+
+.nav {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.nav a {
+  color: #0007E6;
+}
+
+</style>
 </head>
-
 
 <body>
 
-<div class="page">
+<main>
 
-  <h1>Account</h1>
-
-
-  <div id="loading">
-    Loading account...
-  </div>
+<h1>Account Settings</h1>
 
 
-  <div
-    id="loggedOut"
-    class="panel"
-    style="display:none;"
-  >
+<div class="box">
 
-    <p>
-      You are not logged in.
-    </p>
+  <!-- PRIVATE ACCOUNT -->
 
-    <p>
-      <a href="/login/">
-        Log in
-      </a>
-    </p>
+  <div class="setting">
 
-    <p>
-      <a href="/signup/">
-        Create an account
-      </a>
-    </p>
+    <div class="settingTop">
 
-  </div>
+      <span class="settingName">
+        Private Account
+      </span>
 
+      <label class="toggle">
 
+        <input
+          id="privateToggle"
+          type="checkbox"
+        >
 
-  <div
-    id="passwordResetPanel"
-    class="panel"
-    style="display:none;"
-  >
-    <h2>Password Reset Required</h2>
+        <span class="slider"></span>
 
-    <p>
-      Enter a new password for your account.
-    </p>
-
-    <form id="passwordResetForm">
-      <label for="newPassword">
-        New Password
       </label>
 
-      <input
-        id="newPassword"
-        type="password"
-        minlength="8"
-        autocomplete="new-password"
-        required
-      >
+    </div>
 
-      <label for="confirmNewPassword">
-        Confirm New Password
-      </label>
+    <div class="description">
+      Private accounts do not appear publicly or on the
+      public leaderboard. In public games such as Oasis,
+      your Weebie appears anonymously as a Whisp.
+    </div>
 
-      <input
-        id="confirmNewPassword"
-        type="password"
-        minlength="8"
-        autocomplete="new-password"
-        required
-      >
-
-      <button type="submit">
-        Change Password
-      </button>
-    </form>
-
-    <p id="passwordResetMessage"></p>
   </div>
 
 
-  <div
-    id="loggedIn"
-    style="display:none;"
-  >
+  <!-- LEADERBOARD PLACEMENT -->
 
-    <div class="panel">
+  <div class="setting">
 
-      <h2 id="usernameDisplay"></h2>
+    <div class="settingTop">
 
-      <p class="stat">
-        Account age:
-        <span id="accountAge"></span>
-      </p>
+      <span class="settingName">
+        Show Leaderboard Placement
+      </span>
 
-      <button id="logoutButton">
-        Log Out
-      </button>
+      <label class="toggle">
+
+        <input
+          id="leaderboardToggle"
+          type="checkbox"
+        >
+
+        <span class="slider"></span>
+
+      </label>
 
     </div>
 
+    <div class="description">
+      Shows your leaderboard placement on your account
+      page. Turning this off does not affect XP or your
+      actual placement.
+    </div>
+
+  </div>
 
 
-    <div class="panel">
+  <!-- NEWS -->
 
-      <h2>Weebies</h2>
+  <div class="setting">
 
+    <div class="settingTop">
 
-      <!-- CREATE WEEBIE -->
+      <span class="settingName">
+        Breaking News Alerts
+      </span>
 
-      <div
-        id="weebieSetup"
-        style="display:none;"
-      >
+      <label class="toggle">
 
-        <p>
-          Create your first Weebie.
-        </p>
+        <input
+          id="newsToggle"
+          type="checkbox"
+        >
 
-        <form id="weebieForm">
+        <span class="slider"></span>
 
-          <label for="weebieName">
-            Name
-          </label>
-
-          <input
-            id="weebieName"
-            type="text"
-            maxlength="30"
-            required
-          >
-
-
-          <label for="primaryColor">
-            Primary Color
-          </label>
-
-          <select
-            id="primaryColor"
-            required
-          >
-
-            <option value="">
-              Choose a color
-            </option>
-
-            <option>Teal</option>
-            <option>Tan</option>
-            <option>Red</option>
-            <option>Pink</option>
-            <option>Blue</option>
-            <option>Lime Green</option>
-            <option>White</option>
-            <option>Purple</option>
-            <option>Silver</option>
-
-          </select>
-
-
-          <label for="secondaryColor">
-            Secondary Color
-          </label>
-
-          <select
-            id="secondaryColor"
-            required
-          >
-
-            <option value="">
-              Choose a color
-            </option>
-
-            <option>Teal</option>
-            <option>Tan</option>
-            <option>Red</option>
-            <option>Pink</option>
-            <option>Blue</option>
-            <option>Lime Green</option>
-            <option>White</option>
-            <option>Purple</option>
-            <option>Silver</option>
-
-          </select>
-
-          <div id="createStatFields"></div>
-
-<button
-            id="createWeebieButton"
-            type="submit"
-          >
-            Create Weebie
-          </button>
-
-        </form>
-
-
-        <div
-          id="weebieMessage"
-          class="message"
-        ></div>
-
-      </div>
-
-
-
-      <!-- EXISTING WEEBIE -->
-
-      <div
-        id="weebieDisplay"
-        style="display:none;"
-      >
-
-
-        <!-- MISSING STAT PROMPT -->
-
-        <div id="missingStats">
-
-          <h2>
-            New Weebie Option
-          </h2>
-
-          <p>
-            Please choose an option for your Weebie.
-          </p>
-
-          <form id="missingStatsForm">
-
-            <div id="missingStatFields"></div>
-
-<button
-              id="saveMissingStatsButton"
-              type="submit"
-            >
-              Save
-            </button>
-
-          </form>
-
-          <div
-            id="missingStatsMessage"
-            class="message"
-          ></div>
-
-        </div>
-
-
-
-        <!-- LAYERED WEEBIE IMAGE -->
-
-        <div class="weebie-image">
-
-          <div
-            id="weebieColor1"
-            class="weebie-layer"
-          ></div>
-
-          <div
-            id="weebieColor2"
-            class="weebie-layer"
-          ></div>
-
-          <div
-            id="weebieOutline"
-            class="weebie-layer"
-          ></div>
-
-          <div id="weebieEquippedLayers"></div>
-
-        </div>
-
-
-        <p class="stat">
-          Name:
-          <span id="displayWeebieName"></span>
-        </p>
-
-        <p class="stat">
-          XP:
-          <span id="displayWeebieXP">0</span>
-        </p>
-
-        <p class="stat">
-          Primary Color:
-          <span id="displayPrimaryColor"></span>
-        </p>
-
-        <p class="stat">
-          Secondary Color:
-          <span id="displaySecondaryColor"></span>
-        </p>
-
-        <div id="displayDynamicStats"></div>
-
-
-
-      </div>
+      </label>
 
     </div>
 
-    <div id="inventoryPanel" class="panel inventory-panel" style="display:none;">
-      <h2>Inventory</h2>
-      <p id="inventoryEmpty" style="display:none;">Your inventory is empty.</p>
-      <div id="inventoryGrid" class="inventory-grid"></div>
-      <p id="inventoryMessage" class="message"></p>
+    <div class="description">
+      Shows alerts on your account page when a new news
+      post has been published.
     </div>
-
-    <a
-      class="training-link"
-      href="/training"
-    >
-      TRAIN YOUR WEEBIE!
-    </a>
-
-    <a
-      class="training-link"
-      href="/oasis"
-    >
-      VISIT THE OASIS!
-    </a>
-
-    <a
-      class="training-link"
-      href="/leaderboard"
-    >
-      WEEBIE LEADERBOARD!
-    </a>
-
-    <a
-      class="training-link"
-      href="/account/settings"
-    >
-      ACCOUNT SETTINGS
-    </a>
 
   </div>
 
 </div>
 
+
+<div id="status"></div>
+
+
+<div class="box danger">
+
+  <h2>Delete Account</h2>
+
+  <div class="description">
+    Permanently deletes your account, Weebie, XP,
+    inventory, and account data.
+  </div>
+
+  <br>
+
+  <button
+    id="deleteButton"
+    class="deleteButton"
+  >
+    Delete Account
+  </button>
+
+</div>
+
+
+<div class="nav">
+
+  <a href="/account">
+    Back to Account
+  </a>
+
+</div>
+
+</main>
 
 
 <script>
@@ -557,988 +345,379 @@
 const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
-const COLORS = {
-  "Teal": "#24B5A5",
-  "Tan": "#C9A875",
-  "Red": "#E04444",
-  "Pink": "#ee89f0",
-  "Blue": "#4A8FE7",
-  "Lime Green": "#8FD14F",
-  "White": "#F5F5F5",
-  "Purple": "#ed15ff",
-  "Silver": "#B8BEC4"
-};
 
-const loading =
-  document.getElementById("loading");
-
-const loggedOut =
-  document.getElementById("loggedOut");
-
-const loggedIn =
-  document.getElementById("loggedIn");
-
-const weebieSetup =
-  document.getElementById("weebieSetup");
-
-const weebieDisplay =
-  document.getElementById("weebieDisplay");
-
-const missingStats =
-  document.getElementById("missingStats");
-
-const createStatFields =
-  document.getElementById("createStatFields");
-
-const missingStatFields =
-  document.getElementById("missingStatFields");
-
-const displayDynamicStats =
-  document.getElementById("displayDynamicStats");
-
-let currentWeebie = null;
-let statDefinitions = [];
-
-const inventoryPanel = document.getElementById("inventoryPanel");
-const inventoryGrid = document.getElementById("inventoryGrid");
-const inventoryEmpty = document.getElementById("inventoryEmpty");
-const inventoryMessage = document.getElementById("inventoryMessage");
-let currentInventory = [];
-
-
-/* AUTH */
-
-function getSessionToken() {
-  return localStorage.getItem("rd_session");
-}
-
-function authHeaders(includeJson = false) {
-  const headers = {};
-  const token = getSessionToken();
-
-  if (token) {
-    headers["Authorization"] =
-      "Bearer " + token;
-  }
-
-  if (includeJson) {
-    headers["Content-Type"] =
-      "application/json";
-  }
-
-  return headers;
-}
-
-
-/* STAT FIELDS */
-
-function makeStatField(
-  definition,
-  prefix
-) {
-  const wrapper =
-    document.createElement("div");
-
-  const label =
-    document.createElement("label");
-
-  const id =
-    prefix + definition.id;
-
-  label.htmlFor = id;
-  label.textContent =
-    definition.label;
-
-  wrapper.appendChild(label);
-
-  if (definition.type === "choice") {
-    const select =
-      document.createElement("select");
-
-    select.id = id;
-    select.dataset.statId =
-      definition.id;
-    select.required = true;
-
-    const blank =
-      document.createElement("option");
-
-    blank.value = "";
-    blank.textContent =
-      "Choose an option";
-
-    select.appendChild(blank);
-
-    for (
-      const option
-      of definition.options || []
-    ) {
-      const item =
-        document.createElement("option");
-
-      item.value = option;
-      item.textContent = option;
-
-      select.appendChild(item);
-    }
-
-    wrapper.appendChild(select);
-  }
-
-  return wrapper;
-}
-
-function renderCreateStats() {
-  createStatFields.innerHTML = "";
-
-  for (
-    const definition
-    of statDefinitions
-  ) {
-    if (
-      definition.prompt === false ||
-      definition.type === "system"
-    ) {
-      continue;
-    }
-
-    createStatFields.appendChild(
-      makeStatField(
-        definition,
-        "createStat_"
-      )
-    );
-  }
-}
-
-function getMissingDefinitions(
-  weebie
-) {
-  const stats =
-    weebie.stats || {};
-
-  return statDefinitions.filter(
-    definition => {
-      if (
-        definition.prompt === false ||
-        definition.type === "system"
-      ) {
-        return false;
-      }
-
-      const value =
-        stats[definition.id];
-
-      return (
-        value === undefined ||
-        value === null ||
-        value === ""
-      );
-    }
+const privateToggle =
+  document.getElementById(
+    "privateToggle"
   );
-}
 
-function renderMissingStats(
-  weebie
+
+const leaderboardToggle =
+  document.getElementById(
+    "leaderboardToggle"
+  );
+
+
+const newsToggle =
+  document.getElementById(
+    "newsToggle"
+  );
+
+
+const status =
+  document.getElementById(
+    "status"
+  );
+
+
+const deleteButton =
+  document.getElementById(
+    "deleteButton"
+  );
+
+
+let loading = true;
+
+
+
+/* =====================================================
+   API
+===================================================== */
+
+async function api(
+  path,
+  options = {}
 ) {
-  const missing =
-    getMissingDefinitions(weebie);
 
-  missingStatFields.innerHTML = "";
+  const response =
+    await fetch(
+      API + path,
+      {
+        credentials:
+          "include",
 
-  if (missing.length === 0) {
-    missingStats.style.display =
-      "none";
+        ...options,
 
-    return false;
-  }
+        headers: {
+          "Content-Type":
+            "application/json",
 
-  for (
-    const definition
-    of missing
-  ) {
-    missingStatFields.appendChild(
-      makeStatField(
-        definition,
-        "missingStat_"
-      )
-    );
-  }
-
-  missingStats.style.display =
-    "block";
-
-  return true;
-}
-
-function renderVisibleStats(
-  weebie
-) {
-  displayDynamicStats.innerHTML = "";
-
-  const stats =
-    weebie.stats || {};
-
-  for (
-    const definition
-    of statDefinitions
-  ) {
-    if (
-      definition.hidden ||
-      definition.id === "xp"
-    ) {
-      continue;
-    }
-
-    const value =
-      stats[definition.id];
-
-    if (
-      value === undefined ||
-      value === null ||
-      value === ""
-    ) {
-      continue;
-    }
-
-    const p =
-      document.createElement("p");
-
-    p.className = "stat";
-    p.textContent =
-      definition.label + ": " + value;
-
-    displayDynamicStats.appendChild(p);
-  }
-}
-
-function collectStats(
-  container
-) {
-  const stats = {};
-
-  const fields =
-    container.querySelectorAll(
-      "[data-stat-id]"
-    );
-
-  for (
-    const field
-    of fields
-  ) {
-    stats[field.dataset.statId] =
-      field.value;
-  }
-
-  return stats;
-}
-
-
-/* LOAD ACCOUNT */
-
-async function loadAccount() {
-  try {
-    const response =
-      await fetch(
-        API + "/account",
-        {
-          method: "GET",
-          credentials: "include",
-          headers: authHeaders()
+          ...(
+            options.headers ||
+            {}
+          )
         }
-      );
+      }
+    );
 
-    const data =
+
+  let data = {};
+
+
+  try {
+
+    data =
       await response.json();
 
-    loading.style.display =
-      "none";
+  }
 
-    if (!data.loggedIn) {
-      loggedOut.style.display =
-        "block";
+  catch {}
 
-      return;
-    }
 
-    if (data.passwordResetRequired) {
-      document.getElementById(
-        "passwordResetPanel"
-      ).style.display = "block";
+  if (!response.ok) {
 
-      return;
-    }
+    throw new Error(
+      data.error ||
+      "Request failed."
+    );
+  }
 
-    loggedIn.style.display =
-      "block";
 
-    statDefinitions =
-      Array.isArray(
-        data.statDefinitions
-      )
-        ? data.statDefinitions
-        : [];
+  return data;
+}
 
-    renderCreateStats();
 
-    document.getElementById(
-      "usernameDisplay"
-    ).textContent =
-      data.username;
 
-    document.getElementById(
-      "accountAge"
-    ).textContent =
-      calculateAccountAge(
-        data.createdAt
+/* =====================================================
+   LOAD SETTINGS
+===================================================== */
+
+async function loadSettings() {
+
+  loading = true;
+
+
+  try {
+
+    const data =
+      await api(
+        "/account/settings"
       );
 
-    if (data.weebie) {
-      showWeebie(
-        data.weebie
-      );
-    }
 
-    else {
-      weebieSetup.style.display =
-        "block";
-    }
+    privateToggle.checked =
+      data.private === true;
 
-    await loadInventory();
+
+    leaderboardToggle.checked =
+      data.showLeaderboardPlacement ===
+      true;
+
+
+    newsToggle.checked =
+      data.showNewsAlerts ===
+      true;
+
+
+    status.textContent = "";
+
   }
 
   catch (error) {
-    console.error(error);
 
-    loading.textContent =
-      "Unable to load account.";
-  }
-}
+    status.textContent =
+      error.message;
 
 
-/* ACCOUNT AGE */
+    /*
+      If the session is gone, send the user
+      back to login.
+    */
 
-function calculateAccountAge(
-  createdAt
-) {
-  const created =
-    new Date(createdAt);
+    if (
+      error.message ===
+      "You are not logged in."
+    ) {
 
-  const now =
-    new Date();
-
-  let years =
-    now.getFullYear()
-    - created.getFullYear();
-
-  let months =
-    now.getMonth()
-    - created.getMonth();
-
-  let days =
-    now.getDate()
-    - created.getDate();
-
-  if (days < 0) {
-    months--;
-
-    const previousMonth =
-      new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        0
+      setTimeout(
+        () => {
+          location.href =
+            "/login";
+        },
+        700
       );
+    }
 
-    days +=
-      previousMonth.getDate();
   }
 
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
 
-  const parts = [];
-
-  if (years > 0) {
-    parts.push(
-      years +
-      (
-        years === 1
-          ? " year"
-          : " years"
-      )
-    );
-  }
-
-  if (months > 0) {
-    parts.push(
-      months +
-      (
-        months === 1
-          ? " month"
-          : " months"
-      )
-    );
-  }
-
-  parts.push(
-    days +
-    (
-      days === 1
-        ? " day"
-        : " days"
-    )
-  );
-
-  return parts.join(", ");
+  loading = false;
 }
 
 
-/* DISPLAY WEEBIE */
 
-function showWeebie(
-  weebie
-) {
-  currentWeebie =
-    weebie;
+/* =====================================================
+   SAVE SETTINGS
+===================================================== */
 
-  currentWeebie.stats =
-    currentWeebie.stats || {};
+async function saveSettings() {
 
-  weebieSetup.style.display =
-    "none";
-
-  weebieDisplay.style.display =
-    "block";
-
-  document.getElementById(
-    "displayWeebieName"
-  ).textContent =
-    weebie.name;
-
-  document.getElementById(
-    "displayWeebieXP"
-  ).textContent =
-    Number(
-      weebie.xp ??
-      weebie.stats.xp ??
-      0
-    ).toLocaleString();
-
-  document.getElementById(
-    "displayPrimaryColor"
-  ).textContent =
-    weebie.primary_color;
-
-  document.getElementById(
-    "displaySecondaryColor"
-  ).textContent =
-    weebie.secondary_color;
-
-  renderVisibleStats(
-    weebie
-  );
-
-  const hasMissing =
-    renderMissingStats(
-      weebie
-    );
-
-  const primaryHex =
-    COLORS[
-      weebie.primary_color
-    ];
-
-  const secondaryHex =
-    COLORS[
-      weebie.secondary_color
-    ];
-
-  document.getElementById(
-    "weebieColor1"
-  ).style.backgroundColor =
-    primaryHex;
-
-  const eyelashes =
-    weebie.stats.eyelashes;
-
-  if (
-    eyelashes !== "Yes" &&
-    eyelashes !== "No"
-  ) {
-    document.getElementById(
-      "weebieColor2"
-    ).style.display =
-      "none";
-
-    document.getElementById(
-      "weebieOutline"
-    ).style.display =
-      "none";
-
+  if (loading) {
     return;
   }
 
-  document.getElementById(
-    "weebieColor2"
-  ).style.display =
-    "block";
 
-  document.getElementById(
-    "weebieOutline"
-  ).style.display =
-    "block";
-
-  if (eyelashes === "Yes") {
-    document.getElementById(
-      "weebieColor2"
-    ).style.webkitMaskImage =
-      'url("/shared/Weebie-Color2.png")';
-
-    document.getElementById(
-      "weebieColor2"
-    ).style.maskImage =
-      'url("/shared/Weebie-Color2.png")';
-
-    document.getElementById(
-      "weebieOutline"
-    ).style.backgroundImage =
-      'url("/shared/Weebie-Outline.png")';
-  }
-
-  else {
-    document.getElementById(
-      "weebieColor2"
-    ).style.webkitMaskImage =
-      'url("/shared/Weebie-Color2a.png")';
-
-    document.getElementById(
-      "weebieColor2"
-    ).style.maskImage =
-      'url("/shared/Weebie-Color2a.png")';
-
-    document.getElementById(
-      "weebieOutline"
-    ).style.backgroundImage =
-      'url("/shared/Weebie-Outline2.png")';
-  }
-
-  document.getElementById(
-    "weebieColor2"
-  ).style.backgroundColor =
-    secondaryHex;
-}
+  status.textContent =
+    "Saving...";
 
 
-/* CREATE NEW WEEBIE */
-
-document.getElementById(
-  "weebieForm"
-).addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
-
-    const message =
-      document.getElementById(
-        "weebieMessage"
-      );
-
-    const button =
-      document.getElementById(
-        "createWeebieButton"
-      );
-
-    const name =
-      document.getElementById(
-        "weebieName"
-      ).value.trim();
-
-    const primaryColor =
-      document.getElementById(
-        "primaryColor"
-      ).value;
-
-    const secondaryColor =
-      document.getElementById(
-        "secondaryColor"
-      ).value;
-
-    const stats =
-      collectStats(
-        createStatFields
-      );
-
-    button.disabled =
-      true;
-
-    message.textContent =
-      "Creating Weebie...";
-
-    try {
-      const response =
-        await fetch(
-          API + "/weebie",
-          {
-            method: "POST",
-            credentials: "include",
-            headers:
-              authHeaders(true),
-
-            body:
-              JSON.stringify({
-                name,
-                primaryColor,
-                secondaryColor,
-                stats
-              })
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        message.textContent =
-          data.error ||
-          "Unable to create Weebie.";
-
-        button.disabled =
-          false;
-
-        return;
-      }
-
-      showWeebie({
-        name,
-        primary_color:
-          primaryColor,
-        secondary_color:
-          secondaryColor,
-        xp: 0,
-        stats: {
-          ...stats,
-          xp: 0
-        }
-      });
-
-      message.textContent =
-        "";
-    }
-
-    catch (error) {
-      console.error(error);
-
-      message.textContent =
-        "Unable to connect to the account server.";
-
-      button.disabled =
-        false;
-    }
-  }
-);
-
-
-/* SAVE NEW STATS FOR EXISTING WEEBIE */
-
-document.getElementById(
-  "missingStatsForm"
-).addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
-
-    const stats =
-      collectStats(
-        missingStatFields
-      );
-
-    const message =
-      document.getElementById(
-        "missingStatsMessage"
-      );
-
-    const button =
-      document.getElementById(
-        "saveMissingStatsButton"
-      );
-
-    button.disabled =
-      true;
-
-    message.textContent =
-      "Saving...";
-
-    try {
-      const response =
-        await fetch(
-          API + "/weebie/update",
-          {
-            method: "POST",
-            credentials: "include",
-            headers:
-              authHeaders(true),
-
-            body:
-              JSON.stringify({
-                stats
-              })
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        message.textContent =
-          data.error ||
-          "Unable to save.";
-
-        button.disabled =
-          false;
-
-        return;
-      }
-
-      currentWeebie.stats = {
-        ...currentWeebie.stats,
-        ...stats
-      };
-
-      showWeebie(
-        currentWeebie
-      );
-
-      message.textContent =
-        "";
-
-      button.disabled =
-        false;
-    }
-
-    catch (error) {
-      console.error(error);
-
-      message.textContent =
-        "Unable to connect to the account server.";
-
-      button.disabled =
-        false;
-    }
-  }
-);
-
-
-/* INVENTORY */
-async function loadInventory() {
-  inventoryMessage.textContent = "";
   try {
-    const response = await fetch(API + "/inventory", { method:"GET", credentials:"include", headers:authHeaders() });
-    const data = await response.json();
-    inventoryPanel.style.display = "block";
-    if (!response.ok) { inventoryMessage.textContent = data.error || "Unable to load inventory."; return; }
-    currentInventory = Array.isArray(data.inventory) ? data.inventory : [];
-    renderInventory();
-  } catch (error) {
-    console.error(error);
-    inventoryPanel.style.display = "block";
-    inventoryMessage.textContent = "Unable to load inventory.";
-  }
-}
 
-function renderEquippedItems() {
-  const container =
-    document.getElementById("weebieEquippedLayers");
-
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  const equippedItems =
-    currentInventory
-      .filter(
-        item =>
-          item.type === "swag" &&
-          Boolean(item.equipped) &&
-          item.image
-      )
-      .sort(
-        (a, b) =>
-          Number(a.layernumber ?? 4) -
-          Number(b.layernumber ?? 4)
-      );
-
-  for (const item of equippedItems) {
-    const image =
-      document.createElement("img");
-
-    image.className =
-      "weebie-equipped-layer";
-
-    image.src = item.image;
-    image.alt = "";
-
-    image.style.zIndex =
-      String(Number(item.layernumber ?? 4));
-
-    container.appendChild(image);
-  }
-}
-
-
-function renderInventory() {
-  inventoryGrid.innerHTML = "";
-  inventoryMessage.textContent = "";
-  renderEquippedItems();
-  if (currentInventory.length === 0) { inventoryEmpty.style.display = "block"; return; }
-  inventoryEmpty.style.display = "none";
-  for (const item of currentInventory) {
-    const card=document.createElement("div"); card.className="inventory-card";
-    const image=document.createElement("img"); image.src=item.image||""; image.alt=item.title||"Item"; card.appendChild(image);
-    const title=document.createElement("p"); title.className="inventory-title"; title.textContent=item.title||item.id; card.appendChild(title);
-    const type=document.createElement("p"); type.className="inventory-type"; type.textContent=item.type==="swag"?"Swag":item.type==="food"?"Food":String(item.type||""); card.appendChild(type);
-    const quantity=document.createElement("p"); quantity.className="inventory-quantity"; quantity.textContent="Quantity: "+Number(item.quantity||0); card.appendChild(quantity);
-    const button=document.createElement("button"); button.type="button";
-    if (item.type === "swag") {
-      const paint=item.placement === "paintbrush";
-      button.textContent=paint?(item.equipped?"UNPAINT":"PAINT"):(item.equipped?"TAKE OFF":"WEAR");
-      button.addEventListener("click",()=>toggleInventoryItem(item,button));
-    } else if (item.type === "food") {
-      button.textContent="USE"; button.addEventListener("click",()=>useFoodItem(item));
-    } else { button.textContent="UNAVAILABLE"; button.disabled=true; }
-    card.appendChild(button); inventoryGrid.appendChild(card);
-  }
-}
-
-async function toggleInventoryItem(item,button) {
-  button.disabled=true; inventoryMessage.textContent="";
-  try {
-    const response=await fetch(API+"/inventory/equip",{method:"POST",credentials:"include",headers:authHeaders(true),body:JSON.stringify({itemId:item.id})});
-    const data=await response.json();
-    if(!response.ok){inventoryMessage.textContent=data.error||"Unable to update item.";button.disabled=false;return;}
-    await loadInventory();
-  } catch(error){console.error(error);inventoryMessage.textContent="Unable to update item.";button.disabled=false;}
-}
-
-function useFoodItem(item) {
-  inventoryMessage.textContent=item.title+" cannot be used yet.";
-}
-
-/* FORCED PASSWORD RESET */
-
-document.getElementById(
-  "passwordResetForm"
-).addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
-
-    const password =
-      document.getElementById(
-        "newPassword"
-      ).value;
-
-    const confirmPassword =
-      document.getElementById(
-        "confirmNewPassword"
-      ).value;
-
-    const message =
-      document.getElementById(
-        "passwordResetMessage"
-      );
-
-    message.textContent = "";
-
-    if (password.length < 8) {
-      message.textContent =
-        "Password must be at least 8 characters.";
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      message.textContent =
-        "Passwords do not match.";
-      return;
-    }
-
-    try {
-      const response =
-        await fetch(
-          API + "/password-reset",
-          {
-            method: "POST",
-            credentials: "include",
-            headers: authHeaders(true),
-            body: JSON.stringify({
-              password
-            })
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        message.textContent =
-          data.error ||
-          "Unable to reset password.";
-        return;
-      }
-
-      if (data.sessionToken) {
-        localStorage.setItem(
-          "rd_session",
-          data.sessionToken
-        );
-      }
-
-      window.location.reload();
-    }
-
-    catch (error) {
-      console.error(error);
-      message.textContent =
-        "Unable to reset password.";
-    }
-  }
-);
-
-
-/* LOG OUT */
-
-document.getElementById(
-  "logoutButton"
-).addEventListener(
-  "click",
-  async () => {
-    try {
-      await fetch(
-        API + "/logout",
+    const data =
+      await api(
+        "/account/settings",
         {
-          method: "POST",
-          credentials: "include",
-          headers: authHeaders()
+          method:
+            "POST",
+
+          body:
+            JSON.stringify({
+
+              private:
+                privateToggle.checked,
+
+              showLeaderboardPlacement:
+                leaderboardToggle.checked,
+
+              showNewsAlerts:
+                newsToggle.checked
+
+            })
         }
       );
-    }
 
-    catch (error) {
-      console.error(error);
-    }
 
-    localStorage.removeItem(
-      "rd_session"
+    privateToggle.checked =
+      data.private;
+
+
+    leaderboardToggle.checked =
+      data.showLeaderboardPlacement;
+
+
+    newsToggle.checked =
+      data.showNewsAlerts;
+
+
+    status.textContent =
+      "Saved.";
+
+
+    setTimeout(
+      () => {
+
+        if (
+          status.textContent ===
+          "Saved."
+        ) {
+
+          status.textContent = "";
+        }
+
+      },
+      1500
     );
 
-    window.location.href =
-      "/login/";
+  }
+
+  catch (error) {
+
+    status.textContent =
+      error.message;
+
+
+    /*
+      Reload the actual server values if
+      saving failed.
+    */
+
+    setTimeout(
+      loadSettings,
+      1000
+    );
+  }
+
+}
+
+
+
+privateToggle.addEventListener(
+  "change",
+  saveSettings
+);
+
+
+leaderboardToggle.addEventListener(
+  "change",
+  saveSettings
+);
+
+
+newsToggle.addEventListener(
+  "change",
+  saveSettings
+);
+
+
+
+/* =====================================================
+   DELETE ACCOUNT
+===================================================== */
+
+deleteButton.addEventListener(
+  "click",
+  async () => {
+
+    /*
+      CONFIRMATION #1
+    */
+
+    const first =
+      confirm(
+        "Are you sure you want to permanently delete your account?"
+      );
+
+
+    if (!first) {
+      return;
+    }
+
+
+    /*
+      CONFIRMATION #2
+    */
+
+    const second =
+      confirm(
+        "Are you REALLY sure? This permanently deletes your account and cannot be undone."
+      );
+
+
+    if (!second) {
+      return;
+    }
+
+
+    deleteButton.disabled =
+      true;
+
+
+    status.textContent =
+      "Deleting account...";
+
+
+    try {
+
+      await api(
+        "/account/delete",
+        {
+          method:
+            "POST",
+
+          body:
+            JSON.stringify({
+              confirm:
+                "DELETE MY ACCOUNT"
+            })
+        }
+      );
+
+
+      status.textContent =
+        "Account deleted.";
+
+
+      setTimeout(
+        () => {
+
+          location.href = "/";
+
+        },
+        800
+      );
+
+    }
+
+    catch (error) {
+
+      deleteButton.disabled =
+        false;
+
+
+      status.textContent =
+        error.message;
+    }
+
   }
 );
 
 
-loadAccount();
+
+/* =====================================================
+   START
+===================================================== */
+
+loadSettings();
 
 </script>
 
