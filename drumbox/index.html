@@ -24,14 +24,14 @@ body {
 
 main {
   width: 100%;
-  max-width: 950px;
+  max-width: 1000px;
   text-align: center;
 }
 
 #drumbox {
   display: block;
   max-width: 90vw;
-  max-height: 45vh;
+  max-height: 42vh;
   margin: 0 auto 20px;
   image-rendering: pixelated;
   transform: scale(1);
@@ -73,10 +73,25 @@ input[type="range"] {
   opacity: 0.75;
 }
 
-#beatInfo {
-  margin-top: 14px;
+button {
+  border: 2px solid white;
+  background: black;
+  color: white;
+  padding: 8px 14px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+button:hover {
+  background: white;
+  color: black;
+}
+
+#beatInfo,
+#keyInfo {
+  margin-top: 10px;
   font-size: 11px;
-  opacity: 0.65;
+  opacity: 0.7;
 }
 
 #start {
@@ -87,7 +102,6 @@ input[type="range"] {
   background: black;
   color: white;
   font: bold 20px Arial, sans-serif;
-  cursor: pointer;
 }
 
 @media (max-width: 750px) {
@@ -118,10 +132,7 @@ input[type="range"] {
 
 <div class="controls">
 
-  <!-- MASTER -->
-
   <div class="box">
-
     <h2>MASTER</h2>
 
     <div class="control">
@@ -148,13 +159,11 @@ input[type="range"] {
       <div id="randomnessValue" class="value">0%</div>
     </div>
 
+    <button id="skipBeat">SKIP BEAT</button>
   </div>
 
 
-  <!-- DRUM MIX -->
-
   <div class="box">
-
     <h2>DRUM MIX</h2>
 
     <div class="control">
@@ -175,13 +184,15 @@ input[type="range"] {
       <div id="hatVolumeValue" class="value">100%</div>
     </div>
 
+    <div class="control">
+      <label>SOFT</label>
+      <input id="soft" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="softValue" class="value">0%</div>
+    </div>
   </div>
 
 
-  <!-- TONES -->
-
   <div class="box">
-
     <h2>TONES</h2>
 
     <div class="control">
@@ -207,14 +218,10 @@ input[type="range"] {
       <input id="tone2Speed" type="range" min="0" max="1" step="0.01" value="0.6">
       <div id="tone2SpeedValue" class="value">60%</div>
     </div>
-
   </div>
 
 
-  <!-- ATMOSPHERE -->
-
   <div class="box">
-
     <h2>ATMOSPHERE</h2>
 
     <div class="control">
@@ -240,14 +247,10 @@ input[type="range"] {
       <input id="pentagram" type="range" min="0" max="1" step="0.01" value="0">
       <div id="pentagramValue" class="value">0%</div>
     </div>
-
   </div>
 
 
-  <!-- EQ -->
-
   <div class="box">
-
     <h2>EQ</h2>
 
     <div class="control">
@@ -267,30 +270,25 @@ input[type="range"] {
       <input id="high" type="range" min="-36" max="36" step="1" value="0">
       <div id="highValue" class="value">0 dB</div>
     </div>
-
   </div>
 
 </div>
 
 <div id="beatInfo">BEAT 1</div>
+<div id="keyInfo">KEY: C MAJOR</div>
 
 </main>
 
 <script>
+const $ = id => document.getElementById(id);
 
-const $ =
-  id =>
-    document.getElementById(id);
-
-const gif =
-  $("drumbox");
-
-const startButton =
-  $("start");
+const gif = $("drumbox");
 
 let audio;
 
 let drumBus;
+let drumSoftFilter;
+
 let lowEQ;
 let midEQ;
 let highEQ;
@@ -314,25 +312,22 @@ let tone2Feedback;
 
 let toneOscillators = [];
 
-let visualTimer;
-
 let drumStep = 0;
-
 let currentPattern = 0;
-
 let nextPatternChange = 0;
 
-let toneStep = 0;
-let tone2Step = 0;
-
-let nextToneChange = 0;
-let nextTone2Change = 0;
-
+let visualTimer;
 let wobblePhase = 0;
+
+let currentChordIndex = 0;
+let currentKeyIndex = 0;
+let keyStartedAt = 0;
+
+const KEY_DURATION = 120000;
 
 
 /* =====================================================
-   20 BEATS
+   DRUM PATTERNS
 ===================================================== */
 
 const BEATS = [
@@ -362,50 +357,198 @@ const BEATS = [
 
 
 /* =====================================================
-   HARMONIC MATERIAL
+   HARMONY
 
-   The pentagram control progressively
-   favors movement around the circle
-   of fifths.
+   All pitch math uses MIDI notes.
 
-   C -> G -> D -> A -> E -> B ->
-   F# -> C# -> G# -> D# -> A# -> F
+   The strict system uses major keys and
+   consonant diatonic progressions.
+
+   Pentagram determines how strongly the
+   synths obey the current harmony.
 ===================================================== */
 
-const FIFTHS = [
-  130.81,
-  196.00,
-  293.66,
-  220.00,
-  164.81,
-  246.94,
-  185.00,
-  138.59,
-  207.65,
-  155.56,
-  233.08,
-  174.61
+const KEYS = [
+  {name:"C MAJOR",  root:60},
+  {name:"G MAJOR",  root:67},
+  {name:"D MAJOR",  root:62},
+  {name:"A MAJOR",  root:69},
+  {name:"E MAJOR",  root:64},
+  {name:"F MAJOR",  root:65},
+  {name:"Bb MAJOR", root:58}
 ];
 
-const FREE_NOTES = [
-  110.00,
-  116.54,
-  123.47,
-  130.81,
-  138.59,
-  146.83,
-  155.56,
-  164.81,
-  174.61,
-  185.00,
-  196.00,
-  207.65,
-  220.00,
-  233.08,
-  246.94
+const MAJOR_SCALE =
+  [0,2,4,5,7,9,11];
+
+
+/*
+  Deliberately consonant progressions.
+
+  Numbers are scale degrees:
+  0 = I
+  3 = IV
+  4 = V
+  5 = vi
+  1 = ii
+*/
+
+const PROGRESSIONS = [
+
+  [0,5,3,4],
+  [0,3,4,0],
+  [0,4,5,3],
+  [0,5,1,4],
+  [5,3,0,4],
+  [0,3,0,4],
+  [0,1,3,4]
+
 ];
 
-let fifthIndex = 0;
+let progression =
+  PROGRESSIONS[0];
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function midiToFrequency(midi) {
+
+  return 440 *
+    Math.pow(
+      2,
+      (midi - 69) / 12
+    );
+}
+
+
+function currentKey() {
+
+  return KEYS[
+    currentKeyIndex
+  ];
+}
+
+
+function getChordNotes() {
+
+  const key =
+    currentKey();
+
+  const degree =
+    progression[
+      currentChordIndex %
+      progression.length
+    ];
+
+  const rootScaleIndex =
+    degree;
+
+
+  const note1 =
+    key.root +
+    MAJOR_SCALE[
+      rootScaleIndex
+    ];
+
+
+  const note2Index =
+    rootScaleIndex + 2;
+
+  const note3Index =
+    rootScaleIndex + 4;
+
+
+  const note2 =
+    key.root +
+    MAJOR_SCALE[
+      note2Index % 7
+    ] +
+    (
+      note2Index >= 7
+        ? 12
+        : 0
+    );
+
+
+  const note3 =
+    key.root +
+    MAJOR_SCALE[
+      note3Index % 7
+    ] +
+    (
+      note3Index >= 7
+        ? 12
+        : 0
+    );
+
+
+  return [
+    note1,
+    note2,
+    note3
+  ];
+}
+
+
+/* =====================================================
+   PENTAGRAM PITCH
+
+   100% = exact chord tone.
+
+   Lower values progressively permit
+   chromatic deviation.
+===================================================== */
+
+function pentagramPitch(
+  strictMidi
+) {
+
+  const amount =
+    Number(
+      $("pentagram").value
+    );
+
+
+  if (
+    Math.random() <
+    amount
+  ) {
+
+    return strictMidi;
+  }
+
+
+  /*
+    At low Pentagram, allow wandering
+    around the intended pitch.
+
+    The deviation gets smaller as the
+    knob rises.
+  */
+
+  const maxDeviation =
+    Math.max(
+      1,
+      Math.round(
+        6 *
+        (1 - amount)
+      )
+    );
+
+
+  return (
+    strictMidi +
+    Math.floor(
+      Math.random() *
+      (
+        maxDeviation * 2 + 1
+      )
+    ) -
+    maxDeviation
+  );
+}
 
 
 /* =====================================================
@@ -420,8 +563,20 @@ function buildAudio() {
       window.webkitAudioContext
     )();
 
+
   drumBus =
     audio.createGain();
+
+
+  drumSoftFilter =
+    audio.createBiquadFilter();
+
+  drumSoftFilter.type =
+    "lowpass";
+
+  drumSoftFilter.frequency.value =
+    20000;
+
 
   lowEQ =
     audio.createBiquadFilter();
@@ -509,28 +664,48 @@ function buildAudio() {
     audio.createGain();
 
 
-  drumBus.connect(lowEQ);
+  drumBus.connect(
+    drumSoftFilter
+  );
 
-  lowEQ.connect(midEQ);
+  drumSoftFilter.connect(
+    lowEQ
+  );
 
-  midEQ.connect(highEQ);
+  lowEQ.connect(
+    midEQ
+  );
 
-  highEQ.connect(underwaterFilter);
+  midEQ.connect(
+    highEQ
+  );
 
-  underwaterFilter.connect(wobbleFilter);
+  highEQ.connect(
+    underwaterFilter
+  );
 
-  wobbleFilter.connect(airFilter);
+  underwaterFilter.connect(
+    wobbleFilter
+  );
 
-  airFilter.connect(compressor);
+  wobbleFilter.connect(
+    airFilter
+  );
 
-  compressor.connect(masterGain);
+  airFilter.connect(
+    compressor
+  );
+
+  compressor.connect(
+    masterGain
+  );
 
   masterGain.connect(
     audio.destination
   );
 
 
-  buildTone();
+  buildTone1();
 
   buildTone2();
 
@@ -543,9 +718,11 @@ function buildAudio() {
 
 /* =====================================================
    TONE 1
+
+   Constant lush/phasey chord.
 ===================================================== */
 
-function buildTone() {
+function buildTone1() {
 
   toneBus =
     audio.createGain();
@@ -561,24 +738,24 @@ function buildTone() {
     "lowpass";
 
   toneFilter.frequency.value =
-    1600;
+    1800;
 
   toneFilter.Q.value =
-    7;
+    5;
 
 
   toneDelay =
     audio.createDelay(2);
 
   toneDelay.delayTime.value =
-    0.4;
+    0.38;
 
 
   toneFeedback =
     audio.createGain();
 
   toneFeedback.gain.value =
-    0.55;
+    0.52;
 
 
   toneBus.connect(
@@ -606,55 +783,58 @@ function buildTone() {
   );
 
 
-  [1, 1.5, 2].forEach(
-    (ratio, index) => {
+  /*
+    Three chord voices.
+  */
 
-      const osc =
-        audio.createOscillator();
+  for (
+    let i = 0;
+    i < 3;
+    i++
+  ) {
 
-      const gain =
-        audio.createGain();
+    const osc =
+      audio.createOscillator();
 
-      osc.type =
-        index === 1
-          ? "triangle"
-          : "sawtooth";
+    const gain =
+      audio.createGain();
 
-      gain.gain.value =
-        index === 1
-          ? 0.13
-          : 0.07;
 
-      osc.frequency.value =
-        130.81 *
-        ratio;
+    osc.type =
+      i === 1
+        ? "triangle"
+        : "sawtooth";
 
-      osc.connect(
-        gain
-      );
 
-      gain.connect(
-        toneBus
-      );
+    gain.gain.value =
+      i === 1
+        ? 0.11
+        : 0.065;
 
-      osc.start();
 
-      toneOscillators.push({
-        osc,
-        ratio,
-        type: 1
-      });
+    osc.connect(
+      gain
+    );
 
-    }
-  );
+    gain.connect(
+      toneBus
+    );
+
+    osc.start();
+
+
+    toneOscillators.push({
+      osc,
+      gain
+    });
+
+  }
 
 }
 
 
 /* =====================================================
-   TONE 2
-
-   Higher, fast arpeggiated tone.
+   TONE 2 BUS
 ===================================================== */
 
 function buildTone2() {
@@ -670,27 +850,27 @@ function buildTone2() {
     audio.createBiquadFilter();
 
   tone2Filter.type =
-    "bandpass";
+    "lowpass";
 
   tone2Filter.frequency.value =
-    1800;
+    4800;
 
   tone2Filter.Q.value =
-    3;
+    2;
 
 
   tone2Delay =
     audio.createDelay(1);
 
   tone2Delay.delayTime.value =
-    0.18;
+    0.19;
 
 
   tone2Feedback =
     audio.createGain();
 
   tone2Feedback.gain.value =
-    0.48;
+    0.46;
 
 
   tone2Bus.connect(
@@ -721,115 +901,54 @@ function buildTone2() {
 
 
 /* =====================================================
-   TONE NOTE SELECTION
+   SET TONE 1 CHORD
 ===================================================== */
 
-function getToneFrequency(
-  octaveMultiplier = 1
-) {
+function setToneChord() {
 
-  const pentagram =
-    Number(
-      $("pentagram").value
-    );
+  const notes =
+    getChordNotes();
 
 
-  /*
-    At 0%:
-    free chromatic wandering.
+  toneOscillators.forEach(
+    (voice, index) => {
 
-    As Pentagram rises:
-    increasingly favor sequential
-    movement through fifths.
-
-    At 100%:
-    all movement comes from the
-    fifths sequence.
-  */
-
-  if (
-    Math.random() <
-    pentagram
-  ) {
-
-    const direction =
-      Math.random() <
-      0.78
-        ? 1
-        : -1;
+      const midi =
+        pentagramPitch(
+          notes[index]
+        );
 
 
-    fifthIndex =
-      (
-        fifthIndex +
-        direction +
-        FIFTHS.length
-      ) %
-      FIFTHS.length;
+      const frequency =
+        midiToFrequency(
+          midi
+        );
 
 
-    return (
-      FIFTHS[
-        fifthIndex
-      ] *
-      octaveMultiplier
-    );
+      voice.osc.frequency
+        .setTargetAtTime(
+          frequency,
+          audio.currentTime,
+          0.35
+        );
 
-  }
-
-
-  return (
-    FREE_NOTES[
-      Math.floor(
-        Math.random() *
-        FREE_NOTES.length
-      )
-    ] *
-    octaveMultiplier
+    }
   );
 
 }
 
 
 /* =====================================================
-   CHANGE TONE 1
+   TONE 2
+
+   Lush high saw arpeggio.
+
+   Every note is several detuned
+   saw oscillators instead of one
+   thin oscillator.
 ===================================================== */
 
-function changeTone1() {
-
-  const root =
-    getToneFrequency(1);
-
-
-  toneOscillators
-    .filter(
-      item =>
-        item.type === 1
-    )
-    .forEach(
-      (item, index) => {
-
-        const ratios =
-          [1, 1.5, 2];
-
-
-        item.osc.frequency
-          .setTargetAtTime(
-            root *
-            ratios[index],
-            audio.currentTime,
-            0.3
-          );
-
-      }
-    );
-
-}
-
-
-/* =====================================================
-   TONE 2 ARPEGGIO
-===================================================== */
+let arpIndex = 0;
 
 function playTone2Note() {
 
@@ -847,80 +966,221 @@ function playTone2Note() {
   }
 
 
-  const root =
-    getToneFrequency(
-      2 +
-      (
-        tone2Step %
-        3
-      ) *
-      0.5
+  const notes =
+    getChordNotes();
+
+
+  const strictMidi =
+    notes[
+      arpIndex %
+      notes.length
+    ] +
+    12;
+
+
+  const midi =
+    pentagramPitch(
+      strictMidi
     );
 
 
-  const osc =
-    audio.createOscillator();
-
-
-  const gain =
-    audio.createGain();
-
-
-  osc.type =
-    Math.random() <
-    0.5
-      ? "triangle"
-      : "sine";
-
-
-  osc.frequency.value =
-    root;
+  const frequency =
+    midiToFrequency(
+      midi
+    );
 
 
   const now =
     audio.currentTime;
 
 
-  gain.gain.setValueAtTime(
-    0.001,
-    now
+  const noteGain =
+    audio.createGain();
+
+
+  noteGain.gain
+    .setValueAtTime(
+      0.001,
+      now
+    );
+
+
+  noteGain.gain
+    .exponentialRampToValueAtTime(
+      0.11,
+      now + 0.035
+    );
+
+
+  noteGain.gain
+    .exponentialRampToValueAtTime(
+      0.001,
+      now + 0.5
+    );
+
+
+  /*
+    Five detuned saw oscillators.
+  */
+
+  const detunes =
+    [-15,-7,0,7,15];
+
+
+  detunes.forEach(
+    detune => {
+
+      const osc =
+        audio.createOscillator();
+
+
+      osc.type =
+        "sawtooth";
+
+
+      osc.frequency.value =
+        frequency;
+
+
+      osc.detune.value =
+        detune;
+
+
+      osc.connect(
+        noteGain
+      );
+
+
+      osc.start(
+        now
+      );
+
+
+      osc.stop(
+        now + 0.52
+      );
+
+    }
   );
 
 
-  gain.gain.exponentialRampToValueAtTime(
-    0.17 *
-    volume,
-    now + 0.012
-  );
-
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.001,
-    now + 0.22
-  );
-
-
-  osc.connect(
-    gain
-  );
-
-
-  gain.connect(
+  noteGain.connect(
     tone2Bus
   );
 
 
-  osc.start(
-    now
-  );
+  arpIndex =
+    (
+      arpIndex + 1
+    ) %
+    notes.length;
+
+}
 
 
-  osc.stop(
-    now + 0.24
-  );
+/* =====================================================
+   HARMONIC PROGRESSION
+===================================================== */
+
+function advanceChord() {
+
+  currentChordIndex =
+    (
+      currentChordIndex + 1
+    ) %
+    progression.length;
 
 
-  tone2Step++;
+  setToneChord();
+
+}
+
+
+/* =====================================================
+   KEY CHANGE
+
+   Every two minutes.
+
+   New keys favor closely related keys
+   so the transition is smoother.
+===================================================== */
+
+function changeKey() {
+
+  const old =
+    currentKeyIndex;
+
+
+  /*
+    Usually move one position around
+    our related-key list rather than
+    jumping anywhere.
+  */
+
+  if (
+    Math.random() <
+    0.5
+  ) {
+
+    currentKeyIndex =
+      (
+        currentKeyIndex +
+        1
+      ) %
+      KEYS.length;
+
+  }
+
+  else {
+
+    currentKeyIndex =
+      (
+        currentKeyIndex -
+        1 +
+        KEYS.length
+      ) %
+      KEYS.length;
+
+  }
+
+
+  if (
+    currentKeyIndex ===
+    old
+  ) {
+
+    currentKeyIndex =
+      (
+        old + 1
+      ) %
+      KEYS.length;
+
+  }
+
+
+  progression =
+    PROGRESSIONS[
+      Math.floor(
+        Math.random() *
+        PROGRESSIONS.length
+      )
+    ];
+
+
+  currentChordIndex =
+    0;
+
+
+  keyStartedAt =
+    Date.now();
+
+
+  $("keyInfo").textContent =
+    "KEY: " +
+    currentKey().name;
+
+
+  setToneChord();
 
 }
 
@@ -929,9 +1189,7 @@ function playTone2Note() {
    GIF
 ===================================================== */
 
-function hitAnimation(
-  amount
-) {
+function hitAnimation(amount) {
 
   gif.style.transform =
     `scale(${amount})`;
@@ -957,6 +1215,32 @@ function hitAnimation(
 
 
 /* =====================================================
+   DRUM SOFTNESS
+===================================================== */
+
+function drumStrength(
+  strength
+) {
+
+  const soft =
+    Number(
+      $("soft").value
+    );
+
+
+  return (
+    strength *
+    (
+      1 -
+      soft *
+      0.58
+    )
+  );
+
+}
+
+
+/* =====================================================
    KICK
 ===================================================== */
 
@@ -972,10 +1256,13 @@ function kick(
 
   if (
     volume <= 0
-  ) {
+  ) return;
 
-    return;
-  }
+
+  const soft =
+    Number(
+      $("soft").value
+    );
 
 
   const now =
@@ -995,20 +1282,25 @@ function kick(
 
 
   osc.frequency.setValueAtTime(
-    165,
+    155 -
+    soft * 45,
     now
   );
 
 
   osc.frequency.exponentialRampToValueAtTime(
     42,
-    now + 0.14
+    now +
+    0.15 +
+    soft * 0.12
   );
 
 
   gain.gain.setValueAtTime(
     1.05 *
-    strength *
+    drumStrength(
+      strength
+    ) *
     volume,
     now
   );
@@ -1016,14 +1308,15 @@ function kick(
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
-    now + 0.24
+    now +
+    0.24 +
+    soft * 0.18
   );
 
 
   osc.connect(
     gain
   );
-
 
   gain.connect(
     drumBus
@@ -1033,47 +1326,29 @@ function kick(
   osc.start(now);
 
   osc.stop(
-    now + 0.25
+    now + 0.5
   );
 
 
   hitAnimation(
-    1.1
+    1.08
   );
 
 }
 
 
 /* =====================================================
-   SNARE
+   NOISE BUFFER
 ===================================================== */
 
-function snare(
-  strength = 1
+function noiseBuffer(
+  duration
 ) {
-
-  const volume =
-    Number(
-      $("snareVolume").value
-    );
-
-
-  if (
-    volume <= 0
-  ) {
-
-    return;
-  }
-
-
-  const now =
-    audio.currentTime;
-
 
   const length =
     Math.floor(
       audio.sampleRate *
-      0.18
+      duration
     );
 
 
@@ -1105,6 +1380,40 @@ function snare(
   }
 
 
+  return buffer;
+
+}
+
+
+/* =====================================================
+   SNARE
+===================================================== */
+
+function snare(
+  strength = 1
+) {
+
+  const volume =
+    Number(
+      $("snareVolume").value
+    );
+
+
+  if (
+    volume <= 0
+  ) return;
+
+
+  const soft =
+    Number(
+      $("soft").value
+    );
+
+
+  const now =
+    audio.currentTime;
+
+
   const source =
     audio.createBufferSource();
 
@@ -1118,20 +1427,32 @@ function snare(
 
 
   source.buffer =
-    buffer;
+    noiseBuffer(
+      0.25
+    );
 
 
   filter.type =
-    "highpass";
+    "bandpass";
 
 
   filter.frequency.value =
-    700;
+    1800 -
+    soft *
+    900;
+
+
+  filter.Q.value =
+    0.8 +
+    soft *
+    1.5;
 
 
   gain.gain.setValueAtTime(
     0.72 *
-    strength *
+    drumStrength(
+      strength
+    ) *
     volume,
     now
   );
@@ -1139,7 +1460,10 @@ function snare(
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
-    now + 0.18
+    now +
+    0.16 +
+    soft *
+    0.18
   );
 
 
@@ -1147,11 +1471,9 @@ function snare(
     filter
   );
 
-
   filter.connect(
     gain
   );
-
 
   gain.connect(
     drumBus
@@ -1164,7 +1486,7 @@ function snare(
 
 
   hitAnimation(
-    1.06
+    1.05
   );
 
 }
@@ -1186,49 +1508,17 @@ function hihat(
 
   if (
     volume <= 0
-  ) {
+  ) return;
 
-    return;
-  }
+
+  const soft =
+    Number(
+      $("soft").value
+    );
 
 
   const now =
     audio.currentTime;
-
-
-  const length =
-    Math.floor(
-      audio.sampleRate *
-      0.055
-    );
-
-
-  const buffer =
-    audio.createBuffer(
-      1,
-      length,
-      audio.sampleRate
-    );
-
-
-  const data =
-    buffer.getChannelData(
-      0
-    );
-
-
-  for (
-    let i = 0;
-    i < length;
-    i++
-  ) {
-
-    data[i] =
-      Math.random() *
-      2 -
-      1;
-
-  }
 
 
   const source =
@@ -1244,7 +1534,9 @@ function hihat(
 
 
   source.buffer =
-    buffer;
+    noiseBuffer(
+      0.08
+    );
 
 
   filter.type =
@@ -1252,12 +1544,16 @@ function hihat(
 
 
   filter.frequency.value =
-    5200;
+    5200 -
+    soft *
+    3000;
 
 
   gain.gain.setValueAtTime(
     0.32 *
-    strength *
+    drumStrength(
+      strength
+    ) *
     volume,
     now
   );
@@ -1265,7 +1561,10 @@ function hihat(
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
-    now + 0.06
+    now +
+    0.055 +
+    soft *
+    0.08
   );
 
 
@@ -1273,11 +1572,9 @@ function hihat(
     filter
   );
 
-
   filter.connect(
     gain
   );
-
 
   gain.connect(
     drumBus
@@ -1290,14 +1587,19 @@ function hihat(
 
 
   hitAnimation(
-    1.025
+    1.02
   );
 
 }
 
 
 /* =====================================================
-   DRUM BPM
+   DRUM SPEED
+
+   Much wider than before.
+
+   Approximately:
+   2 BPM -> 2000 BPM
 ===================================================== */
 
 function getBPM() {
@@ -1309,9 +1611,9 @@ function getBPM() {
 
 
   return (
-    20 *
+    2 *
     Math.pow(
-      20,
+      1000,
       value
     )
   );
@@ -1322,92 +1624,65 @@ function getBPM() {
 /* =====================================================
    BEAT SWITCH SPEED
 
-   0%:
-   10 minutes -> 2 hours
+   Much wider than before.
 
-   50%:
-   10 seconds -> ~15 minutes
+   0%:
+   extremely long.
 
    100%:
-   1 second -> 10 seconds
+   extremely rapid.
 ===================================================== */
 
 function getBeatSwitchDuration() {
 
-  const speed =
+  const value =
     Number(
       $("beatSwitchSpeed").value
     );
 
 
-  let minimum;
-  let maximum;
+  /*
+    20 hours -> 1 second
+  */
+
+  const maximum =
+    20 *
+    60 *
+    60 *
+    1000;
 
 
-  if (
-    speed < 0.5
-  ) {
-
-    const t =
-      speed /
-      0.5;
+  const minimum =
+    1000;
 
 
-    minimum =
-      600000 +
-      (
-        10000 -
-        600000
-      ) *
-      t;
+  const centerAdjusted =
+    Math.pow(
+      value,
+      1.35
+    );
 
 
-    maximum =
-      7200000 +
-      (
-        900000 -
-        7200000
-      ) *
-      t;
-
-  }
-
-  else {
-
-    const t =
-      (
-        speed -
-        0.5
-      ) /
-      0.5;
+  const base =
+    maximum *
+    Math.pow(
+      minimum /
+      maximum,
+      centerAdjusted
+    );
 
 
-    minimum =
-      10000 +
-      (
-        1000 -
-        10000
-      ) *
-      t;
-
-
-    maximum =
-      900000 +
-      (
-        10000 -
-        900000
-      ) *
-      t;
-
-  }
-
+  /*
+    Keep the exact switch time somewhat
+    unpredictable.
+  */
 
   return (
-    minimum +
-    Math.random() *
+    base *
     (
-      maximum -
-      minimum
+      0.65 +
+      Math.random() *
+      0.7
     )
   );
 
@@ -1421,22 +1696,19 @@ function getBeatSwitchDuration() {
 function chooseNextPattern() {
 
   let next =
-    Math.floor(
-      Math.random() *
-      BEATS.length
-    );
+    currentPattern;
 
 
-  if (
+  while (
     next ===
     currentPattern
   ) {
 
     next =
-      (
-        next + 1
-      ) %
-      BEATS.length;
+      Math.floor(
+        Math.random() *
+        BEATS.length
+      );
 
   }
 
@@ -1451,15 +1723,13 @@ function chooseNextPattern() {
 
 
   $("beatInfo").textContent =
-    `BEAT ${
-      currentPattern + 1
-    }`;
+    `BEAT ${currentPattern + 1}`;
 
 }
 
 
 /* =====================================================
-   DRUM STEP
+   PLAY DRUM STEP
 ===================================================== */
 
 function playDrumStep() {
@@ -1504,11 +1774,6 @@ function playDrumStep() {
     );
 
 
-  /*
-    Increasing randomness progressively
-    replaces preset decisions.
-  */
-
   if (
     Math.random() <
     randomness
@@ -1545,7 +1810,7 @@ function playDrumStep() {
   }
 
 
-  const randomStrength =
+  const strength =
     () =>
       0.45 +
       Math.random() *
@@ -1554,28 +1819,24 @@ function playDrumStep() {
 
   if (k) {
     kick(
-      randomStrength()
+      strength()
     );
   }
 
 
   if (s) {
     snare(
-      randomStrength()
+      strength()
     );
   }
 
 
   if (h) {
     hihat(
-      randomStrength()
+      strength()
     );
   }
 
-
-  /*
-    Fully independent chaos.
-  */
 
   if (
     Math.random() <
@@ -1664,7 +1925,7 @@ function scheduleDrums() {
 
     delay *=
       Math.max(
-        0.12,
+        0.1,
         1 +
         (
           Math.random() *
@@ -1687,7 +1948,7 @@ function scheduleDrums() {
 
     },
     Math.max(
-      18,
+      8,
       delay
     )
   );
@@ -1696,7 +1957,9 @@ function scheduleDrums() {
 
 
 /* =====================================================
-   TONE 1 SPEED
+   TONE 1 SCHEDULER
+
+   Advances through the chord progression.
 ===================================================== */
 
 function scheduleTone1() {
@@ -1708,15 +1971,13 @@ function scheduleTone1() {
 
 
   /*
-    0% = approximately every 30 sec
-    100% = approximately every 0.4 sec
+    ~40 sec -> 0.4 sec
   */
 
   const delay =
-    30000 *
+    40000 *
     Math.pow(
-      0.4 /
-      30,
+      0.01,
       speed
     );
 
@@ -1724,7 +1985,27 @@ function scheduleTone1() {
   setTimeout(
     () => {
 
-      changeTone1();
+      /*
+        Check two-minute key timer before
+        moving to the next chord.
+      */
+
+      if (
+        Date.now() -
+        keyStartedAt >=
+        KEY_DURATION
+      ) {
+
+        changeKey();
+
+      }
+
+      else {
+
+        advanceChord();
+
+      }
+
 
       scheduleTone1();
 
@@ -1736,7 +2017,7 @@ function scheduleTone1() {
 
 
 /* =====================================================
-   TONE 2 SPEED
+   TONE 2 SCHEDULER
 ===================================================== */
 
 function scheduleTone2() {
@@ -1748,18 +2029,14 @@ function scheduleTone2() {
 
 
   /*
-    Designed to be the quicker,
-    arpeggiated layer.
-
-    0% = 2 seconds
-    100% = 45 ms
+    2.5 sec -> 45ms
   */
 
   const delay =
-    2000 *
+    2500 *
     Math.pow(
       45 /
-      2000,
+      2500,
       speed
     );
 
@@ -1784,9 +2061,11 @@ function scheduleTone2() {
 
 function updateEffects() {
 
-  if (!audio) {
-    return;
-  }
+  if (!audio) return;
+
+
+  const now =
+    audio.currentTime;
 
 
   const volume =
@@ -1807,15 +2086,9 @@ function updateEffects() {
     );
 
 
-  const tone =
+  const soft =
     Number(
-      $("tone").value
-    );
-
-
-  const tone2 =
-    Number(
-      $("tone2").value
+      $("soft").value
     );
 
 
@@ -1823,8 +2096,27 @@ function updateEffects() {
     .setTargetAtTime(
       volume *
       1.65,
-      audio.currentTime,
+      now,
       0.02
+    );
+
+
+  /*
+    DRUM SOFTNESS
+
+    Removes brightness and apparent size.
+  */
+
+  drumSoftFilter.frequency
+    .setTargetAtTime(
+      20000 *
+      Math.pow(
+        1800 /
+        20000,
+        soft
+      ),
+      now,
+      0.04
     );
 
 
@@ -1832,19 +2124,15 @@ function updateEffects() {
     UNDERWATER
   */
 
-  const underwaterFrequency =
-    20000 *
-    Math.pow(
-      80 /
-      20000,
-      underwater
-    );
-
-
   underwaterFilter.frequency
     .setTargetAtTime(
-      underwaterFrequency,
-      audio.currentTime,
+      20000 *
+      Math.pow(
+        80 /
+        20000,
+        underwater
+      ),
+      now,
       0.025
     );
 
@@ -1854,36 +2142,32 @@ function updateEffects() {
       1 +
       underwater *
       22,
-      audio.currentTime,
+      now,
       0.025
     );
 
 
   /*
     AIR
-
-    Strongly boosts high frequencies
-    across drums and both synth layers.
   */
 
   airFilter.gain
     .setTargetAtTime(
       air *
       32,
-      audio.currentTime,
+      now,
       0.03
     );
 
 
-  $("low") &&
-    lowEQ.gain
-      .setTargetAtTime(
-        Number(
-          $("low").value
-        ),
-        audio.currentTime,
-        0.02
-      );
+  lowEQ.gain
+    .setTargetAtTime(
+      Number(
+        $("low").value
+      ),
+      now,
+      0.02
+    );
 
 
   midEQ.gain
@@ -1891,7 +2175,7 @@ function updateEffects() {
       Number(
         $("mid").value
       ),
-      audio.currentTime,
+      now,
       0.02
     );
 
@@ -1901,55 +2185,30 @@ function updateEffects() {
       Number(
         $("high").value
       ),
-      audio.currentTime,
+      now,
       0.02
     );
 
 
-  /*
-    TONE VOLUMES
-  */
-
   toneBus.gain
     .setTargetAtTime(
-      tone *
+      Number(
+        $("tone").value
+      ) *
       0.55,
-      audio.currentTime,
+      now,
       0.08
     );
 
 
   tone2Bus.gain
     .setTargetAtTime(
-      tone2 *
-      0.75,
-      audio.currentTime,
+      Number(
+        $("tone2").value
+      ) *
+      0.65,
+      now,
       0.05
-    );
-
-
-  /*
-    AIR ALSO MAKES THE TONES
-    BRIGHTER / MORE OPEN.
-  */
-
-  toneFilter.frequency
-    .setTargetAtTime(
-      1500 +
-      air *
-      6500,
-      audio.currentTime,
-      0.08
-    );
-
-
-  tone2Filter.frequency
-    .setTargetAtTime(
-      1800 +
-      air *
-      8000,
-      audio.currentTime,
-      0.08
     );
 
 }
@@ -1961,9 +2220,7 @@ function updateEffects() {
 
 function modulationLoop() {
 
-  if (!audio) {
-    return;
-  }
+  if (!audio) return;
 
 
   const now =
@@ -1973,6 +2230,12 @@ function modulationLoop() {
   const wrobly =
     Number(
       $("wrobly").value
+    );
+
+
+  const air =
+    Number(
+      $("air").value
     );
 
 
@@ -2025,34 +2288,28 @@ function modulationLoop() {
 
 
   /*
-    TONE 1 PHASEY MOVEMENT
+    TONE 1 MOVEMENT
   */
 
-  const toneWave =
+  const slowWave =
     (
       Math.sin(
         now *
-        0.37
+        0.31
       ) +
       1
     ) /
     2;
 
 
-  const air =
-    Number(
-      $("air").value
-    );
-
-
   toneFilter.frequency
     .setTargetAtTime(
-      380 +
-      toneWave *
+      550 +
+      slowWave *
       (
-        2100 +
+        2200 +
         air *
-        6000
+        5000
       ),
       now,
       0.08
@@ -2061,9 +2318,9 @@ function modulationLoop() {
 
   toneFilter.Q
     .setTargetAtTime(
-      4 +
-      toneWave *
-      15,
+      3 +
+      slowWave *
+      10,
       now,
       0.08
     );
@@ -2071,23 +2328,23 @@ function modulationLoop() {
 
   toneDelay.delayTime
     .setTargetAtTime(
-      0.12 +
-      toneWave *
-      0.55,
+      0.15 +
+      slowWave *
+      0.45,
       now,
       0.08
     );
 
 
   /*
-    TONE 2 QUICKER SHIMMER
+    TONE 2 LUSH SAW MOVEMENT
   */
 
-  const highWave =
+  const fastWave =
     (
       Math.sin(
         now *
-        1.7
+        1.3
       ) +
       1
     ) /
@@ -2096,50 +2353,59 @@ function modulationLoop() {
 
   tone2Filter.frequency
     .setTargetAtTime(
-      900 +
-      highWave *
+      1700 +
+      fastWave *
       (
-        3800 +
+        3500 +
         air *
-        7000
+        5500
       ),
       now,
-      0.04
+      0.05
+    );
+
+
+  tone2Filter.Q
+    .setTargetAtTime(
+      1.5 +
+      fastWave *
+      3,
+      now,
+      0.05
     );
 
 
   tone2Delay.delayTime
     .setTargetAtTime(
-      0.07 +
-      highWave *
-      0.24,
+      0.08 +
+      fastWave *
+      0.22,
       now,
-      0.04
+      0.05
     );
 
 
   /*
-    Slow detuning of Tone 1.
+    Very small detuning movement only.
+
+    Harmonic pitch itself stays controlled
+    by the key/chord system.
   */
 
   toneOscillators.forEach(
-    (item, index) => {
+    (voice, index) => {
 
-      const drift =
-        Math.sin(
-          now *
-          (
-            0.08 +
-            index *
-            0.027
-          )
-        ) *
-        20;
-
-
-      item.osc.detune
+      voice.osc.detune
         .setTargetAtTime(
-          drift,
+          Math.sin(
+            now *
+            (
+              0.07 +
+              index *
+              0.02
+            )
+          ) *
+          6,
           now,
           0.1
         );
@@ -2219,8 +2485,7 @@ function dbDisplay(
 
       output.textContent =
         (
-          value >
-          0
+          value > 0
             ? "+"
             : ""
         ) +
@@ -2236,29 +2501,26 @@ function dbDisplay(
 }
 
 
-/* =====================================================
-   CONNECT UI
-===================================================== */
-
 [
-  ["volume", "volumeValue"],
-  ["speed", "speedValue"],
-  ["beatSwitchSpeed", "beatSwitchSpeedValue"],
-  ["randomness", "randomnessValue"],
+  ["volume","volumeValue"],
+  ["speed","speedValue"],
+  ["beatSwitchSpeed","beatSwitchSpeedValue"],
+  ["randomness","randomnessValue"],
 
-  ["kickVolume", "kickVolumeValue"],
-  ["snareVolume", "snareVolumeValue"],
-  ["hatVolume", "hatVolumeValue"],
+  ["kickVolume","kickVolumeValue"],
+  ["snareVolume","snareVolumeValue"],
+  ["hatVolume","hatVolumeValue"],
+  ["soft","softValue"],
 
-  ["tone", "toneValue"],
-  ["toneSpeed", "toneSpeedValue"],
-  ["tone2", "tone2Value"],
-  ["tone2Speed", "tone2SpeedValue"],
+  ["tone","toneValue"],
+  ["toneSpeed","toneSpeedValue"],
+  ["tone2","tone2Value"],
+  ["tone2Speed","tone2SpeedValue"],
 
-  ["underwater", "underwaterValue"],
-  ["wrobly", "wroblyValue"],
-  ["air", "airValue"],
-  ["pentagram", "pentagramValue"]
+  ["underwater","underwaterValue"],
+  ["wrobly","wroblyValue"],
+  ["air","airValue"],
+  ["pentagram","pentagramValue"]
 
 ].forEach(
   pair =>
@@ -2286,10 +2548,35 @@ dbDisplay(
 
 
 /* =====================================================
+   SKIP BEAT
+===================================================== */
+
+$("skipBeat").addEventListener(
+  "click",
+  () => {
+
+    if (!audio) return;
+
+
+    chooseNextPattern();
+
+
+    /*
+      Start the new pattern cleanly
+      from step 1.
+    */
+
+    drumStep = 0;
+
+  }
+);
+
+
+/* =====================================================
    START
 ===================================================== */
 
-startButton.addEventListener(
+$("start").addEventListener(
   "click",
   async () => {
 
@@ -2299,8 +2586,12 @@ startButton.addEventListener(
     await audio.resume();
 
 
-    startButton.remove();
+    $("start").remove();
 
+
+    /*
+      Initial drum beat.
+    */
 
     currentPattern =
       Math.floor(
@@ -2310,9 +2601,7 @@ startButton.addEventListener(
 
 
     $("beatInfo").textContent =
-      `BEAT ${
-        currentPattern + 1
-      }`;
+      `BEAT ${currentPattern + 1}`;
 
 
     nextPatternChange =
@@ -2321,15 +2610,41 @@ startButton.addEventListener(
 
 
     /*
-      Give Tone 1 an initial
-      harmonic position.
+      Initial musical key.
     */
 
-    changeTone1();
+    currentKeyIndex =
+      Math.floor(
+        Math.random() *
+        KEYS.length
+      );
+
+
+    progression =
+      PROGRESSIONS[
+        Math.floor(
+          Math.random() *
+          PROGRESSIONS.length
+        )
+      ];
+
+
+    currentChordIndex = 0;
+
+
+    keyStartedAt =
+      Date.now();
+
+
+    $("keyInfo").textContent =
+      "KEY: " +
+      currentKey().name;
+
+
+    setToneChord();
 
 
     playDrumStep();
-
 
     scheduleDrums();
 
