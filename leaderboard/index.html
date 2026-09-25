@@ -226,11 +226,13 @@
 </head>
 
 <body>
+
 <div class="page">
 
   <h1>Weebie Leaderboard</h1>
 
   <div class="leaderboard">
+
     <div class="header">
       <div class="cell">Place</div>
       <div class="cell">Weebie</div>
@@ -240,14 +242,32 @@
     </div>
 
     <div id="rows"></div>
+
   </div>
 
-  <div id="status">Loading leaderboard...</div>
+  <div id="status">
+    Loading leaderboard...
+  </div>
 
-  <button id="showMore" type="button">Show More</button>
+  <button
+    id="showMore"
+    type="button"
+  >
+    Show More
+  </button>
 
-  <div id="pagination" class="pagination">
-    <button id="previousPage" class="page-arrow" type="button">←</button>
+  <div
+    id="pagination"
+    class="pagination"
+  >
+
+    <button
+      id="previousPage"
+      class="page-arrow"
+      type="button"
+    >
+      ←
+    </button>
 
     <input
       id="pageInput"
@@ -257,16 +277,28 @@
       aria-label="Page number"
     >
 
-    <span id="pageCount">/ 1</span>
+    <span id="pageCount">
+      / 1
+    </span>
 
-    <button id="nextPage" class="page-arrow" type="button">→</button>
+    <button
+      id="nextPage"
+      class="page-arrow"
+      type="button"
+    >
+      →
+    </button>
+
   </div>
 
 </div>
 
+
 <script>
+
 const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
 
 const COLORS = {
   "Teal": "#24B5A5",
@@ -279,6 +311,7 @@ const COLORS = {
   "Purple": "#ed15ff",
   "Silver": "#B8BEC4"
 };
+
 
 const rows =
   document.getElementById("rows");
@@ -304,50 +337,105 @@ const pageInput =
 const pageCount =
   document.getElementById("pageCount");
 
+
 let currentPage = 1;
 let limit = 10;
 let totalPages = 1;
 let totalWeebies = 0;
 
 
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+function getSessionToken() {
+
+  return localStorage.getItem(
+    "rd_session"
+  );
+}
+
+
+function authHeaders() {
+
+  const headers = {};
+
+  const token =
+    getSessionToken();
+
+
+  if (token) {
+
+    headers["Authorization"] =
+      "Bearer " + token;
+  }
+
+
+  return headers;
+}
+
+
+
+/* =====================================================
+   PLACEMENT
+===================================================== */
+
 function makePlacement(number) {
+
   const div =
     document.createElement("div");
+
 
   div.className =
     "placement";
 
+
   div.textContent =
     number;
 
+
   if (number === 1) {
+
     div.classList.add(
       "medal",
       "gold"
     );
   }
 
+
   else if (number === 2) {
+
     div.classList.add(
       "medal",
       "silver"
     );
   }
 
+
   else if (number === 3) {
+
     div.classList.add(
       "medal",
       "bronze"
     );
   }
 
+
   return div;
 }
 
 
+
+/* =====================================================
+   WEEBIE IMAGE
+===================================================== */
+
 function makeWeebiePic(weebie) {
+
   const pic =
     document.createElement("div");
+
 
   pic.className =
     "weebie-pic";
@@ -356,8 +444,10 @@ function makeWeebiePic(weebie) {
   const color1 =
     document.createElement("div");
 
+
   color1.className =
     "weebie-layer color1";
+
 
   color1.style.backgroundColor =
     COLORS[weebie.primaryColor] ||
@@ -367,8 +457,10 @@ function makeWeebiePic(weebie) {
   const color2 =
     document.createElement("div");
 
+
   color2.className =
     "weebie-layer color2";
+
 
   color2.style.backgroundColor =
     COLORS[weebie.secondaryColor] ||
@@ -378,58 +470,101 @@ function makeWeebiePic(weebie) {
   const outline =
     document.createElement("div");
 
+
   outline.className =
     "weebie-layer outline";
 
 
-  if (weebie.eyelashes === "No") {
+  if (
+    weebie.eyelashes === "No"
+  ) {
+
     color2.style.webkitMaskImage =
       'url("/shared/Weebie-Color2a.png")';
 
+
     color2.style.maskImage =
       'url("/shared/Weebie-Color2a.png")';
+
 
     outline.style.backgroundImage =
       'url("/shared/Weebie-Outline2.png")';
   }
 
+
   else {
+
     color2.style.webkitMaskImage =
       'url("/shared/Weebie-Color2.png")';
 
+
     color2.style.maskImage =
       'url("/shared/Weebie-Color2.png")';
+
 
     outline.style.backgroundImage =
       'url("/shared/Weebie-Outline.png")';
   }
 
 
-  pic.appendChild(color1);
-  pic.appendChild(color2);
-  pic.appendChild(outline);
+  pic.appendChild(
+    color1
+  );
+
+
+  pic.appendChild(
+    color2
+  );
+
+
+  pic.appendChild(
+    outline
+  );
+
 
   return pic;
 }
 
 
-function makeCell(className = "") {
+
+/* =====================================================
+   CELL
+===================================================== */
+
+function makeCell(
+  className = ""
+) {
+
   const div =
     document.createElement("div");
 
+
   div.className =
     "cell " + className;
+
 
   return div;
 }
 
 
+
+/* =====================================================
+   RENDER ROWS
+===================================================== */
+
 function renderRows(weebies) {
+
   rows.innerHTML = "";
 
-  for (const weebie of weebies) {
+
+  for (
+    const weebie
+    of weebies
+  ) {
+
     const row =
       document.createElement("div");
+
 
     row.className =
       "row";
@@ -438,15 +573,19 @@ function renderRows(weebies) {
     const placementCell =
       makeCell();
 
+
     placementCell.appendChild(
       makePlacement(
-        weebie.placement
+        Number(
+          weebie.placement
+        )
       )
     );
 
 
     const pictureCell =
       makeCell();
+
 
     pictureCell.appendChild(
       makeWeebiePic(
@@ -458,12 +597,14 @@ function renderRows(weebies) {
     const nameCell =
       makeCell("name");
 
+
     nameCell.textContent =
       weebie.name;
 
 
     const xpCell =
       makeCell("xp");
+
 
     xpCell.textContent =
       Number(
@@ -474,18 +615,25 @@ function renderRows(weebies) {
     const ownerCell =
       makeCell("owner");
 
+
     const ownerLink =
       document.createElement("a");
 
+
     ownerLink.href =
       "/user/" +
-      encodeURIComponent(weebie.owner);
+      encodeURIComponent(
+        weebie.owner
+      );
+
 
     ownerLink.textContent =
       weebie.owner;
 
+
     ownerLink.style.color =
       "inherit";
+
 
     ownerCell.appendChild(
       ownerLink
@@ -496,53 +644,74 @@ function renderRows(weebies) {
       placementCell
     );
 
+
     row.appendChild(
       pictureCell
     );
+
 
     row.appendChild(
       nameCell
     );
 
+
     row.appendChild(
       xpCell
     );
+
 
     row.appendChild(
       ownerCell
     );
 
-    rows.appendChild(row);
+
+    rows.appendChild(
+      row
+    );
   }
 }
 
 
+
+/* =====================================================
+   CONTROLS
+===================================================== */
+
 function updateControls() {
+
   pageInput.value =
     currentPage;
+
 
   pageInput.max =
     totalPages;
 
+
   pageCount.textContent =
     "/ " + totalPages;
+
 
   previousPage.disabled =
     currentPage <= 1;
 
+
   nextPage.disabled =
-    currentPage >= totalPages;
+    currentPage >=
+    totalPages;
 
 
   if (
     limit === 10 &&
     totalWeebies > 10
   ) {
+
     showMore.style.display =
       "block";
   }
 
+
   else {
+
     showMore.style.display =
       "none";
   }
@@ -552,66 +721,117 @@ function updateControls() {
     limit === 30 &&
     totalWeebies > 30
   ) {
+
     pagination.style.display =
       "flex";
   }
 
+
   else {
+
     pagination.style.display =
       "none";
   }
 }
 
 
+
+/* =====================================================
+   LOAD LEADERBOARD
+===================================================== */
+
 async function loadLeaderboard(
   page = 1
 ) {
+
   status.textContent =
     "Loading leaderboard...";
 
+
   try {
+
     const response =
       await fetch(
         API +
         "/leaderboard?page=" +
-        encodeURIComponent(page) +
+        encodeURIComponent(
+          page
+        ) +
         "&limit=" +
-        encodeURIComponent(limit)
+        encodeURIComponent(
+          limit
+        ),
+
+        {
+          method:
+            "GET",
+
+          credentials:
+            "include",
+
+          headers:
+            authHeaders()
+        }
       );
+
 
     const data =
       await response.json();
 
+
     if (!response.ok) {
+
       throw new Error(
         data.error ||
         "Unable to load leaderboard."
       );
     }
 
+
     currentPage =
-      Number(data.page || 1);
+      Number(
+        data.page || 1
+      );
+
 
     totalPages =
-      Number(data.totalPages || 1);
+      Math.max(
+        1,
+        Number(
+          data.totalPages || 1
+        )
+      );
+
 
     totalWeebies =
-      Number(data.totalWeebies || 0);
+      Number(
+        data.totalWeebies || 0
+      );
+
 
     renderRows(
-      Array.isArray(data.weebies)
+      Array.isArray(
+        data.weebies
+      )
         ? data.weebies
         : []
     );
 
+
     updateControls();
 
-    if (totalWeebies === 0) {
+
+    if (
+      totalWeebies === 0
+    ) {
+
       status.textContent =
         "No Weebies yet.";
     }
 
+
     else {
+
       status.textContent =
         totalWeebies.toLocaleString() +
         (
@@ -620,12 +840,20 @@ async function loadLeaderboard(
             : " Weebies"
         );
     }
+
   }
 
-  catch (error) {
-    console.error(error);
 
-    rows.innerHTML = "";
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    rows.innerHTML =
+      "";
+
 
     status.textContent =
       "Unable to load leaderboard.";
@@ -633,21 +861,40 @@ async function loadLeaderboard(
 }
 
 
+
+/* =====================================================
+   SHOW MORE
+===================================================== */
+
 showMore.addEventListener(
   "click",
   () => {
+
     limit = 30;
+
     currentPage = 1;
 
-    loadLeaderboard(1);
+
+    loadLeaderboard(
+      1
+    );
   }
 );
 
 
+
+/* =====================================================
+   PREVIOUS PAGE
+===================================================== */
+
 previousPage.addEventListener(
   "click",
   () => {
-    if (currentPage > 1) {
+
+    if (
+      currentPage > 1
+    ) {
+
       loadLeaderboard(
         currentPage - 1
       );
@@ -656,13 +903,20 @@ previousPage.addEventListener(
 );
 
 
+
+/* =====================================================
+   NEXT PAGE
+===================================================== */
+
 nextPage.addEventListener(
   "click",
   () => {
+
     if (
       currentPage <
       totalPages
     ) {
+
       loadLeaderboard(
         currentPage + 1
       );
@@ -671,27 +925,42 @@ nextPage.addEventListener(
 );
 
 
+
+/* =====================================================
+   PAGE INPUT
+===================================================== */
+
 pageInput.addEventListener(
   "change",
   () => {
+
     let requested =
-      Number(pageInput.value);
+      Number(
+        pageInput.value
+      );
+
 
     if (
-      !Number.isInteger(requested)
+      !Number.isInteger(
+        requested
+      )
     ) {
+
       requested =
         currentPage;
     }
 
+
     requested =
       Math.max(
         1,
+
         Math.min(
           totalPages,
           requested
         )
       );
+
 
     loadLeaderboard(
       requested
@@ -703,14 +972,26 @@ pageInput.addEventListener(
 pageInput.addEventListener(
   "keydown",
   event => {
-    if (event.key === "Enter") {
+
+    if (
+      event.key ===
+      "Enter"
+    ) {
+
       pageInput.blur();
     }
   }
 );
 
 
+
+/* =====================================================
+   START
+===================================================== */
+
 loadLeaderboard(1);
+
 </script>
+
 </body>
 </html>
