@@ -7,7 +7,6 @@
 <title>Drumbox</title>
 
 <style>
-
 * {
   box-sizing: border-box;
 }
@@ -23,32 +22,29 @@ body {
 
 body {
   display: flex;
-  align-items: center;
   justify-content: center;
   padding: 20px;
 }
 
 main {
   width: 100%;
-  max-width: 760px;
+  max-width: 850px;
   text-align: center;
 }
 
 #drumbox {
   display: block;
   max-width: 90vw;
-  max-height: 52vh;
+  max-height: 48vh;
   margin: 0 auto 20px;
-
   image-rendering: pixelated;
-
   transform: scale(1);
   transition: transform 0.035s linear;
 }
 
 .controls {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
@@ -63,7 +59,7 @@ main {
 }
 
 .control {
-  margin: 10px 0;
+  margin: 12px 0;
 }
 
 .control label {
@@ -81,47 +77,42 @@ input[type="range"] {
   opacity: 0.75;
 }
 
+#beatInfo {
+  margin-top: 14px;
+  font-size: 11px;
+  opacity: 0.65;
+}
+
 #start {
   position: fixed;
   inset: 0;
   z-index: 1000;
-
   border: 0;
-
   background: black;
   color: white;
-
   font: bold 20px Arial, sans-serif;
-
   cursor: pointer;
 }
 
 @media (max-width: 650px) {
-
   .controls {
     grid-template-columns: repeat(2, 1fr);
   }
-
 }
 
 @media (max-width: 400px) {
-
   .controls {
     grid-template-columns: 1fr;
   }
-
 }
-
 </style>
 </head>
-
 
 <body>
 
 <button id="start">
   CLICK TO START
 </button>
-
 
 <main>
 
@@ -131,21 +122,14 @@ input[type="range"] {
   alt="Drumbox"
 >
 
-
 <div class="controls">
-
-
-  <!-- MASTER -->
 
   <div class="box">
 
     <h2>MASTER</h2>
 
     <div class="control">
-
-      <label>
-        VOLUME
-      </label>
+      <label>VOLUME</label>
 
       <input
         id="volume"
@@ -156,30 +140,13 @@ input[type="range"] {
         value="0.8"
       >
 
-      <div
-        id="volumeValue"
-        class="value"
-      >
+      <div id="volumeValue" class="value">
         80%
       </div>
-
     </div>
 
-  </div>
-
-
-
-  <!-- RHYTHM -->
-
-  <div class="box">
-
-    <h2>RHYTHM</h2>
-
     <div class="control">
-
-      <label>
-        SPEED
-      </label>
+      <label>SPEED</label>
 
       <input
         id="speed"
@@ -187,34 +154,40 @@ input[type="range"] {
         min="0"
         max="1"
         step="0.01"
-        value="0.42"
+        value="0.5"
       >
 
-      <div
-        id="speedValue"
-        class="value"
-      >
-        42%
+      <div id="speedValue" class="value">
+        50%
       </div>
+    </div>
 
+    <div class="control">
+      <label>RANDOMNESS</label>
+
+      <input
+        id="randomness"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0"
+      >
+
+      <div id="randomnessValue" class="value">
+        0%
+      </div>
     </div>
 
   </div>
 
 
-
-  <!-- EFFECTS -->
-
   <div class="box">
 
     <h2>EFFECTS</h2>
 
-
     <div class="control">
-
-      <label>
-        UNDERWATER
-      </label>
+      <label>UNDERWATER</label>
 
       <input
         id="underwater"
@@ -225,21 +198,13 @@ input[type="range"] {
         value="0"
       >
 
-      <div
-        id="underwaterValue"
-        class="value"
-      >
+      <div id="underwaterValue" class="value">
         0%
       </div>
-
     </div>
 
-
     <div class="control">
-
-      <label>
-        WROBLY
-      </label>
+      <label>WROBLY</label>
 
       <input
         id="wrobly"
@@ -250,149 +215,287 @@ input[type="range"] {
         value="0"
       >
 
-      <div
-        id="wroblyValue"
-        class="value"
-      >
+      <div id="wroblyValue" class="value">
         0%
       </div>
+    </div>
 
+    <div class="control">
+      <label>TONE</label>
+
+      <input
+        id="tone"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="0"
+      >
+
+      <div id="toneValue" class="value">
+        0%
+      </div>
     </div>
 
   </div>
 
-
-
-  <!-- EQ -->
 
   <div class="box">
 
     <h2>EQ</h2>
 
-
     <div class="control">
-
-      <label>
-        LOW
-      </label>
+      <label>LOW</label>
 
       <input
         id="low"
         type="range"
-        min="-18"
-        max="18"
+        min="-36"
+        max="36"
         step="1"
         value="0"
       >
 
-      <div
-        id="lowValue"
-        class="value"
-      >
+      <div id="lowValue" class="value">
         0 dB
       </div>
-
     </div>
 
-
     <div class="control">
-
-      <label>
-        MID
-      </label>
+      <label>MID</label>
 
       <input
         id="mid"
         type="range"
-        min="-18"
-        max="18"
+        min="-36"
+        max="36"
         step="1"
         value="0"
       >
 
-      <div
-        id="midValue"
-        class="value"
-      >
+      <div id="midValue" class="value">
         0 dB
       </div>
-
     </div>
 
-
     <div class="control">
-
-      <label>
-        HIGH
-      </label>
+      <label>HIGH</label>
 
       <input
         id="high"
         type="range"
-        min="-18"
-        max="18"
+        min="-36"
+        max="36"
         step="1"
         value="0"
       >
 
-      <div
-        id="highValue"
-        class="value"
-      >
+      <div id="highValue" class="value">
         0 dB
       </div>
-
     </div>
 
   </div>
 
+</div>
 
+<div id="beatInfo">
+  BEAT 1
 </div>
 
 </main>
 
-
 <script>
 
 const gif =
-  document.getElementById(
-    "drumbox"
-  );
+  document.getElementById("drumbox");
 
-
-const start =
-  document.getElementById(
-    "start"
-  );
-
+const startButton =
+  document.getElementById("start");
 
 const speedControl =
-  document.getElementById(
-    "speed"
-  );
+  document.getElementById("speed");
+
+const randomnessControl =
+  document.getElementById("randomness");
+
+const toneControl =
+  document.getElementById("tone");
+
+const beatInfo =
+  document.getElementById("beatInfo");
 
 
 let audio;
 
-let inputBus;
-
+let drumBus;
 let lowEQ;
 let midEQ;
 let highEQ;
-
 let underwaterFilter;
 let wroblyFilter;
-
+let compressor;
 let masterGain;
+
+let toneBus;
+let toneFilter;
+let toneDelay;
+let toneFeedback;
+let toneWet;
+let toneDry;
+
+let toneOscillators = [];
 
 let wobblePhase = 0;
 
 let visualTimer = null;
 
+let schedulerTimer = null;
+
+let nextStepTime = 0;
+let step = 0;
+
+let currentPattern = 0;
+let nextPatternChange = 0;
 
 
 /* =====================================================
-   AUDIO SYSTEM
+   20 BEAT PRESETS
+
+   k = kick
+   s = snare
+   h = hi-hat
+
+   Every pattern contains 16 steps.
+===================================================== */
+
+const BEATS = [
+
+  {
+    k: [0,8],
+    s: [4,12],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,6,8,11],
+    s: [4,12],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,3,8,10],
+    s: [4,12],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,7,10],
+    s: [4,12],
+    h: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+  },
+
+  {
+    k: [0,5,8,14],
+    s: [4,12],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,2,7,8,10,15],
+    s: [4,12],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,8],
+    s: [6,14],
+    h: [0,3,6,9,12,15]
+  },
+
+  {
+    k: [0,4,8,12],
+    s: [2,6,10,14],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,3,6,9,12,15],
+    s: [4,12],
+    h: [1,5,9,13]
+  },
+
+  {
+    k: [0,10],
+    s: [4,12],
+    h: [0,4,8,12]
+  },
+
+  {
+    k: [0,2,8,9],
+    s: [4,12,15],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,5,7,11,14],
+    s: [4,12],
+    h: [1,3,5,7,9,11,13,15]
+  },
+
+  {
+    k: [0,8,11,15],
+    s: [4,12],
+    h: [0,1,4,5,8,9,12,13]
+  },
+
+  {
+    k: [0,3,8,13],
+    s: [6,14],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,1,7,8,9,15],
+    s: [4,12],
+    h: [2,6,10,14]
+  },
+
+  {
+    k: [0,5,10,15],
+    s: [3,7,11],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,6,10,13],
+    s: [4,9,12],
+    h: [1,3,5,7,9,11,13,15]
+  },
+
+  {
+    k: [0,2,4,8,10,12],
+    s: [6,14],
+    h: [0,4,8,12]
+  },
+
+  {
+    k: [0,7,8,15],
+    s: [3,5,11,13],
+    h: [0,2,4,6,8,10,12,14]
+  },
+
+  {
+    k: [0,3,5,8,11,14],
+    s: [4,12],
+    h: [0,1,3,4,6,7,9,10,12,13,15]
+  }
+
+];
+
+
+/* =====================================================
+   AUDIO
 ===================================================== */
 
 function buildAudio() {
@@ -404,12 +507,9 @@ function buildAudio() {
     )();
 
 
-  inputBus =
+  drumBus =
     audio.createGain();
 
-
-
-  /* LOW EQ */
 
   lowEQ =
     audio.createBiquadFilter();
@@ -418,11 +518,8 @@ function buildAudio() {
     "lowshelf";
 
   lowEQ.frequency.value =
-    250;
+    220;
 
-
-
-  /* MID EQ */
 
   midEQ =
     audio.createBiquadFilter();
@@ -431,14 +528,11 @@ function buildAudio() {
     "peaking";
 
   midEQ.frequency.value =
-    1200;
+    1100;
 
   midEQ.Q.value =
-    0.8;
+    1.3;
 
-
-
-  /* HIGH EQ */
 
   highEQ =
     audio.createBiquadFilter();
@@ -447,11 +541,8 @@ function buildAudio() {
     "highshelf";
 
   highEQ.frequency.value =
-    4500;
+    4200;
 
-
-
-  /* UNDERWATER */
 
   underwaterFilter =
     audio.createBiquadFilter();
@@ -466,9 +557,6 @@ function buildAudio() {
     1;
 
 
-
-  /* WROBLY */
-
   wroblyFilter =
     audio.createBiquadFilter();
 
@@ -482,57 +570,226 @@ function buildAudio() {
     1;
 
 
+  compressor =
+    audio.createDynamicsCompressor();
 
-  /* MASTER */
+  compressor.threshold.value =
+    -14;
+
+  compressor.knee.value =
+    18;
+
+  compressor.ratio.value =
+    5;
+
+  compressor.attack.value =
+    0.003;
+
+  compressor.release.value =
+    0.18;
+
 
   masterGain =
     audio.createGain();
 
-  masterGain.gain.value =
-    1;
+
+  drumBus
+    .connect(lowEQ);
+
+  lowEQ
+    .connect(midEQ);
+
+  midEQ
+    .connect(highEQ);
+
+  highEQ
+    .connect(underwaterFilter);
+
+  underwaterFilter
+    .connect(wroblyFilter);
+
+  wroblyFilter
+    .connect(compressor);
+
+  compressor
+    .connect(masterGain);
+
+  masterGain
+    .connect(audio.destination);
 
 
-
-  /* AUDIO ROUTING */
-
-  inputBus.connect(
-    lowEQ
-  );
-
-  lowEQ.connect(
-    midEQ
-  );
-
-  midEQ.connect(
-    highEQ
-  );
-
-  highEQ.connect(
-    underwaterFilter
-  );
-
-  underwaterFilter.connect(
-    wroblyFilter
-  );
-
-  wroblyFilter.connect(
-    masterGain
-  );
-
-  masterGain.connect(
-    audio.destination
-  );
-
+  buildTone();
 
   updateEffects();
 
   wobbleLoop();
+
 }
 
 
+/* =====================================================
+   SPACEY TONE
+===================================================== */
+
+function buildTone() {
+
+  toneBus =
+    audio.createGain();
+
+  toneBus.gain.value =
+    0;
+
+
+  toneFilter =
+    audio.createBiquadFilter();
+
+  toneFilter.type =
+    "lowpass";
+
+  toneFilter.frequency.value =
+    1400;
+
+  toneFilter.Q.value =
+    7;
+
+
+  toneDelay =
+    audio.createDelay(2);
+
+  toneDelay.delayTime.value =
+    0.38;
+
+
+  toneFeedback =
+    audio.createGain();
+
+  toneFeedback.gain.value =
+    0.58;
+
+
+  toneWet =
+    audio.createGain();
+
+  toneWet.gain.value =
+    0.7;
+
+
+  toneDry =
+    audio.createGain();
+
+  toneDry.gain.value =
+    0.45;
+
+
+  toneBus.connect(
+    toneFilter
+  );
+
+
+  toneFilter.connect(
+    toneDry
+  );
+
+  toneDry.connect(
+    compressor
+  );
+
+
+  toneFilter.connect(
+    toneDelay
+  );
+
+  toneDelay.connect(
+    toneWet
+  );
+
+  toneWet.connect(
+    compressor
+  );
+
+
+  toneDelay.connect(
+    toneFeedback
+  );
+
+  toneFeedback.connect(
+    toneDelay
+  );
+
+
+  /*
+    Continuous detuned synth cluster.
+  */
+
+  const frequencies = [
+    110,
+    164.81,
+    220
+  ];
+
+
+  frequencies.forEach(
+    (frequency, index) => {
+
+      const osc =
+        audio.createOscillator();
+
+
+      const gain =
+        audio.createGain();
+
+
+      osc.type =
+        index === 1
+          ? "triangle"
+          : "sawtooth";
+
+
+      osc.frequency.value =
+        frequency;
+
+
+      osc.detune.value =
+        (
+          index - 1
+        ) *
+        7;
+
+
+      gain.gain.value =
+        index === 1
+          ? 0.15
+          : 0.09;
+
+
+      osc.connect(
+        gain
+      );
+
+
+      gain.connect(
+        toneBus
+      );
+
+
+      osc.start();
+
+
+      toneOscillators.push({
+        osc,
+        gain,
+        base:
+          frequency
+      });
+
+    }
+  );
+
+}
+
 
 /* =====================================================
-   GIF MOVEMENT
+   GIF HIT
 ===================================================== */
 
 function hitAnimation(
@@ -556,11 +813,10 @@ function hitAnimation(
           "scale(1)";
 
       },
-
       45
     );
-}
 
+}
 
 
 /* =====================================================
@@ -571,6 +827,10 @@ function kick(
   strength = 1
 ) {
 
+  const now =
+    audio.currentTime;
+
+
   const osc =
     audio.createOscillator();
 
@@ -579,41 +839,42 @@ function kick(
     audio.createGain();
 
 
-  osc.connect(
-    gain
-  );
-
-
-  gain.connect(
-    inputBus
-  );
-
-
-  const now =
-    audio.currentTime;
+  osc.type =
+    "sine";
 
 
   osc.frequency.setValueAtTime(
-    155,
+    165,
     now
   );
 
 
   osc.frequency.exponentialRampToValueAtTime(
     42,
-    now + 0.15
+    now + 0.14
   );
 
 
   gain.gain.setValueAtTime(
-    0.9 * strength,
+    1.05 *
+    strength,
     now
   );
 
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
-    now + 0.22
+    now + 0.24
+  );
+
+
+  osc.connect(
+    gain
+  );
+
+
+  gain.connect(
+    drumBus
   );
 
 
@@ -623,16 +884,17 @@ function kick(
 
 
   osc.stop(
-    now + 0.23
+    now + 0.25
   );
 
 
   hitAnimation(
-    1.08 +
-    0.05 * strength
+    1.09 +
+    strength *
+    0.04
   );
-}
 
+}
 
 
 /* =====================================================
@@ -643,9 +905,15 @@ function snare(
   strength = 1
 ) {
 
+  const now =
+    audio.currentTime;
+
+
   const length =
-    audio.sampleRate *
-    0.16;
+    Math.floor(
+      audio.sampleRate *
+      0.18
+    );
 
 
   const buffer =
@@ -669,11 +937,14 @@ function snare(
   ) {
 
     data[i] =
-      Math.random() * 2 - 1;
+      Math.random() *
+      2 -
+      1;
+
   }
 
 
-  const noise =
+  const source =
     audio.createBufferSource();
 
 
@@ -685,19 +956,31 @@ function snare(
     audio.createGain();
 
 
-  noise.buffer =
+  source.buffer =
     buffer;
 
 
   filter.type =
     "highpass";
 
-
   filter.frequency.value =
-    850;
+    700;
 
 
-  noise.connect(
+  gain.gain.setValueAtTime(
+    0.72 *
+    strength,
+    now
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 0.18
+  );
+
+
+  source.connect(
     filter
   );
 
@@ -708,37 +991,22 @@ function snare(
 
 
   gain.connect(
-    inputBus
+    drumBus
   );
 
 
-  const now =
-    audio.currentTime;
-
-
-  gain.gain.setValueAtTime(
-    0.55 * strength,
-    now
-  );
-
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.001,
-    now + 0.16
-  );
-
-
-  noise.start(
+  source.start(
     now
   );
 
 
   hitAnimation(
-    1.05 +
-    0.035 * strength
+    1.06 +
+    strength *
+    0.025
   );
-}
 
+}
 
 
 /* =====================================================
@@ -749,9 +1017,15 @@ function hihat(
   strength = 1
 ) {
 
+  const now =
+    audio.currentTime;
+
+
   const length =
-    audio.sampleRate *
-    0.045;
+    Math.floor(
+      audio.sampleRate *
+      0.055
+    );
 
 
   const buffer =
@@ -775,11 +1049,14 @@ function hihat(
   ) {
 
     data[i] =
-      Math.random() * 2 - 1;
+      Math.random() *
+      2 -
+      1;
+
   }
 
 
-  const noise =
+  const source =
     audio.createBufferSource();
 
 
@@ -791,19 +1068,31 @@ function hihat(
     audio.createGain();
 
 
-  noise.buffer =
+  source.buffer =
     buffer;
 
 
   filter.type =
     "highpass";
 
-
   filter.frequency.value =
-    6000;
+    5200;
 
 
-  noise.connect(
+  gain.gain.setValueAtTime(
+    0.32 *
+    strength,
+    now
+  );
+
+
+  gain.gain.exponentialRampToValueAtTime(
+    0.001,
+    now + 0.06
+  );
+
+
+  source.connect(
     filter
   );
 
@@ -814,477 +1103,538 @@ function hihat(
 
 
   gain.connect(
-    inputBus
+    drumBus
   );
 
 
-  const now =
-    audio.currentTime;
-
-
-  gain.gain.setValueAtTime(
-    0.25 * strength,
-    now
-  );
-
-
-  gain.gain.exponentialRampToValueAtTime(
-    0.001,
-    now + 0.05
-  );
-
-
-  noise.start(
+  source.start(
     now
   );
 
 
   hitAnimation(
-    1.025 +
-    0.025 * strength
+    1.025
   );
+
 }
 
 
-
 /* =====================================================
-   RANDOM DRUM CHOICE
+   SPEED
+
+   Center = approximately 100 BPM.
+
+   Lowest is roughly half the previous
+   low speed.
+
+   Highest is roughly double the
+   previous maximum.
 ===================================================== */
 
-function chooseDrum() {
+function getBPM() {
 
-  const r =
-    Math.random();
+  const value =
+    Number(
+      speedControl.value
+    );
 
 
   /*
-    Loose psychedelic-rock weighting.
-
-    Kick:   40%
-    Hi-hat: 35%
-    Snare:  25%
-
-    There is still no fixed sequence.
-  */
-
-
-  if (
-    r < 0.40
-  ) {
-
-    return kick;
-  }
-
-
-  if (
-    r < 0.75
-  ) {
-
-    return hihat;
-  }
-
-
-  return snare;
-}
-
-
-
-/* =====================================================
-   RANDOM HIT STRENGTH
-===================================================== */
-
-function randomStrength() {
-
-  const random =
-    Math.random();
-
-
-  /*
-    Most hits are moderate.
-
-    Occasional hits are much stronger.
+    20 BPM -> 400 BPM
   */
 
   return (
-    0.40 +
-    random *
-    random *
-    0.75
+    20 *
+    Math.pow(
+      20,
+      value
+    )
   );
+
 }
 
 
-
 /* =====================================================
-   RANDOM TIMING
+   PATTERN CHANGE
+
+   Each preset remains active for a
+   completely random period between
+   10 seconds and 2 hours.
 ===================================================== */
 
-function getRandomDelay() {
+function chooseNextPattern() {
 
-  const speed =
-    Number(
-      speedControl.value
+  let next =
+    Math.floor(
+      Math.random() *
+      BEATS.length
     );
 
 
-  /*
-    EXTREME SPEED RANGE
+  if (
+    BEATS.length >
+      1 &&
+    next ===
+      currentPattern
+  ) {
 
-    0% speed:
-    approximately 500–3600 ms
+    next =
+      (
+        next + 1
+      ) %
+      BEATS.length;
 
-    100% speed:
-    approximately 28–250 ms
-
-    This makes the slowest setting
-    roughly twice as slow as before
-    and the fastest roughly twice
-    as fast.
-  */
-
-
-  const slowMinimum =
-    500;
+  }
 
 
-  const slowMaximum =
-    3600;
-
-
-  const fastMinimum =
-    28;
-
-
-  const fastMaximum =
-    250;
-
-
-
-  /*
-    Curved knob response.
-
-    This leaves more usable territory
-    around the middle of the knob.
-  */
-
-  const speedCurve =
-    Math.pow(
-      speed,
-      1.15
-    );
+  currentPattern =
+    next;
 
 
   const minimum =
-    slowMinimum +
-    (
-      fastMinimum -
-      slowMinimum
-    ) *
-    speedCurve;
+    10 * 1000;
 
 
   const maximum =
-    slowMaximum +
-    (
-      fastMaximum -
-      slowMaximum
-    ) *
-    speedCurve;
+    2 *
+    60 *
+    60 *
+    1000;
 
 
-
-  /*
-    Shorter spaces are favored,
-    but every event receives a
-    new random delay.
-  */
-
-  const random =
-    Math.random();
-
-
-  let delay =
+  nextPatternChange =
+    Date.now() +
     minimum +
+    Math.random() *
     (
       maximum -
       minimum
-    ) *
-    Math.pow(
-      random,
-      2.4
     );
 
 
+  beatInfo.textContent =
+    `BEAT ${
+      currentPattern + 1
+    }`;
 
-  /*
-    Occasional breathing space.
-  */
-
-  if (
-    Math.random() <
-    0.065
-  ) {
-
-    delay *=
-      1.5 +
-      Math.random() *
-      1.8;
-  }
-
-
-
-  /*
-    Occasional abrupt quick hit.
-
-    This helps create loose fills
-    without locking into a pattern.
-  */
-
-  if (
-    Math.random() <
-    0.10
-  ) {
-
-    delay *=
-      0.35 +
-      Math.random() *
-      0.30;
-  }
-
-
-  return delay;
 }
 
 
-
 /* =====================================================
-   RANDOM PSYCHEDELIC RHYTHM
+   RANDOM VELOCITY
 ===================================================== */
 
-function randomDrum() {
+function velocity(
+  base,
+  randomness
+) {
 
-  const drum =
-    chooseDrum();
+  const variation =
+    (
+      Math.random() *
+      2 -
+      1
+    ) *
+    randomness *
+    0.75;
 
 
-  drum(
-    randomStrength()
+  return Math.max(
+    0.12,
+    base +
+    variation
   );
 
-
-  const speed =
-    Number(
-      speedControl.value
-    );
+}
 
 
+/* =====================================================
+   PLAY STEP
+===================================================== */
 
-  /*
-    SECONDARY HIT
-
-    Roughly one fifth of primary hits
-    produce another nearby hit.
-
-    Timing and instrument remain random.
-  */
+function playStep() {
 
   if (
-    Math.random() <
-    0.22
+    Date.now() >=
+    nextPatternChange
   ) {
 
-    const clusterDelay =
-      45 +
-      Math.random() *
-      (
-        210 -
-        speed * 130
-      );
+    chooseNextPattern();
 
-
-    setTimeout(
-      () => {
-
-        chooseDrum()(
-          randomStrength() *
-          0.72
-        );
-
-      },
-
-      clusterDelay
-    );
   }
 
 
+  const randomness =
+    Number(
+      randomnessControl.value
+    );
+
+
+  const pattern =
+    BEATS[
+      currentPattern
+    ];
+
 
   /*
-    RANDOM FILL
+    At 0% this is exactly the preset.
 
-    Occasionally creates a group
-    of 2–4 additional hits.
+    As randomness increases:
+    - intended hits can disappear
+    - unexpected hits appear
+    - instruments substitute
+    - additional hits occur
 
-    The fill does not use a stored
-    or repeating pattern.
+    At 100%, the pattern no longer
+    restricts what can happen.
+  */
+
+
+  let plannedKick =
+    pattern.k.includes(
+      step
+    );
+
+
+  let plannedSnare =
+    pattern.s.includes(
+      step
+    );
+
+
+  let plannedHat =
+    pattern.h.includes(
+      step
+    );
+
+
+  /*
+    DESTROY PLANNED HITS
   */
 
   if (
     Math.random() <
-    0.055
+    randomness
   ) {
 
-    const hits =
-      2 +
+    plannedKick =
+      Math.random() <
+      (
+        0.5 +
+        randomness *
+        0.15
+      );
+
+  }
+
+
+  if (
+    Math.random() <
+    randomness
+  ) {
+
+    plannedSnare =
+      Math.random() <
+      (
+        0.38 +
+        randomness *
+        0.22
+      );
+
+  }
+
+
+  if (
+    Math.random() <
+    randomness
+  ) {
+
+    plannedHat =
+      Math.random() <
+      (
+        0.45 +
+        randomness *
+        0.35
+      );
+
+  }
+
+
+  if (
+    plannedKick
+  ) {
+
+    kick(
+      velocity(
+        0.9,
+        randomness
+      )
+    );
+
+  }
+
+
+  if (
+    plannedSnare
+  ) {
+
+    snare(
+      velocity(
+        0.82,
+        randomness
+      )
+    );
+
+  }
+
+
+  if (
+    plannedHat
+  ) {
+
+    hihat(
+      velocity(
+        0.65,
+        randomness
+      )
+    );
+
+  }
+
+
+  /*
+    At high randomness, completely
+    independent additional events can
+    occur on every subdivision.
+  */
+
+  if (
+    Math.random() <
+    randomness *
+    0.55
+  ) {
+
+    const choice =
       Math.floor(
         Math.random() *
         3
       );
 
 
-    let position =
-      60 +
+    const strength =
+      0.2 +
       Math.random() *
-      80;
+      1.2;
 
 
-    for (
-      let i = 0;
-      i < hits;
-      i++
+    if (
+      choice === 0
     ) {
 
-      position +=
-        45 +
-        Math.random() *
-        (
-          150 -
-          speed * 70
-        );
-
-
-      const hitTime =
-        position;
-
-
-      setTimeout(
-        () => {
-
-          /*
-            Fills favor kick and snare
-            slightly more than hats.
-          */
-
-          const r =
-            Math.random();
-
-
-          let fillDrum;
-
-
-          if (
-            r < 0.42
-          ) {
-
-            fillDrum =
-              kick;
-          }
-
-
-          else if (
-            r < 0.76
-          ) {
-
-            fillDrum =
-              snare;
-          }
-
-
-          else {
-
-            fillDrum =
-              hihat;
-          }
-
-
-          fillDrum(
-            randomStrength() *
-            (
-              0.55 +
-              Math.random() *
-              0.35
-            )
-          );
-
-        },
-
-        hitTime
+      kick(
+        strength
       );
+
     }
+
+    else if (
+      choice === 1
+    ) {
+
+      snare(
+        strength
+      );
+
+    }
+
+    else {
+
+      hihat(
+        strength
+      );
+
+    }
+
   }
 
 
-
   /*
-    OCCASIONAL EXTRA KICK
-
-    This gives the generator more of
-    the grounded pulse associated with
-    a rock kit without establishing a
-    repeating kick pattern.
+    Random flam / double hit.
   */
 
   if (
     Math.random() <
-    0.08
+    randomness *
+    0.32
   ) {
 
-    const kickDelay =
-      80 +
+    const delay =
+      15 +
       Math.random() *
-      (
-        260 -
-        speed * 120
-      );
+      180;
 
 
     setTimeout(
       () => {
 
-        kick(
-          randomStrength() *
-          0.75
-        );
+        const r =
+          Math.random();
+
+
+        if (
+          r < 0.34
+        ) {
+
+          kick(
+            Math.random()
+          );
+
+        }
+
+        else if (
+          r < 0.67
+        ) {
+
+          snare(
+            Math.random()
+          );
+
+        }
+
+        else {
+
+          hihat(
+            Math.random()
+          );
+
+        }
 
       },
-
-      kickDelay
+      delay
     );
+
   }
 
 
+  step =
+    (
+      step + 1
+    ) %
+    16;
 
-  /*
-    Schedule the next completely
-    independent primary hit.
-  */
-
-  setTimeout(
-    randomDrum,
-    getRandomDelay()
-  );
 }
 
 
+/* =====================================================
+   SCHEDULER
+
+   Uses 16th-note subdivisions.
+===================================================== */
+
+function scheduleNextStep() {
+
+  const bpm =
+    getBPM();
+
+
+  const beatMilliseconds =
+    60000 /
+    bpm;
+
+
+  let stepMilliseconds =
+    beatMilliseconds /
+    4;
+
+
+  const randomness =
+    Number(
+      randomnessControl.value
+    );
+
+
+  /*
+    At increasing randomness the actual
+    clock itself becomes unstable.
+
+    At 100%, spacing can become extremely
+    short or dramatically stretched.
+  */
+
+  if (
+    randomness >
+    0
+  ) {
+
+    const normalVariation =
+      (
+        Math.random() *
+        2 -
+        1
+      ) *
+      randomness *
+      0.55;
+
+
+    stepMilliseconds *=
+      Math.max(
+        0.15,
+        1 +
+        normalVariation
+      );
+
+
+    /*
+      Extreme timing event.
+    */
+
+    if (
+      Math.random() <
+      randomness *
+      randomness *
+      0.16
+    ) {
+
+      stepMilliseconds *=
+        0.08 +
+        Math.random() *
+        5;
+
+    }
+
+  }
+
+
+  schedulerTimer =
+    setTimeout(
+      () => {
+
+        playStep();
+
+        scheduleNextStep();
+
+      },
+      Math.max(
+        18,
+        stepMilliseconds
+      )
+    );
+
+}
+
 
 /* =====================================================
-   EFFECT SETTINGS
+   EFFECTS
 ===================================================== */
 
 function updateEffects() {
 
-  if (!audio) {
+  if (
+    !audio
+  ) {
 
     return;
+
   }
 
 
@@ -1301,6 +1651,20 @@ function updateEffects() {
       document.getElementById(
         "underwater"
       ).value
+    );
+
+
+  const wrobly =
+    Number(
+      document.getElementById(
+        "wrobly"
+      ).value
+    );
+
+
+  const tone =
+    Number(
+      toneControl.value
     );
 
 
@@ -1328,33 +1692,26 @@ function updateEffects() {
     );
 
 
-
-  /*
-    LOUDER MASTER
-
-    Maximum volume now reaches
-    1.5x gain.
-  */
-
   masterGain.gain.setTargetAtTime(
-    volume * 1.5,
+    volume *
+    1.65,
     audio.currentTime,
     0.02
   );
 
 
-
   /*
-    UNDERWATER
+    EXTREME UNDERWATER
 
-    Progressively closes the
-    low-pass filter.
+    Full setting drops the cutoff
+    down near 80 Hz.
   */
 
   const underwaterFrequency =
     20000 *
     Math.pow(
-      350 / 20000,
+      80 /
+      20000,
       underwater
     );
 
@@ -1364,7 +1721,7 @@ function updateEffects() {
     .setTargetAtTime(
       underwaterFrequency,
       audio.currentTime,
-      0.03
+      0.025
     );
 
 
@@ -1372,14 +1729,12 @@ function updateEffects() {
     .Q
     .setTargetAtTime(
       1 +
-      underwater * 3,
+      underwater *
+      22,
       audio.currentTime,
-      0.03
+      0.025
     );
 
-
-
-  /* EQ */
 
   lowEQ.gain.setTargetAtTime(
     low,
@@ -1400,23 +1755,46 @@ function updateEffects() {
     audio.currentTime,
     0.02
   );
+
+
+  /*
+    TONE ONLY CONTROLS VOLUME.
+
+    0% = genuinely silent.
+  */
+
+  toneBus.gain.setTargetAtTime(
+    tone *
+    0.55,
+    audio.currentTime,
+    0.08
+  );
+
+
+  /*
+    Wrobly control is read by the
+    continuous modulation loop.
+  */
+
 }
 
 
-
 /* =====================================================
-   WROBLY EFFECT
+   EXTREME WROBLY + SPACE SYNTH MOTION
 ===================================================== */
 
 function wobbleLoop() {
 
-  if (!audio) {
+  if (
+    !audio
+  ) {
 
     return;
+
   }
 
 
-  const amount =
+  const wrobly =
     Number(
       document.getElementById(
         "wrobly"
@@ -1424,13 +1802,21 @@ function wobbleLoop() {
     );
 
 
+  const time =
+    audio.currentTime;
+
+
   wobblePhase +=
-    0.05 +
-    amount *
-    0.13;
+    0.012 +
+    wrobly *
+    0.19;
 
 
-  const movement =
+  /*
+    DRUM WOBBLE
+  */
+
+  const wave =
     (
       Math.sin(
         wobblePhase
@@ -1440,30 +1826,30 @@ function wobbleLoop() {
     2;
 
 
-  const minimum =
-    350 +
+  const wobbleMinimum =
+    100 +
     (
       1 -
-      amount
+      wrobly
     ) *
-    12000;
+    15000;
 
 
-  const frequency =
-    minimum +
+  const wobbleFrequency =
+    wobbleMinimum +
     (
       20000 -
-      minimum
+      wobbleMinimum
     ) *
-    movement;
+    wave;
 
 
   wroblyFilter
     .frequency
     .setTargetAtTime(
-      frequency,
-      audio.currentTime,
-      0.03
+      wobbleFrequency,
+      time,
+      0.025
     );
 
 
@@ -1471,22 +1857,127 @@ function wobbleLoop() {
     .Q
     .setTargetAtTime(
       1 +
-      amount *
-      8,
-      audio.currentTime,
-      0.03
+      wrobly *
+      28,
+      time,
+      0.025
     );
+
+
+  /*
+    CONSTANT SPACE SYNTH FILTER MOTION.
+
+    This happens regardless of the Wrobly
+    knob. Tone controls only its volume.
+  */
+
+  const slowWave =
+    (
+      Math.sin(
+        time *
+        0.37
+      ) +
+      1
+    ) /
+    2;
+
+
+  const secondWave =
+    Math.sin(
+      time *
+      0.113
+    );
+
+
+  toneFilter
+    .frequency
+    .setTargetAtTime(
+      380 +
+      slowWave *
+      2100,
+      time,
+      0.08
+    );
+
+
+  toneFilter
+    .Q
+    .setTargetAtTime(
+      4 +
+      slowWave *
+      15,
+      time,
+      0.08
+    );
+
+
+  /*
+    Slowly bend/detune each oscillator.
+  */
+
+  toneOscillators.forEach(
+    (
+      item,
+      index
+    ) => {
+
+      const drift =
+        Math.sin(
+          time *
+          (
+            0.08 +
+            index *
+            0.027
+          ) +
+          index *
+          2.1
+        ) *
+        18;
+
+
+      const psychicDrift =
+        secondWave *
+        (
+          3 +
+          index *
+          2
+        );
+
+
+      item.osc.detune.setTargetAtTime(
+        drift +
+        psychicDrift,
+        time,
+        0.1
+      );
+
+    }
+  );
+
+
+  /*
+    Slowly move delay time for a
+    phasey / smeared character.
+  */
+
+  toneDelay.delayTime.setTargetAtTime(
+    0.12 +
+    slowWave *
+    0.55,
+    time,
+    0.08
+  );
 
 
   requestAnimationFrame(
     wobbleLoop
   );
+
 }
 
 
-
 /* =====================================================
-   PERCENT CONTROL
+   CONTROL DISPLAYS
 ===================================================== */
 
 function percentDisplay(
@@ -1521,15 +2012,12 @@ function percentDisplay(
 
 
       updateEffects();
+
     }
   );
+
 }
 
-
-
-/* =====================================================
-   DB CONTROL
-===================================================== */
 
 function dbDisplay(
   inputId,
@@ -1560,7 +2048,8 @@ function dbDisplay(
 
       output.textContent =
         (
-          value > 0
+          value >
+          0
             ? "+"
             : ""
         ) +
@@ -1569,51 +2058,52 @@ function dbDisplay(
 
 
       updateEffects();
+
     }
   );
+
 }
 
-
-
-/* =====================================================
-   CONNECT CONTROLS
-===================================================== */
 
 percentDisplay(
   "volume",
   "volumeValue"
 );
 
-
 percentDisplay(
   "speed",
   "speedValue"
 );
 
+percentDisplay(
+  "randomness",
+  "randomnessValue"
+);
 
 percentDisplay(
   "underwater",
   "underwaterValue"
 );
 
-
 percentDisplay(
   "wrobly",
   "wroblyValue"
 );
 
+percentDisplay(
+  "tone",
+  "toneValue"
+);
 
 dbDisplay(
   "low",
   "lowValue"
 );
 
-
 dbDisplay(
   "mid",
   "midValue"
 );
-
 
 dbDisplay(
   "high",
@@ -1621,12 +2111,11 @@ dbDisplay(
 );
 
 
-
 /* =====================================================
    START
 ===================================================== */
 
-start.addEventListener(
+startButton.addEventListener(
   "click",
   async () => {
 
@@ -1636,10 +2125,47 @@ start.addEventListener(
     await audio.resume();
 
 
-    start.remove();
+    startButton.remove();
 
 
-    randomDrum();
+    /*
+      Choose one of the 20 patterns
+      immediately.
+
+      Then select a random lifetime
+      between 10 seconds and 2 hours.
+    */
+
+    currentPattern =
+      Math.floor(
+        Math.random() *
+        BEATS.length
+      );
+
+
+    beatInfo.textContent =
+      `BEAT ${
+        currentPattern + 1
+      }`;
+
+
+    nextPatternChange =
+      Date.now() +
+      10000 +
+      Math.random() *
+      (
+        2 *
+        60 *
+        60 *
+        1000 -
+        10000
+      );
+
+
+    playStep();
+
+    scheduleNextStep();
+
   }
 );
 
