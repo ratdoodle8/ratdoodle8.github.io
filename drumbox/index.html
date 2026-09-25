@@ -3,16 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Drumbox</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html,
-body {
+html, body {
   margin: 0;
   min-height: 100%;
   background: black;
@@ -44,7 +40,7 @@ main {
 
 .controls {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
@@ -94,7 +90,7 @@ input[type="range"] {
   cursor: pointer;
 }
 
-@media (max-width: 650px) {
+@media (max-width: 750px) {
   .controls {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -110,9 +106,7 @@ input[type="range"] {
 
 <body>
 
-<button id="start">
-  CLICK TO START
-</button>
+<button id="start">CLICK TO START</button>
 
 <main>
 
@@ -124,207 +118,121 @@ input[type="range"] {
 
 <div class="controls">
 
-  <div class="box">
+  <!-- MASTER -->
 
+  <div class="box">
     <h2>MASTER</h2>
 
     <div class="control">
       <label>VOLUME</label>
-
-      <input
-        id="volume"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.8"
-      >
-
-      <div id="volumeValue" class="value">
-        80%
-      </div>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8">
+      <div id="volumeValue" class="value">80%</div>
     </div>
 
     <div class="control">
       <label>SPEED</label>
-
-      <input
-        id="speed"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0.5"
-      >
-
-      <div id="speedValue" class="value">
-        50%
-      </div>
+      <input id="speed" type="range" min="0" max="1" step="0.01" value="0.5">
+      <div id="speedValue" class="value">50%</div>
     </div>
 
     <div class="control">
       <label>RANDOMNESS</label>
-
-      <input
-        id="randomness"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0"
-      >
-
-      <div id="randomnessValue" class="value">
-        0%
-      </div>
+      <input id="randomness" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="randomnessValue" class="value">0%</div>
     </div>
-
   </div>
 
 
-  <div class="box">
+  <!-- DRUM MIX -->
 
+  <div class="box">
+    <h2>DRUM MIX</h2>
+
+    <div class="control">
+      <label>KICK</label>
+      <input id="kickVolume" type="range" min="0" max="1.5" step="0.01" value="1">
+      <div id="kickVolumeValue" class="value">100%</div>
+    </div>
+
+    <div class="control">
+      <label>SNARE</label>
+      <input id="snareVolume" type="range" min="0" max="1.5" step="0.01" value="1">
+      <div id="snareVolumeValue" class="value">100%</div>
+    </div>
+
+    <div class="control">
+      <label>HI-HAT</label>
+      <input id="hatVolume" type="range" min="0" max="1.5" step="0.01" value="1">
+      <div id="hatVolumeValue" class="value">100%</div>
+    </div>
+  </div>
+
+
+  <!-- EFFECTS -->
+
+  <div class="box">
     <h2>EFFECTS</h2>
 
     <div class="control">
       <label>UNDERWATER</label>
-
-      <input
-        id="underwater"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0"
-      >
-
-      <div id="underwaterValue" class="value">
-        0%
-      </div>
+      <input id="underwater" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="underwaterValue" class="value">0%</div>
     </div>
 
     <div class="control">
       <label>WROBLY</label>
-
-      <input
-        id="wrobly"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0"
-      >
-
-      <div id="wroblyValue" class="value">
-        0%
-      </div>
+      <input id="wrobly" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="wroblyValue" class="value">0%</div>
     </div>
 
     <div class="control">
       <label>TONE</label>
-
-      <input
-        id="tone"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value="0"
-      >
-
-      <div id="toneValue" class="value">
-        0%
-      </div>
+      <input id="tone" type="range" min="0" max="1" step="0.01" value="0">
+      <div id="toneValue" class="value">0%</div>
     </div>
-
   </div>
 
 
-  <div class="box">
+  <!-- EQ -->
 
+  <div class="box">
     <h2>EQ</h2>
 
     <div class="control">
       <label>LOW</label>
-
-      <input
-        id="low"
-        type="range"
-        min="-36"
-        max="36"
-        step="1"
-        value="0"
-      >
-
-      <div id="lowValue" class="value">
-        0 dB
-      </div>
+      <input id="low" type="range" min="-36" max="36" step="1" value="0">
+      <div id="lowValue" class="value">0 dB</div>
     </div>
 
     <div class="control">
       <label>MID</label>
-
-      <input
-        id="mid"
-        type="range"
-        min="-36"
-        max="36"
-        step="1"
-        value="0"
-      >
-
-      <div id="midValue" class="value">
-        0 dB
-      </div>
+      <input id="mid" type="range" min="-36" max="36" step="1" value="0">
+      <div id="midValue" class="value">0 dB</div>
     </div>
 
     <div class="control">
       <label>HIGH</label>
-
-      <input
-        id="high"
-        type="range"
-        min="-36"
-        max="36"
-        step="1"
-        value="0"
-      >
-
-      <div id="highValue" class="value">
-        0 dB
-      </div>
+      <input id="high" type="range" min="-36" max="36" step="1" value="0">
+      <div id="highValue" class="value">0 dB</div>
     </div>
-
   </div>
 
 </div>
 
-<div id="beatInfo">
-  BEAT 1
-</div>
+<div id="beatInfo">BEAT 1</div>
 
 </main>
 
 <script>
 
-const gif =
-  document.getElementById("drumbox");
+const $ = id => document.getElementById(id);
 
-const startButton =
-  document.getElementById("start");
-
-const speedControl =
-  document.getElementById("speed");
-
-const randomnessControl =
-  document.getElementById("randomness");
-
-const toneControl =
-  document.getElementById("tone");
-
-const beatInfo =
-  document.getElementById("beatInfo");
-
+const gif = $("drumbox");
+const startButton = $("start");
+const speedControl = $("speed");
+const randomnessControl = $("randomness");
+const toneControl = $("tone");
+const beatInfo = $("beatInfo");
 
 let audio;
 
@@ -347,149 +255,58 @@ let toneDry;
 let toneOscillators = [];
 
 let wobblePhase = 0;
-
 let visualTimer = null;
 
-let schedulerTimer = null;
-
-let nextStepTime = 0;
 let step = 0;
-
 let currentPattern = 0;
 let nextPatternChange = 0;
 
 
 /* =====================================================
-   20 BEAT PRESETS
-
-   k = kick
-   s = snare
-   h = hi-hat
-
-   Every pattern contains 16 steps.
+   20 DRUM BEATS
 ===================================================== */
 
 const BEATS = [
 
-  {
-    k: [0,8],
-    s: [4,12],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,8], s:[4,12], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,6,8,11],
-    s: [4,12],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,6,8,11], s:[4,12], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,3,8,10],
-    s: [4,12],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,3,8,10], s:[4,12], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,7,10],
-    s: [4,12],
-    h: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-  },
+  { k:[0,7,10], s:[4,12], h:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] },
 
-  {
-    k: [0,5,8,14],
-    s: [4,12],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,5,8,14], s:[4,12], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,2,7,8,10,15],
-    s: [4,12],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,2,7,8,10,15], s:[4,12], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,8],
-    s: [6,14],
-    h: [0,3,6,9,12,15]
-  },
+  { k:[0,8], s:[6,14], h:[0,3,6,9,12,15] },
 
-  {
-    k: [0,4,8,12],
-    s: [2,6,10,14],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,4,8,12], s:[2,6,10,14], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,3,6,9,12,15],
-    s: [4,12],
-    h: [1,5,9,13]
-  },
+  { k:[0,3,6,9,12,15], s:[4,12], h:[1,5,9,13] },
 
-  {
-    k: [0,10],
-    s: [4,12],
-    h: [0,4,8,12]
-  },
+  { k:[0,10], s:[4,12], h:[0,4,8,12] },
 
-  {
-    k: [0,2,8,9],
-    s: [4,12,15],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,2,8,9], s:[4,12,15], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,5,7,11,14],
-    s: [4,12],
-    h: [1,3,5,7,9,11,13,15]
-  },
+  { k:[0,5,7,11,14], s:[4,12], h:[1,3,5,7,9,11,13,15] },
 
-  {
-    k: [0,8,11,15],
-    s: [4,12],
-    h: [0,1,4,5,8,9,12,13]
-  },
+  { k:[0,8,11,15], s:[4,12], h:[0,1,4,5,8,9,12,13] },
 
-  {
-    k: [0,3,8,13],
-    s: [6,14],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,3,8,13], s:[6,14], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,1,7,8,9,15],
-    s: [4,12],
-    h: [2,6,10,14]
-  },
+  { k:[0,1,7,8,9,15], s:[4,12], h:[2,6,10,14] },
 
-  {
-    k: [0,5,10,15],
-    s: [3,7,11],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,5,10,15], s:[3,7,11], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,6,10,13],
-    s: [4,9,12],
-    h: [1,3,5,7,9,11,13,15]
-  },
+  { k:[0,6,10,13], s:[4,9,12], h:[1,3,5,7,9,11,13,15] },
 
-  {
-    k: [0,2,4,8,10,12],
-    s: [6,14],
-    h: [0,4,8,12]
-  },
+  { k:[0,2,4,8,10,12], s:[6,14], h:[0,4,8,12] },
 
-  {
-    k: [0,7,8,15],
-    s: [3,5,11,13],
-    h: [0,2,4,6,8,10,12,14]
-  },
+  { k:[0,7,8,15], s:[3,5,11,13], h:[0,2,4,6,8,10,12,14] },
 
-  {
-    k: [0,3,5,8,11,14],
-    s: [4,12],
-    h: [0,1,3,4,6,7,9,10,12,13,15]
-  }
+  { k:[0,3,5,8,11,14], s:[4,12], h:[0,1,3,4,6,7,9,10,12,13,15] }
 
 ];
 
@@ -500,130 +317,55 @@ const BEATS = [
 
 function buildAudio() {
 
-  audio =
-    new (
-      window.AudioContext ||
-      window.webkitAudioContext
-    )();
+  audio = new (
+    window.AudioContext ||
+    window.webkitAudioContext
+  )();
 
+  drumBus = audio.createGain();
 
-  drumBus =
-    audio.createGain();
+  lowEQ = audio.createBiquadFilter();
+  lowEQ.type = "lowshelf";
+  lowEQ.frequency.value = 220;
 
+  midEQ = audio.createBiquadFilter();
+  midEQ.type = "peaking";
+  midEQ.frequency.value = 1100;
+  midEQ.Q.value = 1.3;
 
-  lowEQ =
-    audio.createBiquadFilter();
+  highEQ = audio.createBiquadFilter();
+  highEQ.type = "highshelf";
+  highEQ.frequency.value = 4200;
 
-  lowEQ.type =
-    "lowshelf";
+  underwaterFilter = audio.createBiquadFilter();
+  underwaterFilter.type = "lowpass";
+  underwaterFilter.frequency.value = 20000;
 
-  lowEQ.frequency.value =
-    220;
+  wroblyFilter = audio.createBiquadFilter();
+  wroblyFilter.type = "lowpass";
+  wroblyFilter.frequency.value = 20000;
 
+  compressor = audio.createDynamicsCompressor();
+  compressor.threshold.value = -14;
+  compressor.knee.value = 18;
+  compressor.ratio.value = 5;
+  compressor.attack.value = 0.003;
+  compressor.release.value = 0.18;
 
-  midEQ =
-    audio.createBiquadFilter();
+  masterGain = audio.createGain();
 
-  midEQ.type =
-    "peaking";
-
-  midEQ.frequency.value =
-    1100;
-
-  midEQ.Q.value =
-    1.3;
-
-
-  highEQ =
-    audio.createBiquadFilter();
-
-  highEQ.type =
-    "highshelf";
-
-  highEQ.frequency.value =
-    4200;
-
-
-  underwaterFilter =
-    audio.createBiquadFilter();
-
-  underwaterFilter.type =
-    "lowpass";
-
-  underwaterFilter.frequency.value =
-    20000;
-
-  underwaterFilter.Q.value =
-    1;
-
-
-  wroblyFilter =
-    audio.createBiquadFilter();
-
-  wroblyFilter.type =
-    "lowpass";
-
-  wroblyFilter.frequency.value =
-    20000;
-
-  wroblyFilter.Q.value =
-    1;
-
-
-  compressor =
-    audio.createDynamicsCompressor();
-
-  compressor.threshold.value =
-    -14;
-
-  compressor.knee.value =
-    18;
-
-  compressor.ratio.value =
-    5;
-
-  compressor.attack.value =
-    0.003;
-
-  compressor.release.value =
-    0.18;
-
-
-  masterGain =
-    audio.createGain();
-
-
-  drumBus
-    .connect(lowEQ);
-
-  lowEQ
-    .connect(midEQ);
-
-  midEQ
-    .connect(highEQ);
-
-  highEQ
-    .connect(underwaterFilter);
-
-  underwaterFilter
-    .connect(wroblyFilter);
-
-  wroblyFilter
-    .connect(compressor);
-
-  compressor
-    .connect(masterGain);
-
-  masterGain
-    .connect(audio.destination);
-
+  drumBus.connect(lowEQ);
+  lowEQ.connect(midEQ);
+  midEQ.connect(highEQ);
+  highEQ.connect(underwaterFilter);
+  underwaterFilter.connect(wroblyFilter);
+  wroblyFilter.connect(compressor);
+  compressor.connect(masterGain);
+  masterGain.connect(audio.destination);
 
   buildTone();
-
   updateEffects();
-
   wobbleLoop();
-
 }
 
 
@@ -633,93 +375,37 @@ function buildAudio() {
 
 function buildTone() {
 
-  toneBus =
-    audio.createGain();
+  toneBus = audio.createGain();
+  toneBus.gain.value = 0;
 
-  toneBus.gain.value =
-    0;
+  toneFilter = audio.createBiquadFilter();
+  toneFilter.type = "lowpass";
+  toneFilter.frequency.value = 1400;
+  toneFilter.Q.value = 7;
 
+  toneDelay = audio.createDelay(2);
+  toneDelay.delayTime.value = 0.38;
 
-  toneFilter =
-    audio.createBiquadFilter();
+  toneFeedback = audio.createGain();
+  toneFeedback.gain.value = 0.58;
 
-  toneFilter.type =
-    "lowpass";
+  toneWet = audio.createGain();
+  toneWet.gain.value = 0.7;
 
-  toneFilter.frequency.value =
-    1400;
+  toneDry = audio.createGain();
+  toneDry.gain.value = 0.45;
 
-  toneFilter.Q.value =
-    7;
+  toneBus.connect(toneFilter);
 
+  toneFilter.connect(toneDry);
+  toneDry.connect(compressor);
 
-  toneDelay =
-    audio.createDelay(2);
+  toneFilter.connect(toneDelay);
+  toneDelay.connect(toneWet);
+  toneWet.connect(compressor);
 
-  toneDelay.delayTime.value =
-    0.38;
-
-
-  toneFeedback =
-    audio.createGain();
-
-  toneFeedback.gain.value =
-    0.58;
-
-
-  toneWet =
-    audio.createGain();
-
-  toneWet.gain.value =
-    0.7;
-
-
-  toneDry =
-    audio.createGain();
-
-  toneDry.gain.value =
-    0.45;
-
-
-  toneBus.connect(
-    toneFilter
-  );
-
-
-  toneFilter.connect(
-    toneDry
-  );
-
-  toneDry.connect(
-    compressor
-  );
-
-
-  toneFilter.connect(
-    toneDelay
-  );
-
-  toneDelay.connect(
-    toneWet
-  );
-
-  toneWet.connect(
-    compressor
-  );
-
-
-  toneDelay.connect(
-    toneFeedback
-  );
-
-  toneFeedback.connect(
-    toneDelay
-  );
-
-
-  /*
-    Continuous detuned synth cluster.
-  */
+  toneDelay.connect(toneFeedback);
+  toneFeedback.connect(toneDelay);
 
   const frequencies = [
     110,
@@ -727,95 +413,54 @@ function buildTone() {
     220
   ];
 
+  frequencies.forEach((frequency, index) => {
 
-  frequencies.forEach(
-    (frequency, index) => {
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
 
-      const osc =
-        audio.createOscillator();
+    osc.type =
+      index === 1
+        ? "triangle"
+        : "sawtooth";
 
+    osc.frequency.value = frequency;
 
-      const gain =
-        audio.createGain();
+    osc.detune.value =
+      (index - 1) * 7;
 
+    gain.gain.value =
+      index === 1
+        ? 0.15
+        : 0.09;
 
-      osc.type =
-        index === 1
-          ? "triangle"
-          : "sawtooth";
+    osc.connect(gain);
+    gain.connect(toneBus);
 
+    osc.start();
 
-      osc.frequency.value =
-        frequency;
-
-
-      osc.detune.value =
-        (
-          index - 1
-        ) *
-        7;
-
-
-      gain.gain.value =
-        index === 1
-          ? 0.15
-          : 0.09;
-
-
-      osc.connect(
-        gain
-      );
-
-
-      gain.connect(
-        toneBus
-      );
-
-
-      osc.start();
-
-
-      toneOscillators.push({
-        osc,
-        gain,
-        base:
-          frequency
-      });
-
-    }
-  );
-
+    toneOscillators.push({
+      osc,
+      gain,
+      base: frequency
+    });
+  });
 }
 
 
 /* =====================================================
-   GIF HIT
+   VISUAL HIT
 ===================================================== */
 
-function hitAnimation(
-  amount
-) {
+function hitAnimation(amount) {
 
   gif.style.transform =
     `scale(${amount})`;
 
+  clearTimeout(visualTimer);
 
-  clearTimeout(
-    visualTimer
-  );
-
-
-  visualTimer =
-    setTimeout(
-      () => {
-
-        gif.style.transform =
-          "scale(1)";
-
-      },
-      45
-    );
-
+  visualTimer = setTimeout(() => {
+    gif.style.transform = "scale(1)";
+  }, 45);
 }
 
 
@@ -823,77 +468,57 @@ function hitAnimation(
    KICK
 ===================================================== */
 
-function kick(
-  strength = 1
-) {
+function kick(strength = 1) {
 
-  const now =
-    audio.currentTime;
+  const instrumentVolume =
+    Number($("kickVolume").value);
 
+  if (instrumentVolume <= 0) {
+    return;
+  }
+
+  const now = audio.currentTime;
 
   const osc =
     audio.createOscillator();
 
-
   const gain =
     audio.createGain();
 
-
-  osc.type =
-    "sine";
-
+  osc.type = "sine";
 
   osc.frequency.setValueAtTime(
     165,
     now
   );
 
-
   osc.frequency.exponentialRampToValueAtTime(
     42,
     now + 0.14
   );
 
-
   gain.gain.setValueAtTime(
     1.05 *
-    strength,
+    strength *
+    instrumentVolume,
     now
   );
-
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 0.24
   );
 
+  osc.connect(gain);
+  gain.connect(drumBus);
 
-  osc.connect(
-    gain
-  );
-
-
-  gain.connect(
-    drumBus
-  );
-
-
-  osc.start(
-    now
-  );
-
-
-  osc.stop(
-    now + 0.25
-  );
-
+  osc.start(now);
+  osc.stop(now + 0.25);
 
   hitAnimation(
     1.09 +
-    strength *
-    0.04
+    strength * 0.04
   );
-
 }
 
 
@@ -901,20 +526,21 @@ function kick(
    SNARE
 ===================================================== */
 
-function snare(
-  strength = 1
-) {
+function snare(strength = 1) {
 
-  const now =
-    audio.currentTime;
+  const instrumentVolume =
+    Number($("snareVolume").value);
 
+  if (instrumentVolume <= 0) {
+    return;
+  }
+
+  const now = audio.currentTime;
 
   const length =
     Math.floor(
-      audio.sampleRate *
-      0.18
+      audio.sampleRate * 0.18
     );
-
 
   const buffer =
     audio.createBuffer(
@@ -923,89 +549,54 @@ function snare(
       audio.sampleRate
     );
 
-
   const data =
-    buffer.getChannelData(
-      0
-    );
-
+    buffer.getChannelData(0);
 
   for (
     let i = 0;
     i < length;
     i++
   ) {
-
     data[i] =
-      Math.random() *
-      2 -
-      1;
-
+      Math.random() * 2 - 1;
   }
-
 
   const source =
     audio.createBufferSource();
 
-
   const filter =
     audio.createBiquadFilter();
-
 
   const gain =
     audio.createGain();
 
+  source.buffer = buffer;
 
-  source.buffer =
-    buffer;
-
-
-  filter.type =
-    "highpass";
-
-  filter.frequency.value =
-    700;
-
+  filter.type = "highpass";
+  filter.frequency.value = 700;
 
   gain.gain.setValueAtTime(
     0.72 *
-    strength,
+    strength *
+    instrumentVolume,
     now
   );
-
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 0.18
   );
 
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(drumBus);
 
-  source.connect(
-    filter
-  );
-
-
-  filter.connect(
-    gain
-  );
-
-
-  gain.connect(
-    drumBus
-  );
-
-
-  source.start(
-    now
-  );
-
+  source.start(now);
 
   hitAnimation(
     1.06 +
-    strength *
-    0.025
+    strength * 0.025
   );
-
 }
 
 
@@ -1013,20 +604,21 @@ function snare(
    HI-HAT
 ===================================================== */
 
-function hihat(
-  strength = 1
-) {
+function hihat(strength = 1) {
 
-  const now =
-    audio.currentTime;
+  const instrumentVolume =
+    Number($("hatVolume").value);
 
+  if (instrumentVolume <= 0) {
+    return;
+  }
+
+  const now = audio.currentTime;
 
   const length =
     Math.floor(
-      audio.sampleRate *
-      0.055
+      audio.sampleRate * 0.055
     );
-
 
   const buffer =
     audio.createBuffer(
@@ -1035,100 +627,56 @@ function hihat(
       audio.sampleRate
     );
 
-
   const data =
-    buffer.getChannelData(
-      0
-    );
-
+    buffer.getChannelData(0);
 
   for (
     let i = 0;
     i < length;
     i++
   ) {
-
     data[i] =
-      Math.random() *
-      2 -
-      1;
-
+      Math.random() * 2 - 1;
   }
-
 
   const source =
     audio.createBufferSource();
 
-
   const filter =
     audio.createBiquadFilter();
-
 
   const gain =
     audio.createGain();
 
+  source.buffer = buffer;
 
-  source.buffer =
-    buffer;
-
-
-  filter.type =
-    "highpass";
-
-  filter.frequency.value =
-    5200;
-
+  filter.type = "highpass";
+  filter.frequency.value = 5200;
 
   gain.gain.setValueAtTime(
     0.32 *
-    strength,
+    strength *
+    instrumentVolume,
     now
   );
-
 
   gain.gain.exponentialRampToValueAtTime(
     0.001,
     now + 0.06
   );
 
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(drumBus);
 
-  source.connect(
-    filter
-  );
+  source.start(now);
 
-
-  filter.connect(
-    gain
-  );
-
-
-  gain.connect(
-    drumBus
-  );
-
-
-  source.start(
-    now
-  );
-
-
-  hitAnimation(
-    1.025
-  );
-
+  hitAnimation(1.025);
 }
 
 
 /* =====================================================
    SPEED
-
-   Center = approximately 100 BPM.
-
-   Lowest is roughly half the previous
-   low speed.
-
-   Highest is roughly double the
-   previous maximum.
 ===================================================== */
 
 function getBPM() {
@@ -1138,11 +686,6 @@ function getBPM() {
       speedControl.value
     );
 
-
-  /*
-    20 BPM -> 400 BPM
-  */
-
   return (
     20 *
     Math.pow(
@@ -1150,16 +693,11 @@ function getBPM() {
       value
     )
   );
-
 }
 
 
 /* =====================================================
-   PATTERN CHANGE
-
-   Each preset remains active for a
-   completely random period between
-   10 seconds and 2 hours.
+   CHANGE BEAT
 ===================================================== */
 
 function chooseNextPattern() {
@@ -1170,30 +708,19 @@ function chooseNextPattern() {
       BEATS.length
     );
 
-
   if (
-    BEATS.length >
-      1 &&
-    next ===
-      currentPattern
+    BEATS.length > 1 &&
+    next === currentPattern
   ) {
-
     next =
-      (
-        next + 1
-      ) %
+      (next + 1) %
       BEATS.length;
-
   }
 
-
-  currentPattern =
-    next;
-
+  currentPattern = next;
 
   const minimum =
     10 * 1000;
-
 
   const maximum =
     2 *
@@ -1201,50 +728,34 @@ function chooseNextPattern() {
     60 *
     1000;
 
-
   nextPatternChange =
     Date.now() +
     minimum +
     Math.random() *
-    (
-      maximum -
-      minimum
-    );
-
+    (maximum - minimum);
 
   beatInfo.textContent =
-    `BEAT ${
-      currentPattern + 1
-    }`;
-
+    `BEAT ${currentPattern + 1}`;
 }
 
 
 /* =====================================================
-   RANDOM VELOCITY
+   VELOCITY
 ===================================================== */
 
-function velocity(
-  base,
-  randomness
-) {
+function velocity(base, randomness) {
 
   const variation =
     (
-      Math.random() *
-      2 -
-      1
+      Math.random() * 2 - 1
     ) *
     randomness *
     0.75;
 
-
   return Math.max(
     0.12,
-    base +
-    variation
+    base + variation
   );
-
 }
 
 
@@ -1258,73 +769,37 @@ function playStep() {
     Date.now() >=
     nextPatternChange
   ) {
-
     chooseNextPattern();
-
   }
-
 
   const randomness =
     Number(
       randomnessControl.value
     );
 
-
   const pattern =
-    BEATS[
-      currentPattern
-    ];
-
-
-  /*
-    At 0% this is exactly the preset.
-
-    As randomness increases:
-    - intended hits can disappear
-    - unexpected hits appear
-    - instruments substitute
-    - additional hits occur
-
-    At 100%, the pattern no longer
-    restricts what can happen.
-  */
-
+    BEATS[currentPattern];
 
   let plannedKick =
-    pattern.k.includes(
-      step
-    );
-
+    pattern.k.includes(step);
 
   let plannedSnare =
-    pattern.s.includes(
-      step
-    );
-
+    pattern.s.includes(step);
 
   let plannedHat =
-    pattern.h.includes(
-      step
-    );
+    pattern.h.includes(step);
 
-
-  /*
-    DESTROY PLANNED HITS
-  */
 
   if (
     Math.random() <
     randomness
   ) {
-
     plannedKick =
       Math.random() <
       (
         0.5 +
-        randomness *
-        0.15
+        randomness * 0.15
       );
-
   }
 
 
@@ -1332,15 +807,12 @@ function playStep() {
     Math.random() <
     randomness
   ) {
-
     plannedSnare =
       Math.random() <
       (
         0.38 +
-        randomness *
-        0.22
+        randomness * 0.22
       );
-
   }
 
 
@@ -1348,187 +820,118 @@ function playStep() {
     Math.random() <
     randomness
   ) {
-
     plannedHat =
       Math.random() <
       (
         0.45 +
-        randomness *
-        0.35
+        randomness * 0.35
       );
-
   }
 
 
-  if (
-    plannedKick
-  ) {
-
+  if (plannedKick) {
     kick(
       velocity(
         0.9,
         randomness
       )
     );
-
   }
 
 
-  if (
-    plannedSnare
-  ) {
-
+  if (plannedSnare) {
     snare(
       velocity(
         0.82,
         randomness
       )
     );
-
   }
 
 
-  if (
-    plannedHat
-  ) {
-
+  if (plannedHat) {
     hihat(
       velocity(
         0.65,
         randomness
       )
     );
-
   }
 
 
   /*
-    At high randomness, completely
-    independent additional events can
-    occur on every subdivision.
+    RANDOM EXTRA HIT
   */
 
   if (
     Math.random() <
-    randomness *
-    0.55
+    randomness * 0.55
   ) {
 
     const choice =
       Math.floor(
-        Math.random() *
-        3
+        Math.random() * 3
       );
-
 
     const strength =
       0.2 +
-      Math.random() *
-      1.2;
+      Math.random() * 1.2;
 
-
-    if (
-      choice === 0
-    ) {
-
-      kick(
-        strength
-      );
-
+    if (choice === 0) {
+      kick(strength);
     }
 
-    else if (
-      choice === 1
-    ) {
-
-      snare(
-        strength
-      );
-
+    else if (choice === 1) {
+      snare(strength);
     }
 
     else {
-
-      hihat(
-        strength
-      );
-
+      hihat(strength);
     }
-
   }
 
 
   /*
-    Random flam / double hit.
+    RANDOM FLAM
   */
 
   if (
     Math.random() <
-    randomness *
-    0.32
+    randomness * 0.32
   ) {
 
     const delay =
       15 +
-      Math.random() *
-      180;
+      Math.random() * 180;
 
+    setTimeout(() => {
 
-    setTimeout(
-      () => {
+      const r =
+        Math.random();
 
-        const r =
-          Math.random();
+      if (r < 0.34) {
+        kick(Math.random());
+      }
 
+      else if (r < 0.67) {
+        snare(Math.random());
+      }
 
-        if (
-          r < 0.34
-        ) {
+      else {
+        hihat(Math.random());
+      }
 
-          kick(
-            Math.random()
-          );
-
-        }
-
-        else if (
-          r < 0.67
-        ) {
-
-          snare(
-            Math.random()
-          );
-
-        }
-
-        else {
-
-          hihat(
-            Math.random()
-          );
-
-        }
-
-      },
-      delay
-    );
-
+    }, delay);
   }
 
 
   step =
-    (
-      step + 1
-    ) %
-    16;
-
+    (step + 1) % 16;
 }
 
 
 /* =====================================================
-   SCHEDULER
-
-   Uses 16th-note subdivisions.
+   RHYTHM SCHEDULER
 ===================================================== */
 
 function scheduleNextStep() {
@@ -1536,16 +939,11 @@ function scheduleNextStep() {
   const bpm =
     getBPM();
 
-
   const beatMilliseconds =
-    60000 /
-    bpm;
-
+    60000 / bpm;
 
   let stepMilliseconds =
-    beatMilliseconds /
-    4;
-
+    beatMilliseconds / 4;
 
   const randomness =
     Number(
@@ -1553,40 +951,21 @@ function scheduleNextStep() {
     );
 
 
-  /*
-    At increasing randomness the actual
-    clock itself becomes unstable.
+  if (randomness > 0) {
 
-    At 100%, spacing can become extremely
-    short or dramatically stretched.
-  */
-
-  if (
-    randomness >
-    0
-  ) {
-
-    const normalVariation =
+    const variation =
       (
-        Math.random() *
-        2 -
-        1
+        Math.random() * 2 - 1
       ) *
       randomness *
       0.55;
 
-
     stepMilliseconds *=
       Math.max(
         0.15,
-        1 +
-        normalVariation
+        1 + variation
       );
 
-
-    /*
-      Extreme timing event.
-    */
 
     if (
       Math.random() <
@@ -1597,29 +976,20 @@ function scheduleNextStep() {
 
       stepMilliseconds *=
         0.08 +
-        Math.random() *
-        5;
-
+        Math.random() * 5;
     }
-
   }
 
 
-  schedulerTimer =
-    setTimeout(
-      () => {
+  setTimeout(() => {
 
-        playStep();
+    playStep();
+    scheduleNextStep();
 
-        scheduleNextStep();
-
-      },
-      Math.max(
-        18,
-        stepMilliseconds
-      )
-    );
-
+  }, Math.max(
+    18,
+    stepMilliseconds
+  ));
 }
 
 
@@ -1629,72 +999,31 @@ function scheduleNextStep() {
 
 function updateEffects() {
 
-  if (
-    !audio
-  ) {
-
+  if (!audio) {
     return;
-
   }
 
-
   const volume =
-    Number(
-      document.getElementById(
-        "volume"
-      ).value
-    );
-
+    Number($("volume").value);
 
   const underwater =
-    Number(
-      document.getElementById(
-        "underwater"
-      ).value
-    );
-
-
-  const wrobly =
-    Number(
-      document.getElementById(
-        "wrobly"
-      ).value
-    );
-
+    Number($("underwater").value);
 
   const tone =
-    Number(
-      toneControl.value
-    );
-
+    Number($("tone").value);
 
   const low =
-    Number(
-      document.getElementById(
-        "low"
-      ).value
-    );
-
+    Number($("low").value);
 
   const mid =
-    Number(
-      document.getElementById(
-        "mid"
-      ).value
-    );
-
+    Number($("mid").value);
 
   const high =
-    Number(
-      document.getElementById(
-        "high"
-      ).value
-    );
+    Number($("high").value);
 
 
   masterGain.gain.setTargetAtTime(
-    volume *
-    1.65,
+    volume * 1.65,
     audio.currentTime,
     0.02
   );
@@ -1702,16 +1031,12 @@ function updateEffects() {
 
   /*
     EXTREME UNDERWATER
-
-    Full setting drops the cutoff
-    down near 80 Hz.
   */
 
   const underwaterFrequency =
     20000 *
     Math.pow(
-      80 /
-      20000,
+      80 / 20000,
       underwater
     );
 
@@ -1729,8 +1054,7 @@ function updateEffects() {
     .Q
     .setTargetAtTime(
       1 +
-      underwater *
-      22,
+      underwater * 22,
       audio.currentTime,
       0.025
     );
@@ -1742,13 +1066,11 @@ function updateEffects() {
     0.02
   );
 
-
   midEQ.gain.setTargetAtTime(
     mid,
     audio.currentTime,
     0.02
   );
-
 
   highEQ.gain.setTargetAtTime(
     high,
@@ -1758,49 +1080,31 @@ function updateEffects() {
 
 
   /*
-    TONE ONLY CONTROLS VOLUME.
-
-    0% = genuinely silent.
+    TONE = VOLUME ONLY
   */
 
   toneBus.gain.setTargetAtTime(
-    tone *
-    0.55,
+    tone * 0.55,
     audio.currentTime,
     0.08
   );
-
-
-  /*
-    Wrobly control is read by the
-    continuous modulation loop.
-  */
-
 }
 
 
 /* =====================================================
-   EXTREME WROBLY + SPACE SYNTH MOTION
+   WROBLY + SYNTH MOTION
 ===================================================== */
 
 function wobbleLoop() {
 
-  if (
-    !audio
-  ) {
-
+  if (!audio) {
     return;
-
   }
-
 
   const wrobly =
     Number(
-      document.getElementById(
-        "wrobly"
-      ).value
+      $("wrobly").value
     );
-
 
   const time =
     audio.currentTime;
@@ -1808,13 +1112,8 @@ function wobbleLoop() {
 
   wobblePhase +=
     0.012 +
-    wrobly *
-    0.19;
+    wrobly * 0.19;
 
-
-  /*
-    DRUM WOBBLE
-  */
 
   const wave =
     (
@@ -1822,8 +1121,7 @@ function wobbleLoop() {
         wobblePhase
       ) +
       1
-    ) /
-    2;
+    ) / 2;
 
 
   const wobbleMinimum =
@@ -1857,35 +1155,28 @@ function wobbleLoop() {
     .Q
     .setTargetAtTime(
       1 +
-      wrobly *
-      28,
+      wrobly * 28,
       time,
       0.025
     );
 
 
   /*
-    CONSTANT SPACE SYNTH FILTER MOTION.
-
-    This happens regardless of the Wrobly
-    knob. Tone controls only its volume.
+    PSYCHEDELIC TONE MOVEMENT
   */
 
   const slowWave =
     (
       Math.sin(
-        time *
-        0.37
+        time * 0.37
       ) +
       1
-    ) /
-    2;
+    ) / 2;
 
 
   const secondWave =
     Math.sin(
-      time *
-      0.113
+      time * 0.113
     );
 
 
@@ -1893,8 +1184,7 @@ function wobbleLoop() {
     .frequency
     .setTargetAtTime(
       380 +
-      slowWave *
-      2100,
+      slowWave * 2100,
       time,
       0.08
     );
@@ -1904,33 +1194,23 @@ function wobbleLoop() {
     .Q
     .setTargetAtTime(
       4 +
-      slowWave *
-      15,
+      slowWave * 15,
       time,
       0.08
     );
 
 
-  /*
-    Slowly bend/detune each oscillator.
-  */
-
   toneOscillators.forEach(
-    (
-      item,
-      index
-    ) => {
+    (item, index) => {
 
       const drift =
         Math.sin(
           time *
           (
             0.08 +
-            index *
-            0.027
+            index * 0.027
           ) +
-          index *
-          2.1
+          index * 2.1
         ) *
         18;
 
@@ -1939,8 +1219,7 @@ function wobbleLoop() {
         secondWave *
         (
           3 +
-          index *
-          2
+          index * 2
         );
 
 
@@ -1950,20 +1229,13 @@ function wobbleLoop() {
         time,
         0.1
       );
-
     }
   );
 
 
-  /*
-    Slowly move delay time for a
-    phasey / smeared character.
-  */
-
   toneDelay.delayTime.setTargetAtTime(
     0.12 +
-    slowWave *
-    0.55,
+    slowWave * 0.55,
     time,
     0.08
   );
@@ -1972,30 +1244,21 @@ function wobbleLoop() {
   requestAnimationFrame(
     wobbleLoop
   );
-
 }
 
 
 /* =====================================================
-   CONTROL DISPLAYS
+   PERCENT CONTROLS
 ===================================================== */
 
 function percentDisplay(
   inputId,
-  outputId
+  outputId,
+  multiplier = 100
 ) {
 
-  const input =
-    document.getElementById(
-      inputId
-    );
-
-
-  const output =
-    document.getElementById(
-      outputId
-    );
-
+  const input = $(inputId);
+  const output = $(outputId);
 
   input.addEventListener(
     "input",
@@ -2003,67 +1266,54 @@ function percentDisplay(
 
       output.textContent =
         Math.round(
-          Number(
-            input.value
-          ) *
-          100
+          Number(input.value) *
+          multiplier
         ) +
         "%";
 
-
       updateEffects();
-
     }
   );
-
 }
 
+
+/* =====================================================
+   DB CONTROLS
+===================================================== */
 
 function dbDisplay(
   inputId,
   outputId
 ) {
 
-  const input =
-    document.getElementById(
-      inputId
-    );
-
-
-  const output =
-    document.getElementById(
-      outputId
-    );
-
+  const input = $(inputId);
+  const output = $(outputId);
 
   input.addEventListener(
     "input",
     () => {
 
       const value =
-        Number(
-          input.value
-        );
-
+        Number(input.value);
 
       output.textContent =
         (
-          value >
-          0
+          value > 0
             ? "+"
             : ""
         ) +
         value +
         " dB";
 
-
       updateEffects();
-
     }
   );
-
 }
 
+
+/* =====================================================
+   CONNECT CONTROLS
+===================================================== */
 
 percentDisplay(
   "volume",
@@ -2095,6 +1345,27 @@ percentDisplay(
   "toneValue"
 );
 
+
+/*
+  Instrument knobs go to 150%.
+*/
+
+percentDisplay(
+  "kickVolume",
+  "kickVolumeValue"
+);
+
+percentDisplay(
+  "snareVolume",
+  "snareVolumeValue"
+);
+
+percentDisplay(
+  "hatVolume",
+  "hatVolumeValue"
+);
+
+
 dbDisplay(
   "low",
   "lowValue"
@@ -2121,20 +1392,10 @@ startButton.addEventListener(
 
     buildAudio();
 
-
     await audio.resume();
-
 
     startButton.remove();
 
-
-    /*
-      Choose one of the 20 patterns
-      immediately.
-
-      Then select a random lifetime
-      between 10 seconds and 2 hours.
-    */
 
     currentPattern =
       Math.floor(
@@ -2144,9 +1405,7 @@ startButton.addEventListener(
 
 
     beatInfo.textContent =
-      `BEAT ${
-        currentPattern + 1
-      }`;
+      `BEAT ${currentPattern + 1}`;
 
 
     nextPatternChange =
@@ -2165,7 +1424,6 @@ startButton.addEventListener(
     playStep();
 
     scheduleNextStep();
-
   }
 );
 
