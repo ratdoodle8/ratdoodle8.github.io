@@ -175,7 +175,7 @@ h1 {
 
 
 /* =====================================================
-   DEATH MARKER
+   DEATH MARKERS
 ===================================================== */
 
 .death-marker {
@@ -207,14 +207,8 @@ h1 {
   color: red;
 }
 
-.death-name {
-  color: red;
-}
-
-.death-time {
-  color: red;
-}
-
+.death-name,
+.death-time,
 .death-cooldown {
   color: red;
 }
@@ -229,6 +223,116 @@ h1 {
   font-weight: bold;
   font-size: 34px;
   line-height: 34px;
+}
+
+
+/* =====================================================
+   OASIS INFORMATION BOXES
+===================================================== */
+
+.oasis-list-box {
+  width: min(100%, 1000px);
+  margin: 18px auto 0;
+  padding: 16px;
+  border: 2px solid #0007E6;
+  background: #bcc8cc;
+  text-align: left;
+}
+
+.oasis-list-box h2 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#currentOasisBox,
+#recentlyDeceasedBox {
+  display: none;
+}
+
+#currentOasisList {
+  overflow-x: auto;
+}
+
+
+/* =====================================================
+   CURRENT OASIS TABLE
+===================================================== */
+
+.oasis-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.oasis-table th,
+.oasis-table td {
+  padding: 8px;
+  border: 1px solid #0007E6;
+  vertical-align: middle;
+}
+
+.oasis-table th {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.oasis-table a {
+  color: #0007E6;
+  text-decoration: underline;
+}
+
+.oasis-table-weebie {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+}
+
+.oasis-table-color,
+.oasis-table-outline {
+  position: absolute;
+  inset: 0;
+  width: 60px;
+  height: 60px;
+}
+
+.oasis-table-color {
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.oasis-table-outline {
+  object-fit: contain;
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   RECENTLY DECEASED
+===================================================== */
+
+.oasis-list-row {
+  padding: 8px 4px;
+  border-bottom: 1px solid #0007E6;
+}
+
+.oasis-list-row:last-child {
+  border-bottom: none;
+}
+
+.oasis-list-name {
+  font-weight: bold;
+}
+
+.oasis-list-death {
+  color: red;
 }
 
 
@@ -272,48 +376,26 @@ h1 {
     font-size: 11px;
   }
 
-}
+  .oasis-list-box {
+    padding: 10px;
+  }
 
+  .oasis-table {
+    font-size: 12px;
+  }
 
-/* =====================================================
-   OASIS LIST BOXES
-===================================================== */
+  .oasis-table th,
+  .oasis-table td {
+    padding: 6px;
+  }
 
-.oasis-list-box {
-  width: min(100%, 1000px);
-  margin: 18px auto 0;
-  padding: 16px;
-  border: 2px solid #0007E6;
-  background: #bcc8cc;
-  text-align: left;
-}
+  .oasis-table-weebie,
+  .oasis-table-color,
+  .oasis-table-outline {
+    width: 48px;
+    height: 48px;
+  }
 
-.oasis-list-box h2 {
-  margin: 0 0 12px;
-  text-align: center;
-  font-size: 20px;
-}
-
-.oasis-list-row {
-  padding: 8px 4px;
-  border-bottom: 1px solid #0007E6;
-}
-
-.oasis-list-row:last-child {
-  border-bottom: none;
-}
-
-.oasis-list-name {
-  font-weight: bold;
-}
-
-.oasis-list-death {
-  color: red;
-}
-
-#currentOasisBox,
-#recentlyDeceasedBox {
-  display: none;
 }
 
 </style>
@@ -333,21 +415,35 @@ h1 {
   <div id="ground"></div>
 </div>
 
-<div class="oasis-list-box" id="currentOasisBox">
+
+<div
+  class="oasis-list-box"
+  id="currentOasisBox"
+>
   <h2>Weebies Currently in Oasis</h2>
+
   <div id="currentOasisList"></div>
 </div>
 
-<div class="oasis-list-box" id="recentlyDeceasedBox">
+
+<div
+  class="oasis-list-box"
+  id="recentlyDeceasedBox"
+>
   <h2>Recently Deceased</h2>
+
   <div id="recentlyDeceasedList"></div>
 </div>
 
+
 <div class="oasis-list-box">
+
   <h2>Oasis Info Log</h2>
+
   <div id="oasisInfoLog">
     No information yet.
   </div>
+
 </div>
 
 
@@ -371,13 +467,19 @@ const COLORS = {
 
 
 const oasis =
-  document.getElementById("oasis");
+  document.getElementById(
+    "oasis"
+  );
 
 const releaseButton =
-  document.getElementById("releaseButton");
+  document.getElementById(
+    "releaseButton"
+  );
 
 const statusText =
-  document.getElementById("status");
+  document.getElementById(
+    "status"
+  );
 
 
 const actors =
@@ -387,15 +489,20 @@ const deathMarkers =
   new Map();
 
 
-let serverOffset = 0;
+let serverOffset =
+  0;
 
-let loggedIn = false;
+let loggedIn =
+  false;
 
-let hasWeebie = false;
+let hasWeebie =
+  false;
 
-let myWeebieName = null;
+let myWeebieName =
+  null;
 
-let pollRunning = false;
+let pollRunning =
+  false;
 
 
 /* =====================================================
@@ -479,7 +586,8 @@ async function loadAccount() {
     }
 
 
-    loggedIn = true;
+    loggedIn =
+      true;
 
     hasWeebie =
       !!data.weebie;
@@ -571,7 +679,8 @@ releaseButton.addEventListener(
       if (!response.ok) {
 
         if (
-          data.state === "alive"
+          data.state ===
+          "alive"
         ) {
 
           statusText.textContent =
@@ -580,7 +689,8 @@ releaseButton.addEventListener(
         }
 
         else if (
-          data.state === "cooldown"
+          data.state ===
+          "cooldown"
         ) {
 
           statusText.textContent =
@@ -709,7 +819,7 @@ async function loadOasis() {
 
 
 /* =====================================================
-   OASIS LIST BOXES
+   OASIS LISTS
 ===================================================== */
 
 function updateOasisLists(
@@ -738,74 +848,415 @@ function updateOasisLists(
     );
 
 
-  currentList.innerHTML = "";
-  deceasedList.innerHTML = "";
+  currentList.innerHTML =
+    "";
+
+  deceasedList.innerHTML =
+    "";
 
 
-  if (weebies.length > 0) {
+  if (
+    weebies.length > 0
+  ) {
 
     currentBox.style.display =
       "block";
 
 
-    for (const weebie of weebies) {
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-      row.className =
-        "oasis-list-row";
+    const now =
+      Date.now() +
+      serverOffset;
 
 
-      const expires =
-        new Date(
-          weebie.expiresAt
-        ).getTime();
+    /*
+      Oasis # is based ONLY on current
+      time remaining.
+
+      Most time remaining = #1.
+
+      This does not alter the normal
+      XP leaderboard placement.
+    */
+
+    const sortedWeebies =
+      [...weebies].sort(
+        (a, b) => {
+
+          const aRemaining =
+            new Date(
+              a.expiresAt
+            ).getTime() -
+            now;
+
+          const bRemaining =
+            new Date(
+              b.expiresAt
+            ).getTime() -
+            now;
 
 
-      const remaining =
-        Math.max(
-          0,
-          expires -
-          (
-            Date.now() +
-            serverOffset
-          )
-        );
+          return (
+            bRemaining -
+            aRemaining
+          );
 
-
-      const seconds =
-        Math.ceil(
-          remaining / 1000
-        );
-
-      const minutes =
-        Math.floor(
-          seconds / 60
-        );
-
-      const leftoverSeconds =
-        seconds % 60;
-
-
-      row.innerHTML =
-        `<span class="oasis-list-name">${
-          escapeHtml(
-            weebie.name || "Weebie"
-          )
-        }</span> — ${
-          minutes
-        }:${String(
-          leftoverSeconds
-        ).padStart(2, "0")} remaining`;
-
-
-      currentList.appendChild(
-        row
+        }
       );
-    }
+
+
+    const table =
+      document.createElement(
+        "table"
+      );
+
+    table.className =
+      "oasis-table";
+
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Weebie</th>
+          <th>Name</th>
+          <th>Time Remaining</th>
+          <th>XP</th>
+          <th>Owner</th>
+          <th>Leaderboard Placement</th>
+        </tr>
+      </thead>
+
+      <tbody></tbody>
+    `;
+
+
+    const tbody =
+      table.querySelector(
+        "tbody"
+      );
+
+
+    sortedWeebies.forEach(
+      (
+        weebie,
+        index
+      ) => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
+
+
+        /* OASIS PLACEMENT */
+
+        const oasisPlacement =
+          document.createElement(
+            "td"
+          );
+
+        oasisPlacement.textContent =
+          index + 1;
+
+
+        /* WEEBIE IMAGE */
+
+        const imageCell =
+          document.createElement(
+            "td"
+          );
+
+
+        const preview =
+          document.createElement(
+            "div"
+          );
+
+        preview.className =
+          "oasis-table-weebie";
+
+
+        const primary =
+          COLORS[
+            weebie.primaryColor
+          ] ||
+          weebie.primaryColor ||
+          "#F5F5F5";
+
+
+        const secondary =
+          COLORS[
+            weebie.secondaryColor
+          ] ||
+          weebie.secondaryColor ||
+          "#F5F5F5";
+
+
+        const eyelashes =
+          String(
+            weebie.eyelashes ||
+            "Yes"
+          ).toLowerCase() ===
+          "yes";
+
+
+        const color1 =
+          document.createElement(
+            "div"
+          );
+
+        color1.className =
+          "oasis-table-color";
+
+        color1.style.background =
+          primary;
+
+        color1.style.webkitMaskImage =
+          'url("/shared/Weebie-Color1.png")';
+
+        color1.style.maskImage =
+          'url("/shared/Weebie-Color1.png")';
+
+
+        const color2 =
+          document.createElement(
+            "div"
+          );
+
+        color2.className =
+          "oasis-table-color";
+
+        color2.style.background =
+          secondary;
+
+
+        const color2Image =
+          eyelashes
+            ? "/shared/Weebie-Color2.png"
+            : "/shared/Weebie-Color2a.png";
+
+
+        color2.style.webkitMaskImage =
+          `url("${color2Image}")`;
+
+        color2.style.maskImage =
+          `url("${color2Image}")`;
+
+
+        const outline =
+          document.createElement(
+            "img"
+          );
+
+        outline.className =
+          "oasis-table-outline";
+
+        outline.src =
+          eyelashes
+            ? "/shared/Weebie-Outline.png"
+            : "/shared/Weebie-Outline2.png";
+
+
+        preview.appendChild(
+          color1
+        );
+
+        preview.appendChild(
+          color2
+        );
+
+        preview.appendChild(
+          outline
+        );
+
+
+        imageCell.appendChild(
+          preview
+        );
+
+
+        /* NAME */
+
+        const nameCell =
+          document.createElement(
+            "td"
+          );
+
+        nameCell.textContent =
+          weebie.name ||
+          "Weebie";
+
+
+        /* TIME REMAINING */
+
+        const timeCell =
+          document.createElement(
+            "td"
+          );
+
+
+        const expires =
+          new Date(
+            weebie.expiresAt
+          ).getTime();
+
+
+        const remaining =
+          Math.max(
+            0,
+            expires - now
+          );
+
+
+        const totalSeconds =
+          Math.ceil(
+            remaining /
+            1000
+          );
+
+
+        const minutes =
+          Math.floor(
+            totalSeconds /
+            60
+          );
+
+
+        const seconds =
+          totalSeconds %
+          60;
+
+
+        timeCell.textContent =
+          `${minutes}:${String(
+            seconds
+          ).padStart(2, "0")}`;
+
+
+        /* XP */
+
+        const xpCell =
+          document.createElement(
+            "td"
+          );
+
+        xpCell.textContent =
+          Number(
+            weebie.xp || 0
+          );
+
+
+        /* OWNER */
+
+        const ownerCell =
+          document.createElement(
+            "td"
+          );
+
+
+        if (
+          weebie.private
+        ) {
+
+          ownerCell.textContent =
+            weebie.owner ||
+            weebie.name ||
+            "Whisp";
+
+        }
+
+        else if (
+          weebie.owner
+        ) {
+
+          const ownerLink =
+            document.createElement(
+              "a"
+            );
+
+          ownerLink.textContent =
+            weebie.owner;
+
+          ownerLink.href =
+            `/user/${encodeURIComponent(
+              weebie.owner
+            )}`;
+
+          ownerCell.appendChild(
+            ownerLink
+          );
+
+        }
+
+        else {
+
+          ownerCell.textContent =
+            "-";
+
+        }
+
+
+        /* LEADERBOARD PLACEMENT */
+
+        const leaderboardCell =
+          document.createElement(
+            "td"
+          );
+
+
+        const placement =
+          Number(
+            weebie.placement ||
+            0
+          );
+
+
+        leaderboardCell.textContent =
+          placement > 0
+            ? `#${placement}`
+            : "-";
+
+
+        row.appendChild(
+          oasisPlacement
+        );
+
+        row.appendChild(
+          imageCell
+        );
+
+        row.appendChild(
+          nameCell
+        );
+
+        row.appendChild(
+          timeCell
+        );
+
+        row.appendChild(
+          xpCell
+        );
+
+        row.appendChild(
+          ownerCell
+        );
+
+        row.appendChild(
+          leaderboardCell
+        );
+
+
+        tbody.appendChild(
+          row
+        );
+
+      }
+    );
+
+
+    currentList.appendChild(
+      table
+    );
 
   }
 
@@ -817,13 +1268,20 @@ function updateOasisLists(
   }
 
 
-  if (deaths.length > 0) {
+  /* RECENTLY DECEASED */
+
+  if (
+    deaths.length > 0
+  ) {
 
     deceasedBox.style.display =
       "block";
 
 
-    for (const death of deaths) {
+    for (
+      const death
+      of deaths
+    ) {
 
       const row =
         document.createElement(
@@ -851,35 +1309,42 @@ function updateOasisLists(
         );
 
 
-      const seconds =
+      const totalSeconds =
         Math.floor(
-          elapsed / 1000
+          elapsed /
+          1000
         );
+
 
       const minutes =
         Math.floor(
-          seconds / 60
+          totalSeconds /
+          60
         );
 
-      const leftoverSeconds =
-        seconds % 60;
+
+      const seconds =
+        totalSeconds %
+        60;
 
 
       row.innerHTML =
         `☠ <span class="oasis-list-name">${
           escapeHtml(
-            death.name || "Weebie"
+            death.name ||
+            "Weebie"
           )
         }</span> — died ${
           minutes
         }:${String(
-          leftoverSeconds
+          seconds
         ).padStart(2, "0")} ago`;
 
 
       deceasedList.appendChild(
         row
       );
+
     }
 
   }
@@ -894,7 +1359,9 @@ function updateOasisLists(
 }
 
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
   const div =
     document.createElement(
@@ -902,12 +1369,13 @@ function escapeHtml(value) {
     );
 
   div.textContent =
-    String(value ?? "");
+    String(
+      value ?? ""
+    );
 
   return div.innerHTML;
+
 }
-
-
 /* =====================================================
    OWNER RELEASE STATE
 ===================================================== */
@@ -1006,7 +1474,8 @@ function startPolling() {
   }
 
 
-  pollRunning = true;
+  pollRunning =
+    true;
 
 
   setInterval(
@@ -1040,10 +1509,14 @@ function syncWeebies(
       );
 
 
-    activeIds.add(id);
+    activeIds.add(
+      id
+    );
 
 
-    if (!actors.has(id)) {
+    if (
+      !actors.has(id)
+    ) {
 
       createActor(
         weebie
@@ -1053,7 +1526,9 @@ function syncWeebies(
 
 
     const actor =
-      actors.get(id);
+      actors.get(
+        id
+      );
 
 
     actor.data =
@@ -1079,13 +1554,17 @@ function syncWeebies(
 
       actor.element.remove();
 
-      actors.delete(id);
+      actors.delete(
+        id
+      );
 
     }
 
   }
 
 }
+
+
 /* =====================================================
    CREATE WEEBIE
 ===================================================== */
@@ -1215,8 +1694,10 @@ function createActor(
       color1,
       color2,
       outline,
-      data: weebie,
-      interactionUntil: 0
+      data:
+        weebie,
+      interactionUntil:
+        0
     }
   );
 
@@ -1319,7 +1800,9 @@ function syncDeaths(
       );
 
 
-    activeIds.add(id);
+    activeIds.add(
+      id
+    );
 
 
     if (
@@ -1334,7 +1817,9 @@ function syncDeaths(
 
 
     const marker =
-      deathMarkers.get(id);
+      deathMarkers.get(
+        id
+      );
 
 
     marker.data =
@@ -1487,7 +1972,8 @@ function createDeathMarker(
       name,
       time,
       cooldown,
-      data: death
+      data:
+        death
     }
   );
 
@@ -1649,7 +2135,8 @@ function updateLivingTimer(
   const remaining =
     Math.max(
       0,
-      expires - now
+      expires -
+      now
     );
 
 
@@ -1673,16 +2160,10 @@ function updateLivingTimer(
 
 
   actor.timer.textContent =
-    `${minutes}:${String(seconds).padStart(2, "0")}`;
+    `${minutes}:${String(
+      seconds
+    ).padStart(2, "0")}`;
 
-
-  /*
-    Hide the living Weebie immediately
-    when its timer reaches zero.
-
-    The next server update supplies the
-    shared death marker.
-  */
 
   if (
     remaining <= 0
@@ -1727,7 +2208,8 @@ function updateDeathMarker(
   const sinceDeath =
     Math.max(
       0,
-      now - diedAt
+      now -
+      diedAt
     );
 
 
@@ -1759,7 +2241,8 @@ function updateDeathMarker(
   const cooldownRemaining =
     Math.max(
       0,
-      cooldownUntil - now
+      cooldownUntil -
+      now
     );
 
 
@@ -1773,14 +2256,6 @@ function updateDeathMarker(
   marker.cooldown.textContent =
     `Cooldown: ${cooldownSeconds}`;
 
-
-  /*
-    Remove the visuals locally as soon
-    as cooldown reaches zero.
-
-    Server cleanup will also remove the
-    shared record.
-  */
 
   if (
     cooldownRemaining <= 0
@@ -1797,8 +2272,6 @@ function updateDeathMarker(
   }
 
 }
-
-
 /* =====================================================
    INTERACTIONS
 ===================================================== */
@@ -1932,6 +2405,8 @@ function playInteraction(
   );
 
 }
+
+
 /* =====================================================
    ANIMATION
 ===================================================== */
@@ -1943,7 +2418,8 @@ function animate() {
     serverOffset;
 
 
-  const positions = [];
+  const positions =
+    [];
 
 
   for (
