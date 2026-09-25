@@ -163,7 +163,6 @@ button:hover {
     <button id="skipBeat">SKIP BEAT</button>
   </div>
 
-
   <div class="box">
     <h2>DRUM MIX</h2>
 
@@ -191,7 +190,6 @@ button:hover {
       <div id="softValue" class="value">0%</div>
     </div>
   </div>
-
 
   <div class="box">
     <h2>TONES</h2>
@@ -221,7 +219,6 @@ button:hover {
     </div>
   </div>
 
-
   <div class="box">
     <h2>ATMOSPHERE</h2>
 
@@ -249,7 +246,6 @@ button:hover {
       <div id="pentagramValue" class="value">0%</div>
     </div>
   </div>
-
 
   <div class="box">
     <h2>EQ</h2>
@@ -321,10 +317,22 @@ let currentChordIndex = 0;
 let progression = [];
 
 let keyStartedAt = 0;
-
 let arpIndex = 0;
 
 const KEY_DURATION = 120000;
+
+
+/* =====================================================
+   PHRASE MEMORY
+===================================================== */
+
+let tone1Phrase = null;
+let tone1PhrasePosition = 0;
+let tone1PhraseRepeats = 0;
+
+let tone2Phrase = null;
+let tone2PhrasePosition = 0;
+let tone2PhraseRepeats = 0;
 
 
 /* =====================================================
@@ -381,12 +389,6 @@ const CHORD_NAMES = [
   "vii°"
 ];
 
-
-/*
-   These progressions deliberately favor
-   stable, consonant movement.
-*/
-
 const PROGRESSIONS = [
   [0,5,3,4],
   [0,3,5,4],
@@ -400,7 +402,7 @@ const PROGRESSIONS = [
 
 
 /* =====================================================
-   MIDI
+   BASIC MUSICAL HELPERS
 ===================================================== */
 
 function midiToFrequency(midi) {
@@ -409,6 +411,28 @@ function midiToFrequency(midi) {
 
 function currentKey() {
   return KEYS[currentKeyIndex];
+}
+
+function weightedChoice(options) {
+
+  let total = 0;
+
+  options.forEach(option => {
+    total += option.weight;
+  });
+
+  let roll = Math.random() * total;
+
+  for (const option of options) {
+
+    roll -= option.weight;
+
+    if (roll <= 0) {
+      return option.value;
+    }
+  }
+
+  return options[options.length - 1].value;
 }
 
 
@@ -434,11 +458,8 @@ function getStrictChordNotes() {
 
   return indexes.map(index => {
 
-    const scaleIndex =
-      index % 7;
-
-    const octave =
-      Math.floor(index / 7) * 12;
+    const scaleIndex = index % 7;
+    const octave = Math.floor(index / 7) * 12;
 
     return (
       key.root +
@@ -450,16 +471,7 @@ function getStrictChordNotes() {
 
 
 /* =====================================================
-   MUSICAL FREEDOM
-
-   Pentagram does NOT simply throw
-   random semitones around anymore.
-
-   Even at low settings, wandering notes
-   are selected from musical intervals.
-
-   As Pentagram rises, it increasingly
-   locks directly to the current chord.
+   PENTAGRAM / MUSICAL FREEDOM
 ===================================================== */
 
 function musicalPitch(strictMidi) {
@@ -467,41 +479,14 @@ function musicalPitch(strictMidi) {
   const pentagram =
     Number($("pentagram").value);
 
-
   if (Math.random() < pentagram) {
     return strictMidi;
   }
 
-
   /*
-     Free psychedelic alternatives.
-
-     Octaves, fifths, fourths,
-     major/minor thirds and sixths.
-
-     No arbitrary tiny pitch drift.
-  */
-
-  const intervals = [
-    -12,
-    -7,
-    -5,
-    -4,
-    -3,
-    0,
-    3,
-    4,
-    5,
-    7,
-    9,
-    12
-  ];
-
-
-  /*
-     As Pentagram rises, favor the
-     safer intervals even before
-     reaching 100%.
+     Low Pentagram is freer, but we're
+     still using musical intervals rather
+     than arbitrary microtonal wandering.
   */
 
   if (pentagram > 0.5) {
@@ -525,6 +510,22 @@ function musicalPitch(strictMidi) {
     );
   }
 
+  const intervals = [
+    -12,
+    -7,
+    -5,
+    -4,
+    -3,
+    0,
+    0,
+    0,
+    3,
+    4,
+    5,
+    7,
+    9,
+    12
+  ];
 
   return (
     strictMidi +
@@ -535,6 +536,232 @@ function musicalPitch(strictMidi) {
       )
     ]
   );
+}
+
+
+/* =====================================================
+   TONE 1 PHRASE CREATOR
+===================================================== */
+
+function createTone1Phrase() {
+
+  const length =
+    weightedChoice([
+      {value:2, weight:4},
+      {value:3, weight:6},
+      {value:4, weight:5}
+    ]);
+
+  const phrase = [];
+
+  for (let i = 0; i < length; i++) {
+
+    phrase.push(
+      weightedChoice([
+        {value:0, weight:5},
+        {value:1, weight:10},
+        {value:-1, weight:2},
+        {value:2, weight:2}
+      ])
+    );
+  }
+
+  /*
+     Frequently give the phrase a simple
+     forward/resolving ending.
+  */
+
+  if (Math.random() < 0.55) {
+    phrase[phrase.length - 1] = 1;
+  }
+
+  return phrase;
+}
+
+
+/* =====================================================
+   TONE 1 PHRASE PLAYER
+===================================================== */
+
+function getTone1Movement() {
+
+  if (tone1Phrase) {
+
+    const movement =
+      tone1Phrase[
+        tone1PhrasePosition
+      ];
+
+    tone1PhrasePosition++;
+
+    if (
+      tone1PhrasePosition >=
+      tone1Phrase.length
+    ) {
+
+      tone1PhrasePosition = 0;
+      tone1PhraseRepeats++;
+
+      /*
+         Original phrase + one repeat.
+      */
+
+      if (tone1PhraseRepeats >= 2) {
+
+        tone1Phrase = null;
+        tone1PhraseRepeats = 0;
+      }
+    }
+
+    return movement;
+  }
+
+
+  /*
+     Roughly half the time, invent a
+     short phrase.
+  */
+
+  if (Math.random() < 0.48) {
+
+    tone1Phrase =
+      createTone1Phrase();
+
+    tone1PhrasePosition = 1;
+    tone1PhraseRepeats = 0;
+
+    return tone1Phrase[0];
+  }
+
+
+  return weightedChoice([
+    {value:0, weight:3},
+    {value:1, weight:10},
+    {value:-1, weight:1},
+    {value:2, weight:1}
+  ]);
+}
+
+
+/* =====================================================
+   TONE 2 PHRASE CREATOR
+===================================================== */
+
+function createTone2Phrase() {
+
+  const length =
+    weightedChoice([
+      {value:2, weight:2},
+      {value:3, weight:5},
+      {value:4, weight:6},
+      {value:5, weight:3}
+    ]);
+
+  const phrase = [];
+
+  let current =
+    Math.floor(
+      Math.random() * 3
+    );
+
+  phrase.push(current);
+
+  for (let i = 1; i < length; i++) {
+
+    const movement =
+      weightedChoice([
+        {value:0, weight:5},
+        {value:1, weight:7},
+        {value:-1, weight:7},
+        {value:2, weight:2},
+        {value:-2, weight:2}
+      ]);
+
+    current += movement;
+
+    while (current < 0) {
+      current += 3;
+    }
+
+    while (current > 2) {
+      current -= 3;
+    }
+
+    phrase.push(current);
+  }
+
+
+  /*
+     Often resolve to the root.
+  */
+
+  if (Math.random() < 0.55) {
+    phrase[phrase.length - 1] = 0;
+  }
+
+  return phrase;
+}
+
+
+/* =====================================================
+   TONE 2 PHRASE PLAYER
+===================================================== */
+
+function getTone2PhraseNote() {
+
+  if (tone2Phrase) {
+
+    const note =
+      tone2Phrase[
+        tone2PhrasePosition
+      ];
+
+    tone2PhrasePosition++;
+
+    if (
+      tone2PhrasePosition >=
+      tone2Phrase.length
+    ) {
+
+      tone2PhrasePosition = 0;
+      tone2PhraseRepeats++;
+
+      /*
+         Original phrase + exact repeat.
+      */
+
+      if (tone2PhraseRepeats >= 2) {
+
+        tone2Phrase = null;
+        tone2PhraseRepeats = 0;
+      }
+    }
+
+    return note;
+  }
+
+
+  /*
+     Tone 2 uses little motifs more often.
+  */
+
+  if (Math.random() < 0.62) {
+
+    tone2Phrase =
+      createTone2Phrase();
+
+    tone2PhrasePosition = 1;
+    tone2PhraseRepeats = 0;
+
+    return tone2Phrase[0];
+  }
+
+
+  return weightedChoice([
+    {value:0, weight:5},
+    {value:1, weight:4},
+    {value:2, weight:4}
+  ]);
 }
 
 
@@ -560,31 +787,18 @@ function createReverbImpulse(
       audio.sampleRate
     );
 
-
-  for (
-    let channel = 0;
-    channel < 2;
-    channel++
-  ) {
+  for (let channel = 0; channel < 2; channel++) {
 
     const data =
-      impulse.getChannelData(
-        channel
-      );
+      impulse.getChannelData(channel);
 
-
-    for (
-      let i = 0;
-      i < length;
-      i++
-    ) {
+    for (let i = 0; i < length; i++) {
 
       const envelope =
         Math.pow(
           1 - i / length,
           decay
         );
-
 
       data[i] =
         (
@@ -593,7 +807,6 @@ function createReverbImpulse(
         envelope;
     }
   }
-
 
   return impulse;
 }
@@ -712,53 +925,22 @@ function buildAudio() {
     audio.createGain();
 
 
-  drumBus.connect(
-    drumSoftFilter
-  );
-
-  drumSoftFilter.connect(
-    lowEQ
-  );
-
-  lowEQ.connect(
-    midEQ
-  );
-
-  midEQ.connect(
-    highEQ
-  );
-
-  highEQ.connect(
-    underwaterFilter
-  );
-
-  underwaterFilter.connect(
-    wobbleFilter
-  );
-
-  wobbleFilter.connect(
-    airFilter
-  );
-
-  airFilter.connect(
-    compressor
-  );
-
-  compressor.connect(
-    masterGain
-  );
-
-  masterGain.connect(
-    audio.destination
-  );
+  drumBus.connect(drumSoftFilter);
+  drumSoftFilter.connect(lowEQ);
+  lowEQ.connect(midEQ);
+  midEQ.connect(highEQ);
+  highEQ.connect(underwaterFilter);
+  underwaterFilter.connect(wobbleFilter);
+  wobbleFilter.connect(airFilter);
+  airFilter.connect(compressor);
+  compressor.connect(masterGain);
+  masterGain.connect(audio.destination);
 
 
   buildReverb();
-
   buildToneBuses();
 
   updateEffects();
-
   modulationLoop();
 }
 
@@ -805,62 +987,40 @@ function buildToneBuses() {
   toneDry =
     audio.createGain();
 
-  toneDry.gain.value =
-    0;
+  toneDry.gain.value = 0;
 
 
   toneReverbSend =
     audio.createGain();
 
-  toneReverbSend.gain.value =
-    0;
+  toneReverbSend.gain.value = 0;
 
 
   tone2Dry =
     audio.createGain();
 
-  tone2Dry.gain.value =
-    0;
+  tone2Dry.gain.value = 0;
 
 
   tone2ReverbSend =
     audio.createGain();
 
-  tone2ReverbSend.gain.value =
-    0;
+  tone2ReverbSend.gain.value = 0;
 
 
-  toneDry.connect(
-    compressor
-  );
+  toneDry.connect(compressor);
+  toneReverbSend.connect(reverb);
 
-  toneReverbSend.connect(
-    reverb
-  );
-
-
-  tone2Dry.connect(
-    compressor
-  );
-
-  tone2ReverbSend.connect(
-    reverb
-  );
+  tone2Dry.connect(compressor);
+  tone2ReverbSend.connect(reverb);
 }
 
 
 /* =====================================================
    TONE 1
 
-   IMPORTANT:
-
-   Every chord creates NEW oscillators.
-
-   There is NO oscillator pitch glide.
-
-   Old chord fades/releases into reverb.
-   New chord begins immediately at its
-   correct pitch.
+   Immediate pitch changes.
+   Reverb supplies the dreamy overlap.
 ===================================================== */
 
 function playToneChord() {
@@ -881,13 +1041,7 @@ function playToneChord() {
 
 
   /*
-     Wide chord voicing.
-
-     Root low.
-     Third above.
-     Fifth an octave higher.
-
-     This avoids muddy clustering.
+     Spacious voicing.
   */
 
   const voiced = [
@@ -916,11 +1070,6 @@ function playToneChord() {
         );
 
 
-      /*
-         Each chord voice has several
-         gently detuned oscillators.
-      */
-
       const detunes =
         [-5, 0, 5];
 
@@ -946,6 +1095,10 @@ function playToneChord() {
               : "sawtooth";
 
 
+          /*
+             INSTANT pitch.
+          */
+
           osc.frequency.setValueAtTime(
             frequency,
             now
@@ -970,13 +1123,6 @@ function playToneChord() {
             0.7;
 
 
-          /*
-             Soft attack, stable pitch,
-             then release.
-
-             No pitch movement.
-          */
-
           gain.gain.setValueAtTime(
             0.001,
             now
@@ -987,7 +1133,7 @@ function playToneChord() {
             voiceIndex === 0
               ? 0.065
               : 0.042,
-            now + 0.12
+            now + 0.10
           );
 
 
@@ -995,7 +1141,7 @@ function playToneChord() {
             voiceIndex === 0
               ? 0.065
               : 0.042,
-            now + 1.0
+            now + 1
           );
 
 
@@ -1005,27 +1151,14 @@ function playToneChord() {
           );
 
 
-          osc.connect(
-            filter
-          );
+          osc.connect(filter);
+          filter.connect(gain);
 
-          filter.connect(
-            gain
-          );
-
-          gain.connect(
-            toneDry
-          );
-
-          gain.connect(
-            toneReverbSend
-          );
+          gain.connect(toneDry);
+          gain.connect(toneReverbSend);
 
 
-          osc.start(
-            now
-          );
-
+          osc.start(now);
 
           osc.stop(
             now + 4.3
@@ -1038,16 +1171,38 @@ function playToneChord() {
 
 
 /* =====================================================
+   ADVANCE TONE 1
+
+   This now includes short repeated
+   harmonic motifs.
+===================================================== */
+
+function advanceChord() {
+
+  const movement =
+    getTone1Movement();
+
+
+  currentChordIndex =
+    (
+      currentChordIndex +
+      movement +
+      progression.length
+    ) %
+    progression.length;
+
+
+  updateChordDisplay();
+
+  playToneChord();
+}
+
+
+/* =====================================================
    TONE 2
 
-   High lush saw arpeggio.
-
-   Immediate pitches.
-
-   Five detuned saws create the lush
-   texture.
-
-   Reverb creates the dreaminess.
+   Lush saw texture + short repeating
+   melodic motifs.
 ===================================================== */
 
 function playTone2Note() {
@@ -1067,36 +1222,25 @@ function playTone2Note() {
     getStrictChordNotes();
 
 
-  /*
-     Musical arp pattern instead of
-     merely cycling 1-2-3.
-  */
-
-  const arpPattern =
-    [0,1,2,1,0,2,1,2];
-
-
   const chordIndex =
-    arpPattern[
-      arpIndex %
-      arpPattern.length
-    ];
+    getTone2PhraseNote();
 
 
   let strictMidi =
-    chord[
-      chordIndex
-    ];
+    chord[chordIndex];
 
 
   /*
-     Keep Tone 2 high and sparkling.
+     Mostly one octave above Tone 1.
+
+     Occasional two-octave sparkle.
   */
 
   strictMidi +=
-    arpIndex % 4 === 3
-      ? 24
-      : 12;
+    weightedChoice([
+      {value:12, weight:8},
+      {value:24, weight:2}
+    ]);
 
 
   const midi =
@@ -1133,10 +1277,6 @@ function playTone2Note() {
     1.1;
 
 
-  /*
-     Fast but soft envelope.
-  */
-
   noteGain.gain.setValueAtTime(
     0.001,
     now
@@ -1155,6 +1295,10 @@ function playTone2Note() {
   );
 
 
+  /*
+     Five subtly detuned saws.
+  */
+
   const detunes =
     [-13,-6,0,6,13];
 
@@ -1171,7 +1315,8 @@ function playTone2Note() {
 
 
       /*
-         INSTANT PITCH.
+         Immediate pitch.
+         No glide.
       */
 
       osc.frequency.setValueAtTime(
@@ -1184,15 +1329,9 @@ function playTone2Note() {
         detune;
 
 
-      osc.connect(
-        filter
-      );
+      osc.connect(filter);
 
-
-      osc.start(
-        now
-      );
-
+      osc.start(now);
 
       osc.stop(
         now + 0.45
@@ -1201,19 +1340,10 @@ function playTone2Note() {
   );
 
 
-  filter.connect(
-    noteGain
-  );
+  filter.connect(noteGain);
 
-
-  noteGain.connect(
-    tone2Dry
-  );
-
-
-  noteGain.connect(
-    tone2ReverbSend
-  );
+  noteGain.connect(tone2Dry);
+  noteGain.connect(tone2ReverbSend);
 
 
   arpIndex++;
@@ -1221,39 +1351,12 @@ function playTone2Note() {
 
 
 /* =====================================================
-   ADVANCE CHORD
-===================================================== */
-
-function advanceChord() {
-
-  currentChordIndex =
-    (
-      currentChordIndex + 1
-    ) %
-    progression.length;
-
-
-  updateChordDisplay();
-
-
-  /*
-     New chord starts immediately.
-  */
-
-  playToneChord();
-}
-
-
-/* =====================================================
    KEY CHANGE
+
+   Every two minutes.
 ===================================================== */
 
 function changeKey() {
-
-  /*
-     Favor neighboring keys in this list,
-     which are generally closely related.
-  */
 
   const direction =
     Math.random() < 0.5
@@ -1280,8 +1383,21 @@ function changeKey() {
 
 
   currentChordIndex = 0;
-
   arpIndex = 0;
+
+
+  /*
+     Forget motifs from the previous key.
+  */
+
+  tone1Phrase = null;
+  tone1PhrasePosition = 0;
+  tone1PhraseRepeats = 0;
+
+  tone2Phrase = null;
+  tone2PhrasePosition = 0;
+  tone2PhraseRepeats = 0;
+
 
   keyStartedAt =
     Date.now();
@@ -1293,14 +1409,6 @@ function changeKey() {
 
 
   updateChordDisplay();
-
-
-  /*
-     Immediate new-key chord.
-
-     Existing reverb from the old chord
-     remains behind it naturally.
-  */
 
   playToneChord();
 }
@@ -1326,7 +1434,7 @@ function updateChordDisplay() {
 
 
 /* =====================================================
-   GIF
+   GIF HIT
 ===================================================== */
 
 function hitAnimation(amount) {
@@ -1438,14 +1546,8 @@ function kick(strength = 1) {
   );
 
 
-  osc.connect(
-    gain
-  );
-
-
-  gain.connect(
-    drumBus
-  );
+  osc.connect(gain);
+  gain.connect(drumBus);
 
 
   osc.start(now);
@@ -1570,19 +1672,9 @@ function snare(strength = 1) {
   );
 
 
-  source.connect(
-    filter
-  );
-
-
-  filter.connect(
-    gain
-  );
-
-
-  gain.connect(
-    drumBus
-  );
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(drumBus);
 
 
   source.start(now);
@@ -1659,19 +1751,9 @@ function hihat(strength = 1) {
   );
 
 
-  source.connect(
-    filter
-  );
-
-
-  filter.connect(
-    gain
-  );
-
-
-  gain.connect(
-    drumBus
-  );
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(drumBus);
 
 
   source.start(now);
@@ -1790,7 +1872,7 @@ function chooseNextPattern() {
 
 
 /* =====================================================
-   DRUM STEP
+   PLAY DRUM STEP
 ===================================================== */
 
 function playDrumStep() {
@@ -1888,6 +1970,11 @@ function playDrumStep() {
     );
   }
 
+
+  /*
+     At higher randomness, occasionally
+     add a completely independent hit.
+  */
 
   if (
     Math.random() <
@@ -1989,12 +2076,10 @@ function scheduleDrums() {
 /* =====================================================
    TONE 1 SPEED
 
-   IMPORTANT:
+   ONLY changes how frequently the
+   harmony changes.
 
-   Speed changes ONLY how long we wait
-   before changing chord.
-
-   It does not touch oscillator pitch.
+   It never changes pitch.
 ===================================================== */
 
 function getTone1Delay() {
@@ -2004,11 +2089,6 @@ function getTone1Delay() {
       $("toneSpeed").value
     );
 
-
-  /*
-     0% = 40 seconds
-     100% = 0.4 seconds
-  */
 
   return (
     40000 *
@@ -2024,11 +2104,6 @@ function scheduleTone1() {
 
   setTimeout(
     () => {
-
-      /*
-         Key changes independently every
-         two minutes.
-      */
 
       if (
         Date.now() -
@@ -2056,10 +2131,8 @@ function scheduleTone1() {
 /* =====================================================
    TONE 2 SPEED
 
-   Again, speed ONLY controls note
-   frequency/timing.
-
-   Pitch is always immediate.
+   ONLY controls how frequently notes
+   occur.
 ===================================================== */
 
 function getTone2Delay() {
@@ -2069,11 +2142,6 @@ function getTone2Delay() {
       $("tone2Speed").value
     );
 
-
-  /*
-     0% = 2.5 sec
-     100% = 45ms
-  */
 
   return (
     2500 *
@@ -2230,10 +2298,8 @@ function updateEffects() {
 
 
   /*
-     Tone volume controls both dry
-     and reverberated signal.
-
-     Reverb is intentionally prominent.
+     Dreaminess comes from reverb,
+     not pitch sliding.
   */
 
   toneDry.gain
@@ -2272,9 +2338,8 @@ function updateEffects() {
 /* =====================================================
    WROBLY
 
-   Wrobly now changes FILTER MOVEMENT.
-
-   It does NOT bend synth pitch.
+   Filter movement only.
+   Does NOT bend pitch.
 ===================================================== */
 
 function modulationLoop() {
@@ -2473,6 +2538,7 @@ $("skipBeat").addEventListener(
 
     if (!audio) return;
 
+
     chooseNextPattern();
 
     drumStep = 0;
@@ -2495,6 +2561,10 @@ $("start").addEventListener(
     $("start").remove();
 
 
+    /*
+       RANDOM STARTING BEAT
+    */
+
     currentPattern =
       Math.floor(
         Math.random() *
@@ -2510,6 +2580,10 @@ $("start").addEventListener(
       Date.now() +
       getBeatSwitchDuration();
 
+
+    /*
+       RANDOM STARTING KEY
+    */
 
     currentKeyIndex =
       Math.floor(
@@ -2542,7 +2616,7 @@ $("start").addEventListener(
 
 
     /*
-       Start the first chord immediately.
+       Start first harmony immediately.
     */
 
     playToneChord();
