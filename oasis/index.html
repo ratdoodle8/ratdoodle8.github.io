@@ -273,6 +273,49 @@ h1 {
   }
 
 }
+
+
+/* =====================================================
+   OASIS LIST BOXES
+===================================================== */
+
+.oasis-list-box {
+  width: min(100%, 1000px);
+  margin: 18px auto 0;
+  padding: 16px;
+  border: 2px solid #0007E6;
+  background: #bcc8cc;
+  text-align: left;
+}
+
+.oasis-list-box h2 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 20px;
+}
+
+.oasis-list-row {
+  padding: 8px 4px;
+  border-bottom: 1px solid #0007E6;
+}
+
+.oasis-list-row:last-child {
+  border-bottom: none;
+}
+
+.oasis-list-name {
+  font-weight: bold;
+}
+
+.oasis-list-death {
+  color: red;
+}
+
+#currentOasisBox,
+#recentlyDeceasedBox {
+  display: none;
+}
+
 </style>
 </head>
 
@@ -288,6 +331,23 @@ h1 {
 
 <div id="oasis">
   <div id="ground"></div>
+</div>
+
+<div class="oasis-list-box" id="currentOasisBox">
+  <h2>Weebies Currently in Oasis</h2>
+  <div id="currentOasisList"></div>
+</div>
+
+<div class="oasis-list-box" id="recentlyDeceasedBox">
+  <h2>Recently Deceased</h2>
+  <div id="recentlyDeceasedList"></div>
+</div>
+
+<div class="oasis-list-box">
+  <h2>Oasis Info Log</h2>
+  <div id="oasisInfoLog">
+    No information yet.
+  </div>
 </div>
 
 
@@ -623,6 +683,12 @@ async function loadOasis() {
     );
 
 
+    updateOasisLists(
+      data.weebies || [],
+      data.deaths || []
+    );
+
+
     updateMyReleaseState(
       data.weebies || [],
       data.deaths || []
@@ -639,6 +705,206 @@ async function loadOasis() {
 
   }
 
+}
+
+
+/* =====================================================
+   OASIS LIST BOXES
+===================================================== */
+
+function updateOasisLists(
+  weebies,
+  deaths
+) {
+
+  const currentBox =
+    document.getElementById(
+      "currentOasisBox"
+    );
+
+  const currentList =
+    document.getElementById(
+      "currentOasisList"
+    );
+
+  const deceasedBox =
+    document.getElementById(
+      "recentlyDeceasedBox"
+    );
+
+  const deceasedList =
+    document.getElementById(
+      "recentlyDeceasedList"
+    );
+
+
+  currentList.innerHTML = "";
+  deceasedList.innerHTML = "";
+
+
+  if (weebies.length > 0) {
+
+    currentBox.style.display =
+      "block";
+
+
+    for (const weebie of weebies) {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "oasis-list-row";
+
+
+      const expires =
+        new Date(
+          weebie.expiresAt
+        ).getTime();
+
+
+      const remaining =
+        Math.max(
+          0,
+          expires -
+          (
+            Date.now() +
+            serverOffset
+          )
+        );
+
+
+      const seconds =
+        Math.ceil(
+          remaining / 1000
+        );
+
+      const minutes =
+        Math.floor(
+          seconds / 60
+        );
+
+      const leftoverSeconds =
+        seconds % 60;
+
+
+      row.innerHTML =
+        `<span class="oasis-list-name">${
+          escapeHtml(
+            weebie.name || "Weebie"
+          )
+        }</span> — ${
+          minutes
+        }:${String(
+          leftoverSeconds
+        ).padStart(2, "0")} remaining`;
+
+
+      currentList.appendChild(
+        row
+      );
+    }
+
+  }
+
+  else {
+
+    currentBox.style.display =
+      "none";
+
+  }
+
+
+  if (deaths.length > 0) {
+
+    deceasedBox.style.display =
+      "block";
+
+
+    for (const death of deaths) {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "oasis-list-row oasis-list-death";
+
+
+      const died =
+        new Date(
+          death.diedAt
+        ).getTime();
+
+
+      const elapsed =
+        Math.max(
+          0,
+          (
+            Date.now() +
+            serverOffset
+          ) -
+          died
+        );
+
+
+      const seconds =
+        Math.floor(
+          elapsed / 1000
+        );
+
+      const minutes =
+        Math.floor(
+          seconds / 60
+        );
+
+      const leftoverSeconds =
+        seconds % 60;
+
+
+      row.innerHTML =
+        `☠ <span class="oasis-list-name">${
+          escapeHtml(
+            death.name || "Weebie"
+          )
+        }</span> — died ${
+          minutes
+        }:${String(
+          leftoverSeconds
+        ).padStart(2, "0")} ago`;
+
+
+      deceasedList.appendChild(
+        row
+      );
+    }
+
+  }
+
+  else {
+
+    deceasedBox.style.display =
+      "none";
+
+  }
+
+}
+
+
+function escapeHtml(value) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    String(value ?? "");
+
+  return div.innerHTML;
 }
 
 
@@ -820,8 +1086,6 @@ function syncWeebies(
   }
 
 }
-
-
 /* =====================================================
    CREATE WEEBIE
 ===================================================== */
@@ -1668,8 +1932,6 @@ function playInteraction(
   );
 
 }
-
-
 /* =====================================================
    ANIMATION
 ===================================================== */
