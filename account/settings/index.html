@@ -385,6 +385,28 @@ let loading = true;
 ===================================================== */
 
 async function api(
+function getSessionToken() {
+  return localStorage.getItem("rd_session");
+}
+
+
+function authHeaders() {
+
+  const headers = {
+    "Content-Type":
+      "application/json"
+  };
+
+  const token =
+    getSessionToken();
+
+  if (token) {
+    headers["Authorization"] =
+      "Bearer " + token;
+  }
+
+  return headers;
+}
   path,
   options = {}
 ) {
@@ -398,15 +420,14 @@ async function api(
 
         ...options,
 
-        headers: {
-          "Content-Type":
-            "application/json",
+headers: {
+  ...authHeaders(),
 
-          ...(
-            options.headers ||
-            {}
-          )
-        }
+  ...(
+    options.headers ||
+    {}
+  )
+}
       }
     );
 
