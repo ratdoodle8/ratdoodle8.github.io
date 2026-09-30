@@ -83,4 +83,88 @@
       "Light": "swag"
     }
   }
+
+
+  "P1": {
+    "number": "P1",
+    "name": "Wilmur",
+    "subname": "The Garden Elder",
+    "description": "GLi Core - The Man Who Grows Flowers (in the Garden of Hope, the Elder of Hope)",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P2": {
+    "number": "P2",
+    "name": "The HoneyComb Princess",
+    "subname": "Herald of the Sun",
+    "description": "Li Core - The Emerald Spirit",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P3": {
+    "number": "P3",
+    "name": "Chicken Lifter",
+    "subname": "Edwin "Eagle" Edwards",
+    "description": "GRi Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P4": {
+    "number": "P4",
+    "name": "The Vampire Empress of Death",
+    "subname": "- - -",
+    "description": "DEA Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P5": {
+    "number": "P5",
+    "name": "DJFlamingJaguar420🔥",
+    "subname": "Magician of Air",
+    "description": "LEA Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P6": {
+    "number": "P6",
+    "name": "The Prism Wizard",
+    "subname": "- - -",
+    "description": "GLi Core - The Man Who Grows Flowers (in the Garden of Hope, the Elder of Hope)",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P7": {
+    "number": "P7",
+    "name": "CK",
+    "subname": "The Girl and the Blue Dragon",
+    "description": "PRi Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P8": {
+    "number": "P8",
+    "name": "The All Chicken",
+    "subname": "The Golden Dragon",
+    "description": "AL Core - The Phonenix of Gold",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "P9": {
+    "number": "P9",
+    "name": "The Venus Warlock",
+    "subname": "- - -",
+    "description": "iLG Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  }
+
 }
