@@ -194,54 +194,54 @@
   },
   "S4": {
     "number": "S4",
-    "name": "The Vampire Empress of Death",
+    "name": "Bok Man",
     "subname": "- - -",
-    "description": "DEA Core - ",
+    "description": "- - -",
     "coreLore": {
       "Light": "swag"
     }
   },
   "S5": {
     "number": "S5",
-    "name": "DJFlamingJaguar420🔥",
-    "subname": "Magician of Air",
-    "description": "LEA Core - ",
-    "coreLore": {
-      "Light": "swag"
-    }
-  },
-  "S6": {
-    "number": "S6",
-    "name": "The Prism Wizard",
+    "name": "Spike Lad",
     "subname": "- - -",
-    "description": "GLi Core - The Man Who Grows Flowers (in the Garden of Hope, the Elder of Hope)",
+    "description": "- - -",
     "coreLore": {
       "Light": "swag"
     }
   },
   "S7": {
-    "number": "P7",
-    "name": "CK",
-    "subname": "The Girl and the Blue Dragon",
-    "description": "PRi Core - ",
+    "number": "S7",
+    "name": "Haunter",
+    "subname": "- - -",
+    "description": "- - -",
     "coreLore": {
       "Light": "swag"
     }
   },
   "S8": {
-    "number": "P8",
-    "name": "The All Chicken",
-    "subname": "The Golden Dragon",
-    "description": "AL Core - The Phonenix of Gold",
+    "number": "S8",
+    "name": "Tele Porter",
+    "subname": "- - -",
+    "description": "- - -",
     "coreLore": {
       "Light": "swag"
     }
   },
   "S9": {
-    "number": "P9",
-    "name": "The Venus Warlock",
+    "number": "S9",
+    "name": "Plant Bot",
     "subname": "- - -",
-    "description": "iLG Core - ",
+    "description": "- - -",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S10": {
+    "number": "S10",
+    "name": "Venger",
+    "subname": "- - -",
+    "description": "- - -",
     "coreLore": {
       "Light": "swag"
     }
