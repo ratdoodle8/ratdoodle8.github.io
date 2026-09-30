@@ -31,7 +31,7 @@
 
         main {
             width: 100%;
-            max-width: 800px;
+            max-width: 1100px;
 
             margin: 0 auto;
         }
@@ -208,6 +208,14 @@
             font-weight: bold;
         }
 
+        .reported-username {
+            margin: 0 0 6px;
+
+            font-size: 13px;
+
+            font-weight: bold;
+        }
+
         .report-date {
             margin: 0 0 18px;
 
@@ -225,19 +233,23 @@
             line-height: 1.5;
         }
 
+
+        /* ============================================= */
+        /* REPORT IMAGE                                  */
+        /* ============================================= */
+
         .report-image {
             display: block;
 
-
-    width: auto;
-    max-width: min(100%, 1000px);
-    height: auto;
-
+            width: auto;
+            max-width: min(100%, 1000px);
+            height: auto;
 
             margin: 18px auto 0;
 
             object-fit: contain;
         }
+
 
         #empty-message {
             display: none;
@@ -292,7 +304,7 @@
 
 
         <!-- ============================================= -->
-        <!-- REPORTS                                       -->
+        <!-- REPORT LOG                                    -->
         <!-- ============================================= -->
 
         <div id="report-area">
@@ -345,11 +357,14 @@
     <script>
 
         // ======================================================
-        // EXISTING NEWS WORKER
+        // SETTINGS
         // ======================================================
 
         const WORKER_URL =
             "https://news-upload.ratdoodle8.workers.dev";
+
+        const SITE_URL =
+            "https://ratdoodle.com";
 
 
         // ======================================================
@@ -533,11 +548,6 @@
                 );
 
 
-                // Accept either:
-                // { reports: [...] }
-                // or
-                // { reports: { "1": {...}, "2": {...} } }
-
                 if (
                     Array.isArray(
                         result.reports
@@ -554,10 +564,12 @@
                             result.reports || {}
                         ).map(
                             ([number, report]) => ({
+
                                 number:
                                     Number(number),
 
                                 ...report
+
                             })
                         );
 
@@ -602,6 +614,56 @@
                     "View Report Log";
 
             }
+
+        }
+
+
+        // ======================================================
+        // REPORT IMAGE URL
+        // ======================================================
+
+        function getReportImageURL(
+            imagePath
+        ) {
+
+            if (!imagePath) {
+
+                return "";
+
+            }
+
+
+            if (
+                imagePath.startsWith(
+                    "https://"
+                ) ||
+                imagePath.startsWith(
+                    "http://"
+                )
+            ) {
+
+                return imagePath;
+
+            }
+
+
+            if (
+                imagePath.startsWith("/")
+            ) {
+
+                return (
+                    SITE_URL +
+                    imagePath
+                );
+
+            }
+
+
+            return (
+                SITE_URL +
+                "/" +
+                imagePath
+            );
 
         }
 
@@ -665,7 +727,7 @@
 
 
                 // ==========================================
-                // NAME
+                // REPORTER NAME
                 // ==========================================
 
                 const name =
@@ -676,6 +738,7 @@
                 name.className =
                     "report-name";
 
+
                 name.textContent =
                     report.name ||
                     "Anonymous";
@@ -684,6 +747,41 @@
                 article.appendChild(
                     name
                 );
+
+
+                // ==========================================
+                // REPORTED USERNAME
+                // ==========================================
+
+                if (
+                    report.reportedUsername &&
+                    String(
+                        report.reportedUsername
+                    ).trim()
+                ) {
+
+                    const reportedUsername =
+                        document.createElement(
+                            "p"
+                        );
+
+
+                    reportedUsername.className =
+                        "reported-username";
+
+
+                    reportedUsername.textContent =
+                        "Reported User: " +
+                        String(
+                            report.reportedUsername
+                        ).trim();
+
+
+                    article.appendChild(
+                        reportedUsername
+                    );
+
+                }
 
 
                 // ==========================================
@@ -739,6 +837,7 @@
                 body.className =
                     "report-body";
 
+
                 body.textContent =
                     report.body || "";
 
@@ -752,18 +851,30 @@
                 // IMAGE
                 // ==========================================
 
-                if (report.image) {
+                if (
+                    report.image &&
+                    String(
+                        report.image
+                    ).trim()
+                ) {
 
                     const image =
                         document.createElement(
                             "img"
                         );
 
+
                     image.className =
                         "report-image";
 
+
                     image.src =
-                        report.image;
+                        getReportImageURL(
+                            String(
+                                report.image
+                            ).trim()
+                        );
+
 
                     image.alt =
                         "Report attachment";
@@ -799,7 +910,10 @@
             "keydown",
             event => {
 
-                if (event.key === "Enter") {
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
 
                     loadReports();
 
