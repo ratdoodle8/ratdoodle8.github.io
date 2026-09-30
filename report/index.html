@@ -209,13 +209,13 @@
 
 
             <!-- ========================================= -->
-            <!-- NAME / USERNAME                           -->
+            <!-- MY NAME / USERNAME                        -->
             <!-- ========================================= -->
 
             <div class="field">
 
                 <label for="name">
-                    Name / Username
+                    My Name / Username
                 </label>
 
                 <input
@@ -227,6 +227,30 @@
 
                 <p class="note">
                     Leave blank to be anonymous.
+                </p>
+
+            </div>
+
+
+            <!-- ========================================= -->
+            <!-- REPORTED USERNAME                         -->
+            <!-- ========================================= -->
+
+            <div class="field">
+
+                <label for="reported-username">
+                    The Username of the Stinky Bully! (if its about one)
+                </label>
+
+                <input
+                    id="reported-username"
+                    name="reported-username"
+                    type="text"
+                    autocomplete="off"
+                >
+
+                <p class="note">
+                    Optional.
                 </p>
 
             </div>
@@ -270,7 +294,7 @@
                     id="image"
                     name="image"
                     type="file"
-                    accept="image/*"
+                    accept="image/png,image/jpeg,image/gif,image/webp"
                 >
 
                 <p class="note">
@@ -336,6 +360,11 @@
                 "name"
             );
 
+        const reportedUsernameInput =
+            document.getElementById(
+                "reported-username"
+            );
+
         const bodyInput =
             document.getElementById(
                 "body"
@@ -389,6 +418,9 @@
                 const name =
                     nameInput.value.trim();
 
+                const reportedUsername =
+                    reportedUsernameInput.value.trim();
+
                 const body =
                     bodyInput.value.trim();
 
@@ -431,15 +463,24 @@
                     const formData =
                         new FormData();
 
+
                     formData.append(
                         "name",
                         name
                     );
 
+
+                    formData.append(
+                        "reportedUsername",
+                        reportedUsername
+                    );
+
+
                     formData.append(
                         "body",
                         body
                     );
+
 
                     if (image) {
 
@@ -504,6 +545,9 @@
 
 
                     nameInput.value =
+                        "";
+
+                    reportedUsernameInput.value =
                         "";
 
                     bodyInput.value =
