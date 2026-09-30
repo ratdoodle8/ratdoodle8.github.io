@@ -2,12 +2,23 @@
 // Find current character folder
 // ======================================================
 
-const characterID =
+const pathParts =
     window.location.pathname
         .split("/")
-        .filter(Boolean)
-        .pop();
+        .filter(Boolean);
 
+let characterID =
+    pathParts[pathParts.length - 1];
+
+if (
+    characterID.toLowerCase() === "index.html"
+) {
+    characterID =
+        pathParts[pathParts.length - 2];
+}
+
+characterID =
+    characterID.toUpperCase();
 
 // ======================================================
 // Set favicon
