@@ -384,9 +384,12 @@ let loading = true;
    API
 ===================================================== */
 
-async function api(
 function getSessionToken() {
-  return localStorage.getItem("rd_session");
+
+  return localStorage.getItem(
+    "rd_session"
+  );
+
 }
 
 
@@ -397,16 +400,25 @@ function authHeaders() {
       "application/json"
   };
 
+
   const token =
     getSessionToken();
 
+
   if (token) {
+
     headers["Authorization"] =
       "Bearer " + token;
+
   }
 
+
   return headers;
+
 }
+
+
+async function api(
   path,
   options = {}
 ) {
@@ -420,14 +432,14 @@ function authHeaders() {
 
         ...options,
 
-headers: {
-  ...authHeaders(),
+        headers: {
+          ...authHeaders(),
 
-  ...(
-    options.headers ||
-    {}
-  )
-}
+          ...(
+            options.headers ||
+            {}
+          )
+        }
       }
     );
 
@@ -451,12 +463,13 @@ headers: {
       data.error ||
       "Request failed."
     );
+
   }
 
 
   return data;
-}
 
+}
 
 
 /* =====================================================
