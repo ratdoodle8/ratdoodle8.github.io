@@ -82,9 +82,7 @@
     "coreLore": {
       "Light": "swag"
     }
-  }
-
-
+  },
   "P1": {
     "number": "P1",
     "name": "Wilmur",
@@ -106,7 +104,7 @@
   "P3": {
     "number": "P3",
     "name": "Chicken Lifter",
-    "subname": "Edwin "Eagle" Edwards",
+    "subname": "Edwin \"Eagle\" Edwards",
     "description": "GRi Core - ",
     "coreLore": {
       "Light": "swag"
@@ -166,5 +164,4 @@
       "Light": "swag"
     }
   }
-
 }
