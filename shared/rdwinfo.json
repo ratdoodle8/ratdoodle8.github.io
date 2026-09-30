@@ -163,5 +163,88 @@
     "coreLore": {
       "Light": "swag"
     }
+  },
+
+  "S1": {
+    "number": "S1",
+    "name": "J.P. Riley Investigator",
+    "subname": "- - -",
+    "description": "- - -",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S2": {
+    "number": "S2",
+    "name": "The Ancient Ponderer",
+    "subname": "- - -",
+    "description": "- - -",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S3": {
+    "number": "S3",
+    "name": "Tattle Tail the Fox",
+    "subname": "- - -",
+    "description": "- - -",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S4": {
+    "number": "S4",
+    "name": "The Vampire Empress of Death",
+    "subname": "- - -",
+    "description": "DEA Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S5": {
+    "number": "S5",
+    "name": "DJFlamingJaguar420🔥",
+    "subname": "Magician of Air",
+    "description": "LEA Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S6": {
+    "number": "S6",
+    "name": "The Prism Wizard",
+    "subname": "- - -",
+    "description": "GLi Core - The Man Who Grows Flowers (in the Garden of Hope, the Elder of Hope)",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S7": {
+    "number": "P7",
+    "name": "CK",
+    "subname": "The Girl and the Blue Dragon",
+    "description": "PRi Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S8": {
+    "number": "P8",
+    "name": "The All Chicken",
+    "subname": "The Golden Dragon",
+    "description": "AL Core - The Phonenix of Gold",
+    "coreLore": {
+      "Light": "swag"
+    }
+  },
+  "S9": {
+    "number": "P9",
+    "name": "The Venus Warlock",
+    "subname": "- - -",
+    "description": "iLG Core - ",
+    "coreLore": {
+      "Light": "swag"
+    }
   }
+
 }
