@@ -948,8 +948,11 @@ function getMissingDefinitions(
         return false;
       }
 
-      const value =
-        stats[definition.id];
+      // Eyelashes is intentionally hidden from visible stats.
+      // The Worker sends its saved value separately for the artwork.
+      const value = definition.id === "eyelashes"
+        ? (stats.eyelashes ?? weebie.eyelashes)
+        : stats[definition.id];
 
       return (
         value === undefined ||
