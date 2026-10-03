@@ -399,7 +399,7 @@ h1 {
 }
 
 </style>
-<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-6">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-7">
 </head>
 
 <body>
@@ -2375,14 +2375,8 @@ function checkInteractions(
       now + 1800;
 
 
-    if (window.OasisBattle && !window.OasisBattle.trigger(first.actor.data.id,second.actor.data.id,now)) continue;
-    playInteraction(
-      first.actor
-    );
-
-    playInteraction(
-      second.actor
-    );
+    if(window.OasisBattle){window.OasisBattle.trigger(first.actor.data.id,second.actor.data.id,now);}
+    else {playInteraction(first.actor);playInteraction(second.actor);}
 
   }
 
@@ -2542,7 +2536,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=encounters-6"></script>
+<script src="/shared/oasis-battles.js?v=encounters-7"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>
