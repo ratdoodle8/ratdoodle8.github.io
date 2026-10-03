@@ -399,6 +399,7 @@ h1 {
 }
 
 </style>
+<link rel="stylesheet" href="/shared/weebie-progression.css">
 </head>
 
 <body>
@@ -783,6 +784,7 @@ async function loadOasis() {
     }
 
 
+    window.OasisBattle?.sync(data);
     syncWeebies(
       data.weebies || []
     );
@@ -1145,6 +1147,10 @@ function updateOasisLists(
             weebie.xp || 0
           );
 
+
+        const levelLabel=document.createElement('div');
+        levelLabel.textContent='Level '+Number(weebie.level||0);
+        levelLabel.style.fontSize='12px';xpCell.appendChild(levelLabel);
 
         /* OWNER */
 
@@ -2363,6 +2369,7 @@ function checkInteractions(
       now + 1800;
 
 
+    window.OasisBattle?.trigger(first.actor.data.id,second.actor.data.id,now);
     playInteraction(
       first.actor
     );
@@ -2418,6 +2425,9 @@ function animate() {
     serverOffset;
 
 
+  const timerNow=window.OasisBattle?.timerTime(now) ?? now;
+  const motionNow=window.OasisBattle?.motionTime(now) ?? now;
+
   const positions =
     [];
 
@@ -2445,14 +2455,14 @@ function animate() {
       const x =
         getHorizontalPosition(
           weebie,
-          now
+          motionNow
         );
 
 
       const jump =
         getJumpHeight(
           weebie,
-          now
+          motionNow
         );
 
 
@@ -2474,7 +2484,7 @@ function animate() {
 
     updateLivingTimer(
       actor,
-      now
+      timerNow
     );
 
   }
@@ -2487,15 +2497,17 @@ function animate() {
 
     updateDeathMarker(
       marker,
-      now
+      timerNow
     );
 
   }
 
 
-  checkInteractions(
+  window.OasisBattle?.addMushrooms(positions);
+
+  if(!window.OasisBattle?.isFrozen()) checkInteractions(
     positions,
-    now
+    motionNow
   );
 
 
@@ -2518,5 +2530,7 @@ requestAnimationFrame(
 
 </script>
 
+<script src="/shared/oasis-battles.js"></script>
+<script src="/shared/weebie-progression.js"></script>
 </body>
 </html>

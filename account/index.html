@@ -306,6 +306,7 @@
     }
 
   </style>
+<link rel="stylesheet" href="/shared/weebie-progression.css">
 </head>
 
 
@@ -1180,6 +1181,10 @@ async function loadAccount() {
 function showWeebie(
   weebie
 ) {
+  let levelStat=document.getElementById('accountLevelStat');
+  if(!levelStat){levelStat=document.createElement('p');levelStat.id='accountLevelStat';levelStat.className='stat';document.getElementById('weebieDisplay').appendChild(levelStat);}
+  levelStat.textContent='Level: '+Number(weebie.level||0);
+  window.WeebieProgression?.refresh();
 
   weebieSetup.style.display =
     "none";
@@ -2884,5 +2889,6 @@ loadAccount();
 
 </script>
 
+<script src="/shared/weebie-progression.js"></script>
 </body>
 </html>

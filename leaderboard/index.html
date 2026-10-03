@@ -612,6 +612,10 @@ function renderRows(weebies) {
       ).toLocaleString();
 
 
+    const levelLabel=document.createElement('div');
+    levelLabel.textContent='Level '+Number(weebie.level||0);
+    levelLabel.style.fontSize='12px';xpCell.appendChild(levelLabel);
+
     const ownerCell =
       makeCell("owner");
 
