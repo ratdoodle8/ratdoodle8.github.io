@@ -415,6 +415,10 @@ h1 {
 @keyframes oasis-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg) scale(1.04)}60%{transform:rotate(7deg)}}
 @keyframes oasis-bot-wiggle{25%{rotate:-8deg}60%{rotate:6deg}}
 @media(prefers-reduced-motion:reduce){#oasis .wp-battle-message,#oasis .meet .weebie-body,#oasis .wp-mushroom.meet{animation:none!important}}
+
+#oasis .fight-cooldown .weebie-body,#oasis .wp-mushroom.fight-cooldown{animation:oasis-rest-flash 800ms ease-in-out infinite;animation-play-state:running!important}
+@keyframes oasis-rest-flash{0%,100%{opacity:1}50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){#oasis .fight-cooldown .weebie-body,#oasis .wp-mushroom.fight-cooldown{animation:none!important;opacity:.7}}
 </style>
 <link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-8">
 </head>
@@ -2480,7 +2484,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=contact-fix-11"></script>
+<script src="/shared/oasis-battles.js?v=single-contact-12"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>

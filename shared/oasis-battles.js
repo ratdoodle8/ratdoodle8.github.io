@@ -2,11 +2,13 @@
  'use strict';
  const api='https://ratdoodle-accounts.ratdoodle8.workers.dev',scene=document.getElementById('oasis');
  let world={frozen_total:0,battle_start:0,battle_until:0},mobs=[],offset=0,requesting=false,ownerId=null,encounter=null,overlay=null,overlayKey='',acknowledged=false;
- const mobActors=new Map(),contactLatch=new Set(),retryAfter=new Map();
+ const mobActors=new Map(),contactLatch=new Set(),retryAfter=new Map(),cooldowns=new Map();
  let requestMotionAt=null,collisionRects=new Map(),rollingId=null,queuedRoll=false;
  const now=()=>Date.now()+offset;
  const token=()=>typeof getSessionToken==='function'?getSessionToken():null;
  function auth(){const h={'Content-Type':'application/json'};if(token())h.Authorization='Bearer '+token();return h;}
+ function actorById(id){return id<0?mobActors.get(-id):typeof actors!=='undefined'?actors.get(String(id)):null;}
+ function updateCooldowns(){const t=now();for(const [id,until] of cooldowns){const actor=actorById(id);if(until<=t){actor?.element.classList.remove('fight-cooldown');cooldowns.delete(id);}else actor?.element.classList.add('fight-cooldown');}}
  function isFrozen(){return requesting||now()<world.battle_until;}
  function timerTime(t){return t+Math.max(0,world.battle_until-t);}
  function motionTime(t){if(requesting&&requestMotionAt!==null&&t>=world.battle_until)return requestMotionAt;return t-world.frozen_total+Math.max(0,world.battle_until-t);}
@@ -20,7 +22,16 @@
   if(data.serverTime)offset=Date.parse(data.serverTime)-Date.now();
   if(data.battleWorld)world=data.battleWorld;
   if(data.mushrooms){mobs=data.mushrooms.slice(0,2);const live=new Set(mobs.map(m=>m.id));for(const [id,a] of mobActors)if(!live.has(id)){a.element.remove();mobActors.delete(id);}}
-  if('encounter' in data){const oldId=encounter?.id;encounter=data.encounter;if(encounter?.id!==oldId){acknowledged=false;overlayKey='';}if(encounter&&now()<encounter.end_at){contactLatch.add(pairKey(encounter.a,encounter.b||-encounter.mushroom_id));}}
+  if('encounter' in data){
+   const incoming=data.encounter,oldId=encounter?.id;
+   // A late page refresh must not erase or regress an encounter already accepted.
+   if(!(encounter&&(!incoming&&now()<encounter.end_at||incoming&&incoming.id<encounter.id||incoming?.id===encounter.id&&encounter.applied&&!incoming.applied))){
+    encounter=incoming;
+    if(encounter?.id!==oldId){acknowledged=false;if(!requesting)overlayKey='';}
+    if(encounter){const ids=[encounter.a,encounter.b||-encounter.mushroom_id];for(const id of ids)cooldowns.set(id,encounter.end_at+20000);if(now()<encounter.end_at)contactLatch.add(pairKey(...ids));}
+   }
+  }
+  updateCooldowns();
   renderEncounter();applyFreeze();
  }
  let lastFrozen=null;
@@ -34,15 +45,21 @@
  async function poll(){if(document.hidden||polling||requesting||rollingId!==null)return;polling=true;try{const r=await fetch(api+'/oasis/battle-state');if(r.ok)sync(await r.json());}catch(e){console.error('Battle sync:',e);}finally{polling=false;}}
  function trigger(a,b,time){
   a=Number(a);b=Number(b);
-  const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null||now()<(retryAfter.get(key)||0))return false;
+  const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null||now()<(cooldowns.get(a)||0)||now()<(cooldowns.get(b)||0)||now()<(retryAfter.get(key)||0))return false;
   requesting=true;requestMotionAt=time;contactLatch.add(key);applyFreeze();
   overlay?.remove();overlay=document.createElement('div');overlay.className='wp-battle-message';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label','Oasis contact');
-  const meeting=document.createElement('strong');meeting.textContent='Ready to roll?';const quickRoll=document.createElement('button');quickRoll.textContent='Roll';quickRoll.onclick=()=>{queuedRoll=true;quickRoll.disabled=true;meeting.textContent='Rolling…';quickRoll.textContent='Good luck! ♡';};overlay.append(meeting,quickRoll);scene.append(overlay);overlayKey='contact';
+  const meeting=document.createElement('strong');meeting.textContent='Checking contact… ♡';const quickRoll=document.createElement('button');quickRoll.textContent='Roll';quickRoll.onclick=()=>{queuedRoll=true;quickRoll.disabled=true;meeting.textContent='Your Roll is queued ♡';quickRoll.textContent='Connecting…';};overlay.append(meeting,quickRoll);scene.append(overlay);overlayKey='contact';
   const mushroomId=a<0?-a:b<0?-b:null;
   const body=mushroomId?{a:a>0?a:b,mushroomId,time}:{a,b,time};
   body.sceneWidth=Math.min(1000,scene.clientWidth);body.bodySize=window.matchMedia('(max-width: 600px)').matches?78:100;
-  (async()=>{try{const r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});const result=await r.json();if(r.ok){sync(result);if(!result.accepted){contactLatch.delete(key);retryAfter.set(key,now()+1000);}if(result.accepted&&queuedRoll){queuedRoll=false;void roll();}if(!result.accepted)queuedRoll=false;if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{contactLatch.delete(key);retryAfter.set(key,now()+1000);}if(typeof loadOasis==='function')void loadOasis();}catch(e){contactLatch.delete(key);retryAfter.set(key,now()+1000);console.error('Battle:',e);}finally{requesting=false;queuedRoll=false;requestMotionAt=null;renderEncounter();applyFreeze();}})();
+  (async()=>{try{let r,result;for(let attempt=0;attempt<5;attempt++){r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});result=await r.json();if(!result.busy||attempt===4)break;await new Promise(resolve=>setTimeout(resolve,120));}if(r.ok){sync(result);if(result.accepted)overlayKey='';if(!result.accepted){retryAfter.set(key,now()+20000);}if(result.accepted&&queuedRoll){queuedRoll=false;void roll();}if(!result.accepted)queuedRoll=false;if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{retryAfter.set(key,now()+20000);}if(typeof loadOasis==='function')void loadOasis();}catch(e){retryAfter.set(key,now()+20000);console.error('Battle:',e);}finally{requesting=false;queuedRoll=false;requestMotionAt=null;if(overlayKey==='contact')showContactError();renderEncounter();applyFreeze();}})();
   return true;
+ }
+ function showContactError(){
+  if(!overlay)return;
+  overlayKey='contact-error';overlay.replaceChildren();
+  const message=document.createElement('p');message.textContent='This contact did not start a fight. Let them separate and try again.';
+  const close=document.createElement('button');close.textContent='Okay';close.onclick=()=>{overlay?.remove();overlay=null;overlayKey='';renderEncounter();};overlay.append(message,close);
  }
  async function roll(){
   if(!encounter||rollingId!==null||encounter.applied)return;
@@ -76,6 +93,7 @@
  }
  function setText(node,value){if(node.textContent!==value)node.textContent=value;}
  function renderEncounter(){
+  if(overlayKey==='contact-error')return;
   if(requesting&&overlayKey==='contact')return;
   if(!encounter||acknowledged||now()>=encounter.end_at){overlay?.remove();overlay=null;overlayKey='';return;}
   const stage=rollingId===encounter.id?'rolling':now()<encounter.roll_at?'waiting':!encounter.applied?'rolling':'result';
@@ -114,5 +132,5 @@
  }
  window.OasisBattle={identify:id=>{ownerId=Number(id);},sync,trigger,isFrozen,motionTime,timerTime,addMushrooms,overlap,observeContacts};
  (async()=>{try{const r=await fetch(api+'/account?view=oasis',{credentials:'include',headers:auth()});if(r.ok){const d=await r.json();ownerId=d.weebie?.id??null;}}catch(e){console.error(e);}})();
- poll();setInterval(poll,1000);setInterval(()=>{renderEncounter();applyFreeze();},80);
+ poll();setInterval(poll,1000);setInterval(()=>{renderEncounter();applyFreeze();updateCooldowns();},80);
 })();
