@@ -399,7 +399,7 @@ h1 {
 }
 
 </style>
-<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-4">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-5">
 </head>
 
 <body>
@@ -740,7 +740,10 @@ releaseButton.addEventListener(
    LOAD OASIS
 ===================================================== */
 
+let oasisLoadPending=false;
 async function loadOasis() {
+  if(oasisLoadPending||document.hidden)return;
+  oasisLoadPending=true;
 
   try {
 
@@ -817,6 +820,7 @@ async function loadOasis() {
 
   }
 
+  finally { oasisLoadPending=false; }
 }
 
 
@@ -2420,7 +2424,14 @@ function playInteraction(
    ANIMATION
 ===================================================== */
 
-function animate() {
+let lastOasisFrame=-Infinity,lastOasisTimer=-Infinity;
+function animate(frameTime=performance.now()) {
+  requestAnimationFrame(animate);
+  // Absolute server time drives movement; screen refresh rate never advances it.
+  if(document.hidden||frameTime-lastOasisFrame<1000/30-0.5)return;
+  lastOasisFrame=frameTime;
+  const refreshTimers=frameTime-lastOasisTimer>=250;
+  if(refreshTimers)lastOasisTimer=frameTime;
 
   const now =
     Date.now() +
@@ -2484,7 +2495,7 @@ function animate() {
     }
 
 
-    updateLivingTimer(
+    if(refreshTimers) updateLivingTimer(
       actor,
       timerNow
     );
@@ -2497,7 +2508,7 @@ function animate() {
     of deathMarkers.values()
   ) {
 
-    updateDeathMarker(
+    if(refreshTimers) updateDeathMarker(
       marker,
       timerNow
     );
@@ -2514,9 +2525,7 @@ function animate() {
   );
 
 
-  requestAnimationFrame(
-    animate
-  );
+
 
 }
 
@@ -2533,7 +2542,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=encounters-4"></script>
+<script src="/shared/oasis-battles.js?v=encounters-5"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>

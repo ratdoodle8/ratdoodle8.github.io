@@ -16,15 +16,17 @@
  function sync(data){
   if(data.serverTime)offset=Date.parse(data.serverTime)-Date.now();
   if(data.battleWorld)world=data.battleWorld;
-  if(data.mushrooms){mobs=data.mushrooms;const live=new Set(mobs.map(m=>m.id));for(const [id,a] of mobActors)if(!live.has(id)){a.element.remove();mobActors.delete(id);}}
+  if(data.mushrooms){mobs=data.mushrooms.slice(0,2);const live=new Set(mobs.map(m=>m.id));for(const [id,a] of mobActors)if(!live.has(id)){a.element.remove();mobActors.delete(id);}}
   if('encounter' in data){const oldId=encounter?.id;encounter=data.encounter;if(encounter?.id!==oldId){acknowledged=false;overlayKey='';}if(encounter){contactLatch.add(pairKey(encounter.a,encounter.b||-encounter.mushroom_id));}}
-  renderEncounter();applyFreeze();
+  renderEncounter();applyFreeze(true);
  }
- function applyFreeze(){const frozen=isFrozen();scene.querySelectorAll('.weebie,.weebie *, .death-marker,.death-marker *, .wp-mushroom').forEach(n=>n.style.animationPlayState=frozen?'paused':'');}
+ let lastFrozen=null;
+ function applyFreeze(force=false){const frozen=isFrozen();if(!force&&frozen===lastFrozen)return;lastFrozen=frozen;scene.querySelectorAll('.weebie,.weebie *, .death-marker,.death-marker *, .wp-mushroom').forEach(n=>n.style.animationPlayState=frozen?'paused':'');}
  function addMushrooms(positions){
   for(const m of mobs){let a=mobActors.get(m.id);if(!a){const img=document.createElement('img');img.src='/shared/eraser-bot.png';img.alt='Eraser-Bot';img.className='wp-mushroom';img.style.left=m.x+'%';scene.append(img);a={element:img,data:{id:-m.id},interactionUntil:0};mobActors.set(m.id,a);}positions.push({actor:a,x:m.x});}
  }
- async function poll(){if(document.hidden)return;try{const r=await fetch(api+'/oasis/battle-state');if(r.ok)sync(await r.json());}catch(e){console.error('Battle sync:',e);}}
+ let polling=false;
+ async function poll(){if(document.hidden||polling)return;polling=true;try{const r=await fetch(api+'/oasis/battle-state');if(r.ok)sync(await r.json());}catch(e){console.error('Battle sync:',e);}finally{polling=false;}}
  function trigger(a,b,time){
   const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null)return false;
   requesting=true;contactLatch.add(key);applyFreeze();
@@ -52,5 +54,5 @@
  }
  window.OasisBattle={sync,trigger,isFrozen,motionTime,timerTime,addMushrooms,overlap,observeContacts};
  (async()=>{try{const r=await fetch(api+'/account',{credentials:'include',headers:auth()});if(r.ok){const d=await r.json();ownerId=d.weebie?.id??null;}}catch(e){console.error(e);}})();
- poll();setInterval(poll,400);setInterval(()=>{renderEncounter();applyFreeze();},80);
+ poll();setInterval(poll,1000);setInterval(()=>{renderEncounter();applyFreeze();},80);
 })();
