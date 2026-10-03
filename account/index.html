@@ -306,7 +306,7 @@
     }
 
   </style>
-<link rel="stylesheet" href="/shared/weebie-progression.css">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=account-restore-1">
 </head>
 
 
@@ -1161,6 +1161,7 @@ async function loadAccount() {
       );
 
 
+      window.WeebieProgression?.update(data.progression);
       renderMissingStats(
         currentWeebie
       );
@@ -1198,7 +1199,7 @@ function showWeebie(
   let levelStat=document.getElementById('accountLevelStat');
   if(!levelStat){levelStat=document.createElement('p');levelStat.id='accountLevelStat';levelStat.className='stat';document.getElementById('weebieDisplay').appendChild(levelStat);}
   levelStat.textContent='Level: '+Number(weebie.level||0);
-  window.WeebieProgression?.refresh();
+
 
   weebieSetup.style.display =
     "none";
@@ -1241,6 +1242,8 @@ function showWeebie(
   renderDynamicStats(
     weebie
   );
+  window.WeebieProgression?.show();
+  window.WeebieProgression?.refresh();
 }
 
 
@@ -1702,70 +1705,22 @@ document.getElementById(
 
 /* INVENTORY */
 
-async function loadInventory() {
-
-  inventoryMessage.textContent =
-    "";
-
-
-  try {
-
-    const response =
-      await fetch(
-        API + "/inventory",
-        {
-          method: "GET",
-
-          credentials:
-            "include",
-
-          headers:
-            authHeaders()
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      inventoryPanel.style.display =
-        "none";
-
-      return;
-    }
-
-
-    currentInventory =
-      Array.isArray(
-        data.items
-      )
-        ? data.items
-        : [];
-
-
-    renderInventory();
-
-
-    inventoryPanel.style.display =
-      "block";
-
-
-    renderEquippedLayers();
-
-  }
-
-  catch (error) {
-
-    console.error(error);
-
-    inventoryPanel.style.display =
-      "none";
+async function loadInventory(){
+  inventoryPanel.style.display='block';inventoryMessage.textContent='Loading inventory…';
+  try{
+    const response=await fetch(API+'/inventory',{method:'GET',credentials:'include',headers:authHeaders()});
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||'Inventory request failed ('+response.status+').');
+    currentInventory=Array.isArray(data.items)?data.items:[];
+    renderInventory();inventoryMessage.textContent='';renderEquippedLayers();
+  }catch(error){
+    console.error(error);inventoryPanel.style.display='block';inventoryEmpty.style.display='none';
+    inventoryMessage.replaceChildren();
+    const message=document.createElement('p');message.textContent='Inventory could not load. Your items have not been removed.';
+    const retry=document.createElement('button');retry.textContent='Retry inventory';retry.onclick=()=>loadInventory();
+    inventoryMessage.append(message,retry);
   }
 }
-
 
 
 function renderInventory() {
@@ -2903,6 +2858,6 @@ loadAccount();
 
 </script>
 
-<script src="/shared/weebie-progression.js"></script>
+<script src="/shared/weebie-progression.js?v=account-restore-1"></script>
 </body>
 </html>

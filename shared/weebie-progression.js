@@ -13,6 +13,21 @@
  async function request(path,body){const r=await fetch(api+path,{method:body===undefined?'GET':'POST',credentials:'include',headers:headers(),...(body===undefined?{}:{body:JSON.stringify(body)})});const d=await r.json();if(!r.ok){const e=new Error(d.error||'Unable to update progression.');e.status=r.status;throw e;}return d;}
  function bar(label,value,detail){const section=el('div',undefined,'wp-bar-section');section.append(el('p',label));const track=el('div',undefined,'wp-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label',label);track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.setAttribute('aria-valuenow',String(Math.round(value*100)));const fill=el('div',undefined,'wp-fill');fill.style.width=Math.max(0,Math.min(100,value*100))+'%';track.append(fill);if(training){for(const percentage of [25,50,75]){const tick=el('span',undefined,'wp-quarter-line');tick.style.left=percentage+'%';tick.setAttribute('aria-hidden','true');track.append(tick);}}section.append(track,el('small',detail));return section;}
  let panel;
+ function mountPrivate(){
+  if(!privatePage)return null;
+  const target=document.getElementById('weebieDisplay');if(!target||target.style.display==='none')return null;
+  if(!panel){panel=el('section',undefined,'wp-panel');panel.id='privateProgression';target.append(panel);}
+  return panel;
+ }
+ function showStatus(message){
+  const target=mountPrivate();if(!target)return;
+  let status=document.getElementById('progressionLoadStatus');
+  if(!status){status=el('div',undefined);status.id='progressionLoadStatus';target.append(status);}
+  status.replaceChildren(el('p',message));
+  const retry=el('button','Retry');retry.type='button';retry.onclick=()=>refresh();status.append(retry);
+ }
+ function show(){if(state)render();else showStatus('Loading PeeCoins, daily boost, level progress and stat points…');}
+
  function render(){
   if(!state)return;
   if(privatePage){
@@ -24,6 +39,7 @@
    panel.append(bar('Daily '+state.currencyName+' boost',b.progress,b.end===null?`Maximum boost reached · 1 coin / ${b.rate} minutes`:`${Math.floor(b.minutes)} / ${b.end} active minutes · 1 coin / ${b.rate} minutes`));
    panel.append(bar('Level '+state.level+' → '+(state.level+1),state.progress,`${state.xp-state.startXP} / ${state.nextXP-state.startXP} XP`));
    panel.append(el('p',`PWR: ${state.modifiers.PWR} · DEX: ${state.modifiers.DEX} · DEF: ${state.modifiers.DEF}`));
+   panel.append(el('p',`Unspent stat points: ${state.unspentPoints}`));
    if(state.unspentPoints){const button=el('button',`Allocate ${state.unspentPoints} stat point${state.unspentPoints===1?'':'s'}`);button.onclick=()=>pointAlert();panel.append(button);}
   }
   if(training){
@@ -66,7 +82,7 @@
   form.append(feedback,save,later);form.onsubmit=async e=>{e.preventDefault();const values=Object.fromEntries(Object.entries(inputs).map(([k,v])=>[k,Number(v.value)]));const sum=Object.values(values).reduce((a,b)=>a+b,0);if(sum<1||sum>state.unspentPoints){feedback.textContent='Choose between 1 and '+state.unspentPoints+' points.';return;}save.disabled=true;try{state=await request('/progression/allocate',values);closeDialog();render();}catch(error){feedback.textContent=error.message;save.disabled=false;}};d.append(form);
  }
  function alerts(){if(dialog)return;if(state.pendingRewards.length){itemAlert(state.pendingRewards[0]);return;}if(state.unspentPoints&&dismissedPoints!==state.weebieId+':'+state.pointsEntitled)pointAlert();}
- async function refresh(){if(busy||document.hidden)return;busy=true;try{state=await request('/progression');render();}catch(e){if(e.status!==401)console.error(e);}finally{busy=false;}}
+ async function refresh(){show();if(busy||document.hidden)return;busy=true;try{state=await request('/progression');render();}catch(e){if(e.status!==401)console.error(e);showStatus(e.status===401?'Sign in to load your private progression.':'Progression could not load. Your saved data has not been removed.');}finally{busy=false;}}
  // Trusted input records attention. Merely leaving a visible tab open never renews attention.
  for(const type of ['pointerdown','keydown','touchstart','wheel'])document.addEventListener(type,e=>{if(e.isTrusted&&!document.hidden){lastInput=Date.now();inputPending=true;}},{passive:true});
  async function pulse(){
@@ -75,7 +91,7 @@
   try{state=await request('/oasis/pulse',{active});render();}catch(e){if(e.status!==401)console.error(e);}finally{busy=false;}
  }
  if(oasis)setInterval(pulse,15000);
- window.WeebieProgression={refresh};
+ window.WeebieProgression={refresh,show,update:data=>{if(data){state=data;render();}else show();}};
  refresh();setInterval(refresh,30000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 })();
