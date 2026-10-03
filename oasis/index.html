@@ -635,7 +635,7 @@ async function loadAccount(attempt=0) {
 
     myWeebieName =
       data.weebie.name;
-    window.OasisBattle?.identify(data.weebie.id);
+    try{window.OasisBattle?.identify(data.weebie.id);}catch(error){console.error('Battle identity:',error);}
 
 
     await loadOasis();
@@ -791,6 +791,7 @@ async function loadOasis() {
 
     const data =
       await response.json();
+    let errorNote=document.getElementById('oasisLoadError');if(errorNote)errorNote.remove();
 
 
     if (!response.ok) {
@@ -814,7 +815,7 @@ async function loadOasis() {
     }
 
 
-    window.OasisBattle?.sync(data);
+    if(!Array.isArray(data.weebies)||!Array.isArray(data.deaths))throw new Error('Oasis returned an incomplete response.');
     syncWeebies(
       data.weebies || []
     );
@@ -823,6 +824,7 @@ async function loadOasis() {
     syncDeaths(
       data.deaths || []
     );
+    try{window.OasisBattle?.sync(data);}catch(error){console.error('Oasis battle display:',error);}
 
 
     updateOasisLists(
@@ -839,6 +841,7 @@ async function loadOasis() {
   }
 
   catch (error) {
+    let note=document.getElementById('oasisLoadError');if(!note){note=document.createElement('p');note.id='oasisLoadError';oasis.after(note);}note.textContent='Oasis could not refresh: '+error.message;
 
     console.error(
       "Oasis update failed:",
@@ -2488,7 +2491,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=untouchable-13"></script>
+<script src="/shared/oasis-battles.js?v=residents-restore-14"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>
