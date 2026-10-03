@@ -27,7 +27,7 @@
    if(state.unspentPoints){const button=el('button',`Allocate ${state.unspentPoints} stat point${state.unspentPoints===1?'':'s'}`);button.onclick=()=>pointAlert();panel.append(button);}
   }
   if(training){
-   if(!panel){panel=el('section',undefined,'wp-panel wp-training');panel.id='quarterLevelRewards';const trainingArea=document.getElementById('page');if(trainingArea)trainingArea.before(panel);else document.body.prepend(panel);}
+   if(!panel){panel=el('section',undefined,'wp-panel wp-training');panel.id='quarterLevelRewards';const trainingArea=document.getElementById('page');if(trainingArea)trainingArea.after(panel);else document.body.append(panel);}
    panel.replaceChildren(el('h2','Level rewards'),el('p',`Level ${state.level} · ${state.xp.toLocaleString()} XP`),el('p','Unlock one food or swag item at every quarter-level milestone.'));
    const markers=el('div',undefined,'wp-milestones');
    // Show all four markers of the CURRENT level interval, including completed ones.

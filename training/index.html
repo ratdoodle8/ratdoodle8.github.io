@@ -2568,7 +2568,14 @@ body.pushup-blue-wash::before {
 }
 </style>
 
-<link rel="stylesheet" href="/shared/weebie-progression.css?v=training-markers-2">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=training-layout-3">
+<style>
+/* Keep vertical scrolling while containing wide training effects. */
+html, body { max-width: 100%; overflow-x: hidden; }
+@supports (overflow: clip) {
+  html, body { overflow-x: clip; }
+}
+</style>
 </head>
 
 
@@ -4624,6 +4631,6 @@ body.pushup-blue-wash::before {
 })();
 </script>
 
-<script src="/shared/weebie-progression.js?v=training-markers-2"></script>
+<script src="/shared/weebie-progression.js?v=training-layout-3"></script>
 </body>
 </html>
