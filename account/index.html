@@ -730,6 +730,7 @@
 
 <script>
 
+if(location.hostname==='www.ratdoodle.com')location.replace('https://ratdoodle.com'+location.pathname+location.search+location.hash);
 const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
@@ -1002,6 +1003,8 @@ function renderMissingStats(
 /* ACCOUNT */
 
 async function loadAccount() {
+  loading.style.display='block';loggedOut.style.display='none';
+
 
   try {
 
@@ -1023,8 +1026,9 @@ async function loadAccount() {
       "none";
 
 
+    if(!response.ok)throw new Error(data.error||'Account server returned HTTP '+response.status+'.');
+    if(typeof data.loggedIn!=='boolean')throw new Error('Account server returned an incomplete response.');
     if (
-      !response.ok ||
       !data.loggedIn
     ) {
 
@@ -1169,11 +1173,11 @@ async function loadAccount() {
 
     console.error(error);
 
-    loading.style.display =
-      "none";
-
-    loggedOut.style.display =
-      "block";
+    loggedOut.style.display='none';
+    loading.style.display='block';
+    loading.replaceChildren();
+    const text=document.createElement('p');text.textContent='Account could not load: '+error.message;
+    const retry=document.createElement('button');retry.textContent='Try again';retry.onclick=()=>{retry.disabled=true;loadAccount();};loading.append(text,retry);
   }
 }
 

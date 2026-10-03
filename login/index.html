@@ -138,6 +138,7 @@
 
 <script>
 
+if(location.hostname==='www.ratdoodle.com')location.replace('https://ratdoodle.com'+location.pathname+location.search+location.hash);
 const API =
   "https://ratdoodle-accounts.ratdoodle8.workers.dev";
 
@@ -183,6 +184,8 @@ form.addEventListener(
         API + "/login",
         {
           method: "POST",
+          credentials: "include",
+          cache: "no-store",
 
           headers: {
             "Content-Type":

@@ -3,12 +3,21 @@
  const api='https://ratdoodle-accounts.ratdoodle8.workers.dev',scene=document.getElementById('oasis');
  let world={frozen_total:0,battle_start:0,battle_until:0},mobs=[],offset=0,requesting=false,ownerId=null,encounter=null,overlay=null,overlayKey='',acknowledged=false;
  const mobActors=new Map(),contactLatch=new Set(),retryAfter=new Map(),cooldowns=new Map();
- let requestMotionAt=null,collisionRects=new Map(),rollingId=null,queuedRoll=false;
+ let requestMotionAt=null,collisionRects=new Map(),rollingId=null,queuedRoll=false,contactReason='',lastCooldownPaint=0;
  const now=()=>Date.now()+offset;
  const token=()=>typeof getSessionToken==='function'?getSessionToken():null;
  function auth(){const h={'Content-Type':'application/json'};if(token())h.Authorization='Bearer '+token();return h;}
  function actorById(id){return id<0?mobActors.get(-id):typeof actors!=='undefined'?actors.get(String(id)):null;}
- function updateCooldowns(){const t=now();for(const [id,until] of cooldowns){const actor=actorById(id);if(until<=t){actor?.element.classList.remove('fight-cooldown');cooldowns.delete(id);}else actor?.element.classList.add('fight-cooldown');}}
+ function updateCooldowns(){
+  const t=now();if(t-lastCooldownPaint<250)return;lastCooldownPaint=t;
+  for(const [id,until] of cooldowns){
+   const actor=actorById(id);if(until<=t){actor?.element.classList.remove('fight-cooldown');actor?.cooldownBadge?.remove();if(actor)actor.cooldownBadge=null;cooldowns.delete(id);continue;}
+   if(!actor)continue;actor.element.classList.add('fight-cooldown');
+   if(id>0){if(!actor.cooldownBadge){const badge=document.createElement('div');badge.className='oasis-untouchable-badge';actor.element.append(badge);actor.cooldownBadge=badge;}
+    const value='UNTOUCHABLE · '+Math.max(1,Math.ceil((until-t)/1000))+'s';if(actor.cooldownBadge.textContent!==value)actor.cooldownBadge.textContent=value;}
+  }
+ }
+
  function isFrozen(){return requesting||now()<world.battle_until;}
  function timerTime(t){return t+Math.max(0,world.battle_until-t);}
  function motionTime(t){if(requesting&&requestMotionAt!==null&&t>=world.battle_until)return requestMotionAt;return t-world.frozen_total+Math.max(0,world.battle_until-t);}
@@ -31,7 +40,8 @@
     if(encounter){const ids=[encounter.a,encounter.b||-encounter.mushroom_id];for(const id of ids)cooldowns.set(id,encounter.end_at+20000);if(now()<encounter.end_at)contactLatch.add(pairKey(...ids));}
    }
   }
-  updateCooldowns();
+  if(data.cooldowns)for(const c of data.cooldowns)for(const id of [c.a,c.b||-c.mushroom_id])cooldowns.set(id,c.until);
+  lastCooldownPaint=0;updateCooldowns();
   renderEncounter();applyFreeze();
  }
  let lastFrozen=null;
@@ -46,19 +56,19 @@
  function trigger(a,b,time){
   a=Number(a);b=Number(b);
   const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null||now()<(cooldowns.get(a)||0)||now()<(cooldowns.get(b)||0)||now()<(retryAfter.get(key)||0))return false;
-  requesting=true;requestMotionAt=time;contactLatch.add(key);applyFreeze();
+  contactReason='';requesting=true;requestMotionAt=time;contactLatch.add(key);applyFreeze();
   overlay?.remove();overlay=document.createElement('div');overlay.className='wp-battle-message';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label','Oasis contact');
   const meeting=document.createElement('strong');meeting.textContent='Checking contact… ♡';const quickRoll=document.createElement('button');quickRoll.textContent='Roll';quickRoll.onclick=()=>{queuedRoll=true;quickRoll.disabled=true;meeting.textContent='Your Roll is queued ♡';quickRoll.textContent='Connecting…';};overlay.append(meeting,quickRoll);scene.append(overlay);overlayKey='contact';
   const mushroomId=a<0?-a:b<0?-b:null;
   const body=mushroomId?{a:a>0?a:b,mushroomId,time}:{a,b,time};
   body.sceneWidth=Math.min(1000,scene.clientWidth);body.bodySize=window.matchMedia('(max-width: 600px)').matches?78:100;
-  (async()=>{try{let r,result;for(let attempt=0;attempt<5;attempt++){r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});result=await r.json();if(!result.busy||attempt===4)break;await new Promise(resolve=>setTimeout(resolve,120));}if(r.ok){sync(result);if(result.accepted)overlayKey='';if(!result.accepted){retryAfter.set(key,now()+20000);}if(result.accepted&&queuedRoll){queuedRoll=false;void roll();}if(!result.accepted)queuedRoll=false;if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{retryAfter.set(key,now()+20000);}if(typeof loadOasis==='function')void loadOasis();}catch(e){retryAfter.set(key,now()+20000);console.error('Battle:',e);}finally{requesting=false;queuedRoll=false;requestMotionAt=null;if(overlayKey==='contact')showContactError();renderEncounter();applyFreeze();}})();
+  (async()=>{try{let r,result;for(let attempt=0;attempt<5;attempt++){r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});result=await r.json();if(!result.busy||attempt===4)break;await new Promise(resolve=>setTimeout(resolve,120));}contactReason=result.reason||result.error||'';if(r.ok){sync(result);if(result.accepted)overlayKey='';if(!result.accepted){retryAfter.set(key,now()+20000);}if(result.accepted&&queuedRoll){queuedRoll=false;void roll();}if(!result.accepted)queuedRoll=false;if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{retryAfter.set(key,now()+20000);}if(typeof loadOasis==='function')void loadOasis();}catch(e){retryAfter.set(key,now()+20000);console.error('Battle:',e);}finally{requesting=false;queuedRoll=false;requestMotionAt=null;if(overlayKey==='contact')showContactError();renderEncounter();applyFreeze();}})();
   return true;
  }
  function showContactError(){
   if(!overlay)return;
   overlayKey='contact-error';overlay.replaceChildren();
-  const message=document.createElement('p');message.textContent='This contact did not start a fight. Let them separate and try again.';
+  const message=document.createElement('p');message.textContent=contactReason||'Connection interrupted while confirming contact. Please try again.';
   const close=document.createElement('button');close.textContent='Okay';close.onclick=()=>{overlay?.remove();overlay=null;overlayKey='';renderEncounter();};overlay.append(message,close);
  }
  async function roll(){
@@ -106,7 +116,7 @@
    for(let i=0;i<2;i++){const column=document.createElement('div');column.style.cssText='flex:1;min-width:0';const name=document.createElement('div');name.className='wp-die-name';name.style.cssText='font-weight:bold;overflow-wrap:anywhere';const face=document.createElement('div');face.className='wp-die-face';face.style.cssText='font-size:48px;line-height:1.3';const change=document.createElement('div');change.className='wp-die-change';column.append(name,face,change);dice.append(column);}
    overlay.append(dice);
    const note=document.createElement('small');note.className='wp-battle-countdown';overlay.append(note);
-   if(stage==='waiting'&&[encounter.a,encounter.b].includes(ownerId)){const button=document.createElement('button');button.textContent='Roll';button.onclick=roll;overlay.append(button);}
+   if(stage==='waiting'&&ownerId!==null){const button=document.createElement('button');button.textContent='Roll';button.onclick=roll;overlay.append(button);}
    if(stage==='result'){const button=document.createElement('button');button.textContent=acknowledged?'Okay ♡':'Okay';button.disabled=acknowledged;button.onclick=finishResult;overlay.append(button);if(typeof loadOasis==='function')loadOasis();}
   }
   const actorName=id=>typeof actors!=='undefined'?actors.get(String(id))?.data.name:null;

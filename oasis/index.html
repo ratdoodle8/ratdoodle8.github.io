@@ -419,6 +419,10 @@ h1 {
 #oasis .fight-cooldown .weebie-body,#oasis .wp-mushroom.fight-cooldown{animation:oasis-rest-flash 800ms ease-in-out infinite;animation-play-state:running!important}
 @keyframes oasis-rest-flash{0%,100%{opacity:1}50%{opacity:.45}}
 @media(prefers-reduced-motion:reduce){#oasis .fight-cooldown .weebie-body,#oasis .wp-mushroom.fight-cooldown{animation:none!important;opacity:.7}}
+
+#oasis .fight-cooldown .weebie-body{outline:3px dashed #0007E6;outline-offset:5px;border-radius:50%;box-shadow:0 0 0 7px #bcc8ccaa}
+#oasis .oasis-untouchable-badge{position:absolute;left:50%;bottom:-25px;transform:translateX(-50%);min-width:128px;white-space:nowrap;padding:4px 6px;border:2px solid #0007E6;border-radius:5px;background:#0007E6;color:#fff;font:bold 10px Arial,sans-serif;z-index:40;pointer-events:none}
+#oasis .fight-cooldown .weebie-body{animation:oasis-rest-flash 1100ms ease-in-out infinite}
 </style>
 <link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-8">
 </head>
@@ -696,8 +700,8 @@ releaseButton.addEventListener(
         );
 
 
-      const data =
-        await response.json();
+      let data;
+      try{data=await response.json();}catch{throw new Error('Release server returned HTTP '+response.status+' without a valid response.');}
 
 
       if (!response.ok) {
@@ -750,11 +754,11 @@ releaseButton.addEventListener(
 
       console.error(error);
 
-      statusText.textContent =
-        "Release failed.";
-
+      statusText.textContent = 'Release could not connect: '+error.message;
+    }finally{
+      releaseButton.disabled=false;
+      void loadOasis();
     }
-
   }
 );
 
@@ -2484,7 +2488,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=single-contact-12"></script>
+<script src="/shared/oasis-battles.js?v=untouchable-13"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>
