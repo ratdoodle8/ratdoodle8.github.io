@@ -399,7 +399,7 @@ h1 {
 }
 
 </style>
-<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-5">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-6">
 </head>
 
 <body>
@@ -1837,7 +1837,7 @@ function syncDeaths(
 
 
     marker.element.style.left =
-      `${death.x}%`;
+      `${Number(death.deathX ?? death.x ?? 50)}%`;
 
 
     marker.name.textContent =
@@ -2542,7 +2542,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=encounters-5"></script>
+<script src="/shared/oasis-battles.js?v=encounters-6"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>
