@@ -399,7 +399,7 @@ h1 {
 }
 
 </style>
-<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-7">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-8">
 </head>
 
 <body>
@@ -554,13 +554,13 @@ function authHeaders(
    ACCOUNT
 ===================================================== */
 
-async function loadAccount() {
+async function loadAccount(attempt=0) {
 
   try {
 
     const response =
       await fetch(
-        `${API}/account`,
+        `${API}/account?view=oasis`,
         {
           method: "GET",
 
@@ -577,6 +577,7 @@ async function loadAccount() {
       await response.json();
 
 
+    if(!response.ok)throw new Error(data.error||'Account request failed ('+response.status+').');
     if (!data.loggedIn) {
 
       window.location.href =
@@ -609,6 +610,7 @@ async function loadAccount() {
 
     myWeebieName =
       data.weebie.name;
+    window.OasisBattle?.identify(data.weebie.id);
 
 
     await loadOasis();
@@ -621,8 +623,8 @@ async function loadAccount() {
 
     console.error(error);
 
-    statusText.textContent =
-      "Unable to load account.";
+    if(attempt<2){statusText.textContent='Loading your account…';setTimeout(()=>loadAccount(attempt+1),1500);return;}
+    statusText.textContent='Unable to load account. Please reload to retry.';
 
   }
 
@@ -2286,100 +2288,28 @@ function updateDeathMarker(
    INTERACTIONS
 ===================================================== */
 
-function checkInteractions(
-  positions,
-  now
-) {
-
-  positions.sort(
-    (a, b) =>
-      a.x - b.x
-  );
-
-
-  for (
-    let i = 0;
-    i <
-    positions.length - 1;
-    i++
-  ) {
-
-    const first =
-      positions[i];
-
-    const second =
-      positions[i + 1];
-
-
-    const distance =
-      Math.abs(
-        first.x -
-        second.x
-      );
-
-
-    if (
-      window.OasisBattle
-        ? !window.OasisBattle.overlap(first.actor, second.actor)
-        : distance > 7
-    ) {
-      continue;
+function checkInteractions(positions,now){
+  positions.sort((a,b)=>a.x-b.x);
+  for(let i=0;i<positions.length;i++){
+    for(let j=i+1;j<positions.length;j++){
+      const first=positions[i],second=positions[j];
+      const a=Number(first.actor.data.id),b=Number(second.actor.data.id);
+      const bot=a<0||b<0;
+      if(a<0&&b<0)continue;
+      // Check every Weebie/bot pair; another body cannot hide a contact.
+      if(!bot&&j!==i+1)continue;
+      if(window.OasisBattle?!window.OasisBattle.overlap(first.actor,second.actor):Math.abs(first.x-second.x)>7)continue;
+      if(!bot){
+        if(hash(a*31+b*17+Math.floor(now/2200))<=.70)continue;
+        if(now<first.actor.interactionUntil||now<second.actor.interactionUntil)continue;
+      }
+      if(window.OasisBattle){
+        if(window.OasisBattle.trigger(a,b,now)){
+          first.actor.interactionUntil=now+1800;second.actor.interactionUntil=now+1800;return;
+        }
+      }else{playInteraction(first.actor);playInteraction(second.actor);}
     }
-
-
-    const interactionWindow =
-      Math.floor(
-        now /
-        2200
-      );
-
-
-    const pairSeed =
-      (
-        Number(
-          first.actor.data.id
-        ) *
-        31
-      ) +
-      (
-        Number(
-          second.actor.data.id
-        ) *
-        17
-      ) +
-      interactionWindow;
-
-
-    if (
-      hash(pairSeed) <=
-      0.70
-    ) {
-      continue;
-    }
-
-
-    if (
-      now <
-        first.actor.interactionUntil ||
-      now <
-        second.actor.interactionUntil
-    ) {
-      continue;
-    }
-
-
-    first.actor.interactionUntil =
-      now + 1800;
-
-    second.actor.interactionUntil =
-      now + 1800;
-
-
-    if(window.OasisBattle){window.OasisBattle.trigger(first.actor.data.id,second.actor.data.id,now);}
-    else {playInteraction(first.actor);playInteraction(second.actor);}
-
   }
-
 }
 
 
@@ -2510,7 +2440,7 @@ function animate(frameTime=performance.now()) {
   }
 
 
-  window.OasisBattle?.addMushrooms(positions);
+  window.OasisBattle?.addMushrooms(positions,motionNow);
   window.OasisBattle?.observeContacts(positions);
 
   if(!window.OasisBattle?.isFrozen()) checkInteractions(
@@ -2536,7 +2466,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=encounters-7"></script>
+<script src="/shared/oasis-battles.js?v=encounters-8"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>

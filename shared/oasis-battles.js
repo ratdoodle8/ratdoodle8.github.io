@@ -2,40 +2,44 @@
  'use strict';
  const api='https://ratdoodle-accounts.ratdoodle8.workers.dev',scene=document.getElementById('oasis');
  let world={frozen_total:0,battle_start:0,battle_until:0},mobs=[],offset=0,requesting=false,ownerId=null,encounter=null,overlay=null,overlayKey='',acknowledged=false;
- const mobActors=new Map(),contactLatch=new Set();
+ const mobActors=new Map(),contactLatch=new Set(),retryAfter=new Map();
+ let requestMotionAt=null,collisionRects=new Map();
  const now=()=>Date.now()+offset;
  const token=()=>typeof getSessionToken==='function'?getSessionToken():null;
  function auth(){const h={'Content-Type':'application/json'};if(token())h.Authorization='Bearer '+token();return h;}
  function isFrozen(){return requesting||now()<world.battle_until;}
  function timerTime(t){return t+Math.max(0,world.battle_until-t);}
- function motionTime(t){return t-world.frozen_total+Math.max(0,world.battle_until-t);}
- function bodyRect(actor){return (actor.element.querySelector?.('.weebie-body')||actor.element).getBoundingClientRect();}
- function overlap(a,b){const x=bodyRect(a),y=bodyRect(b);return x.left<y.right&&x.right>y.left&&x.top<y.bottom&&x.bottom>y.top;}
+ function motionTime(t){if(requesting&&requestMotionAt!==null&&t>=world.battle_until)return requestMotionAt;return t-world.frozen_total+Math.max(0,world.battle_until-t);}
+ function bodyRect(actor){if(collisionRects.has(actor))return collisionRects.get(actor);return (actor.element.querySelector?.('.weebie-body')||actor.element).getBoundingClientRect();}
+ function overlap(a,b){const x=bodyRect(a),y=bodyRect(b);return x.left<=y.right&&x.right>=y.left&&x.top<=y.bottom&&x.bottom>=y.top;}
  const pairKey=(a,b)=>[a,b].sort((x,y)=>x-y).join(':');
- function observeContacts(positions){for(const key of contactLatch){const [a,b]=key.split(':').map(Number),first=positions.find(p=>p.actor.data.id===a),second=positions.find(p=>p.actor.data.id===b);if(!first||!second||!overlap(first.actor,second.actor))contactLatch.delete(key);}}
+ function observeContacts(positions){collisionRects=new Map();for(const p of positions)collisionRects.set(p.actor,(p.actor.element.querySelector?.('.weebie-body')||p.actor.element).getBoundingClientRect());for(const key of contactLatch){const [a,b]=key.split(':').map(Number),first=positions.find(p=>Number(p.actor.data.id)===a),second=positions.find(p=>Number(p.actor.data.id)===b);if(!first||!second||!overlap(first.actor,second.actor))contactLatch.delete(key);}}
  let lastSyncTime=0;
  function sync(data){
   const stamp=Date.parse(data.serverTime);if(Number.isFinite(stamp)){if(stamp<lastSyncTime)return;lastSyncTime=stamp;}
   if(data.serverTime)offset=Date.parse(data.serverTime)-Date.now();
   if(data.battleWorld)world=data.battleWorld;
   if(data.mushrooms){mobs=data.mushrooms.slice(0,2);const live=new Set(mobs.map(m=>m.id));for(const [id,a] of mobActors)if(!live.has(id)){a.element.remove();mobActors.delete(id);}}
-  if('encounter' in data){const oldId=encounter?.id;encounter=data.encounter;if(encounter?.id!==oldId){acknowledged=false;overlayKey='';}if(encounter){contactLatch.add(pairKey(encounter.a,encounter.b||-encounter.mushroom_id));}}
+  if('encounter' in data){const oldId=encounter?.id;encounter=data.encounter;if(encounter?.id!==oldId){acknowledged=false;overlayKey='';}if(encounter&&now()<encounter.end_at){contactLatch.add(pairKey(encounter.a,encounter.b||-encounter.mushroom_id));}}
   renderEncounter();applyFreeze(true);
  }
  let lastFrozen=null;
  function applyFreeze(force=false){const frozen=isFrozen();if(!force&&frozen===lastFrozen)return;lastFrozen=frozen;scene.querySelectorAll('.weebie,.weebie *, .death-marker,.death-marker *, .wp-mushroom').forEach(n=>n.style.animationPlayState=frozen?'paused':'');}
- function addMushrooms(positions){
-  for(const m of mobs){let a=mobActors.get(m.id);if(!a){const img=document.createElement('img');img.src='/shared/eraser-bot.png';img.alt='Eraser-Bot';img.className='wp-mushroom';img.style.left=m.x+'%';scene.append(img);a={element:img,data:{id:-m.id},interactionUntil:0};mobActors.set(m.id,a);}positions.push({actor:a,x:m.x});}
+ function botHash(number){const value=Math.sin(number*12.9898)*43758.5453;return value-Math.floor(value);}
+ function eraserBotX(m,t){const center=Number(m.x),range=Math.max(0,Math.min(20,center-10,90-center));return center+range*Math.sin(t*0.00012+botHash(Number(m.id)+700)*Math.PI*2);}
+ function addMushrooms(positions,t=motionTime(now())){
+  for(const m of mobs){let a=mobActors.get(m.id);if(!a){const img=document.createElement('img');img.src='/shared/eraser-bot.png';img.alt='Eraser-Bot';img.className='wp-mushroom';scene.append(img);a={element:img,data:{id:-m.id},interactionUntil:0};mobActors.set(m.id,a);}const x=eraserBotX(m,t);a.element.style.left=x+'%';positions.push({actor:a,x});}
  }
  let polling=false;
  async function poll(){if(document.hidden||polling)return;polling=true;try{const r=await fetch(api+'/oasis/battle-state');if(r.ok)sync(await r.json());}catch(e){console.error('Battle sync:',e);}finally{polling=false;}}
  function trigger(a,b,time){
-  const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null)return false;
-  requesting=true;contactLatch.add(key);applyFreeze();
+  a=Number(a);b=Number(b);
+  const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null||now()<(retryAfter.get(key)||0))return false;
+  requesting=true;requestMotionAt=time;contactLatch.add(key);applyFreeze();
   const mushroomId=a<0?-a:b<0?-b:null;
   const body=mushroomId?{a:a>0?a:b,mushroomId,time}:{a,b,time};
   body.sceneWidth=Math.min(1000,scene.clientWidth);body.bodySize=window.matchMedia('(max-width: 600px)').matches?78:100;
-  (async()=>{try{const r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});const result=await r.json();if(r.ok){sync(result);if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}await poll();if(typeof loadOasis==='function')await loadOasis();}catch(e){contactLatch.delete(key);console.error('Battle:',e);}finally{requesting=false;applyFreeze();}})();
+  (async()=>{try{const r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});const result=await r.json();if(r.ok){sync(result);if(!result.accepted){contactLatch.delete(key);retryAfter.set(key,now()+1000);}if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{contactLatch.delete(key);retryAfter.set(key,now()+1000);}await poll();if(typeof loadOasis==='function')await loadOasis();}catch(e){contactLatch.delete(key);retryAfter.set(key,now()+1000);console.error('Battle:',e);}finally{requesting=false;requestMotionAt=null;applyFreeze();}})();
   return true;
  }
  async function roll(){const button=overlay?.querySelector('button');if(button)button.disabled=true;try{const r=await fetch(api+'/oasis/roll',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify({encounterId:encounter.id})});if(r.ok)sync(await r.json());else if(button)button.disabled=false;}catch(e){if(button)button.disabled=false;console.error(e);}}
@@ -76,7 +80,7 @@
   else if(stage==='rolling'){setText(title,'Rolling…');setText(note,'Good luck! ♡');}
   else {setText(title,rolls[0]===rolls[1]?'A tie! ♡':labels[rolls[0]>rolls[1]?0:1]+' wins! ✨');setText(note,'Back to Oasis in '+Math.max(0,Math.ceil((encounter.end_at-now())/1000))+'s');}
  }
- window.OasisBattle={sync,trigger,isFrozen,motionTime,timerTime,addMushrooms,overlap,observeContacts};
- (async()=>{try{const r=await fetch(api+'/account',{credentials:'include',headers:auth()});if(r.ok){const d=await r.json();ownerId=d.weebie?.id??null;}}catch(e){console.error(e);}})();
+ window.OasisBattle={identify:id=>{ownerId=Number(id);},sync,trigger,isFrozen,motionTime,timerTime,addMushrooms,overlap,observeContacts};
+ (async()=>{try{const r=await fetch(api+'/account?view=oasis',{credentials:'include',headers:auth()});if(r.ok){const d=await r.json();ownerId=d.weebie?.id??null;}}catch(e){console.error(e);}})();
  poll();setInterval(poll,1000);setInterval(()=>{renderEncounter();applyFreeze();},80);
 })();
