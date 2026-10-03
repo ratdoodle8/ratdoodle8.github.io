@@ -2,9 +2,10 @@
 (() => {
  'use strict';
  const api='https://ratdoodle-accounts.ratdoodle8.workers.dev';
- const privatePage=/^\/account\/?$/.test(location.pathname);
- const training=/^\/training\/?$/.test(location.pathname);
- const oasis=/^\/oasis\/?$/.test(location.pathname);
+ const pagePath=location.pathname.replace(/\/index\.html$/i,'/');
+ const privatePage=/^\/account\/?$/.test(pagePath);
+ const training=/^\/training\/?$/.test(pagePath);
+ const oasis=/^\/oasis\/?$/.test(pagePath);
  if(!privatePage&&!training&&!oasis)return;
  let state=null,busy=false,dialog=null,dismissedPoints='',lastInput=0,inputPending=false;
  const el=(tag,text,className)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;};
@@ -26,7 +27,7 @@
    if(state.unspentPoints){const button=el('button',`Allocate ${state.unspentPoints} stat point${state.unspentPoints===1?'':'s'}`);button.onclick=()=>pointAlert();panel.append(button);}
   }
   if(training){
-   if(!panel){panel=el('section',undefined,'wp-panel wp-training');panel.id='quarterLevelRewards';document.body.append(panel);}
+   if(!panel){panel=el('section',undefined,'wp-panel wp-training');panel.id='quarterLevelRewards';const trainingArea=document.getElementById('page');if(trainingArea)trainingArea.before(panel);else document.body.prepend(panel);}
    panel.replaceChildren(el('h2','Level rewards'),el('p',`Level ${state.level} · ${state.xp.toLocaleString()} XP`),el('p','Unlock one food or swag item at every quarter-level milestone.'));
    const markers=el('div',undefined,'wp-milestones');
    // Show all four markers of the CURRENT level interval, including completed ones.
