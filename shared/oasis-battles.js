@@ -3,7 +3,7 @@
  const api='https://ratdoodle-accounts.ratdoodle8.workers.dev',scene=document.getElementById('oasis');
  let world={frozen_total:0,battle_start:0,battle_until:0},mobs=[],offset=0,requesting=false,ownerId=null,encounter=null,overlay=null,overlayKey='',acknowledged=false;
  const mobActors=new Map(),contactLatch=new Set(),retryAfter=new Map();
- let requestMotionAt=null,collisionRects=new Map();
+ let requestMotionAt=null,collisionRects=new Map(),rollingId=null,queuedRoll=false;
  const now=()=>Date.now()+offset;
  const token=()=>typeof getSessionToken==='function'?getSessionToken():null;
  function auth(){const h={'Content-Type':'application/json'};if(token())h.Authorization='Bearer '+token();return h;}
@@ -21,32 +21,64 @@
   if(data.battleWorld)world=data.battleWorld;
   if(data.mushrooms){mobs=data.mushrooms.slice(0,2);const live=new Set(mobs.map(m=>m.id));for(const [id,a] of mobActors)if(!live.has(id)){a.element.remove();mobActors.delete(id);}}
   if('encounter' in data){const oldId=encounter?.id;encounter=data.encounter;if(encounter?.id!==oldId){acknowledged=false;overlayKey='';}if(encounter&&now()<encounter.end_at){contactLatch.add(pairKey(encounter.a,encounter.b||-encounter.mushroom_id));}}
-  renderEncounter();applyFreeze(true);
+  renderEncounter();applyFreeze();
  }
  let lastFrozen=null;
  function applyFreeze(force=false){const frozen=isFrozen();if(!force&&frozen===lastFrozen)return;lastFrozen=frozen;scene.querySelectorAll('.weebie,.weebie *, .death-marker,.death-marker *, .wp-mushroom').forEach(n=>n.style.animationPlayState=frozen?'paused':'');}
  function botHash(number){const value=Math.sin(number*12.9898)*43758.5453;return value-Math.floor(value);}
  function eraserBotX(m,t){const center=Number(m.x),range=Math.max(0,Math.min(20,center-10,90-center));return center+range*Math.sin(t*0.00012+botHash(Number(m.id)+700)*Math.PI*2);}
  function addMushrooms(positions,t=motionTime(now())){
-  for(const m of mobs){let a=mobActors.get(m.id);if(!a){const img=document.createElement('img');img.src='/shared/eraser-bot.png';img.alt='Eraser-Bot';img.className='wp-mushroom';scene.append(img);a={element:img,data:{id:-m.id},interactionUntil:0};mobActors.set(m.id,a);}const x=eraserBotX(m,t);a.element.style.left=x+'%';positions.push({actor:a,x});}
+  for(const m of mobs){let a=mobActors.get(m.id);if(!a){const img=document.createElement('img');img.src='/shared/eraser-bot.png';img.alt='Eraser-Bot';img.className='wp-mushroom';scene.append(img);a={element:img,data:{id:-m.id},interactionUntil:0};mobActors.set(m.id,a);}const x=eraserBotX(m,t);a.element.style.left='0';a.element.style.transform='translateX('+(x*scene.clientWidth/100)+'px) translateX(-50%)';positions.push({actor:a,x});}
  }
  let polling=false;
- async function poll(){if(document.hidden||polling)return;polling=true;try{const r=await fetch(api+'/oasis/battle-state');if(r.ok)sync(await r.json());}catch(e){console.error('Battle sync:',e);}finally{polling=false;}}
+ async function poll(){if(document.hidden||polling||requesting||rollingId!==null)return;polling=true;try{const r=await fetch(api+'/oasis/battle-state');if(r.ok)sync(await r.json());}catch(e){console.error('Battle sync:',e);}finally{polling=false;}}
  function trigger(a,b,time){
   a=Number(a);b=Number(b);
   const key=pairKey(a,b);if(requesting||isFrozen()||contactLatch.has(key)||ownerId===null||now()<(retryAfter.get(key)||0))return false;
   requesting=true;requestMotionAt=time;contactLatch.add(key);applyFreeze();
+  overlay?.remove();overlay=document.createElement('div');overlay.className='wp-battle-message';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label','Oasis contact');
+  const meeting=document.createElement('strong');meeting.textContent='Ready to roll?';const quickRoll=document.createElement('button');quickRoll.textContent='Roll';quickRoll.onclick=()=>{queuedRoll=true;quickRoll.disabled=true;meeting.textContent='Rolling…';quickRoll.textContent='Good luck! ♡';};overlay.append(meeting,quickRoll);scene.append(overlay);overlayKey='contact';
   const mushroomId=a<0?-a:b<0?-b:null;
   const body=mushroomId?{a:a>0?a:b,mushroomId,time}:{a,b,time};
   body.sceneWidth=Math.min(1000,scene.clientWidth);body.bodySize=window.matchMedia('(max-width: 600px)').matches?78:100;
-  (async()=>{try{const r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});const result=await r.json();if(r.ok){sync(result);if(!result.accepted){contactLatch.delete(key);retryAfter.set(key,now()+1000);}if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{contactLatch.delete(key);retryAfter.set(key,now()+1000);}await poll();if(typeof loadOasis==='function')await loadOasis();}catch(e){contactLatch.delete(key);retryAfter.set(key,now()+1000);console.error('Battle:',e);}finally{requesting=false;requestMotionAt=null;applyFreeze();}})();
+  (async()=>{try{const r=await fetch(api+'/oasis/battle',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify(body)});const result=await r.json();if(r.ok){sync(result);if(!result.accepted){contactLatch.delete(key);retryAfter.set(key,now()+1000);}if(result.accepted&&queuedRoll){queuedRoll=false;void roll();}if(!result.accepted)queuedRoll=false;if(result.accepted&&typeof playInteraction==='function'){for(const id of [a,b]){const actor=id<0?mobActors.get(-id):actors.get(String(id));if(actor)playInteraction(actor);}}}else{contactLatch.delete(key);retryAfter.set(key,now()+1000);}if(typeof loadOasis==='function')void loadOasis();}catch(e){contactLatch.delete(key);retryAfter.set(key,now()+1000);console.error('Battle:',e);}finally{requesting=false;queuedRoll=false;requestMotionAt=null;renderEncounter();applyFreeze();}})();
   return true;
  }
- async function roll(){const button=overlay?.querySelector('button');if(button)button.disabled=true;try{const r=await fetch(api+'/oasis/roll',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify({encounterId:encounter.id})});if(r.ok)sync(await r.json());else if(button)button.disabled=false;}catch(e){if(button)button.disabled=false;console.error(e);}}
+ async function roll(){
+  if(!encounter||rollingId!==null||encounter.applied)return;
+  const id=encounter.id;rollingId=id;overlayKey='';renderEncounter();
+  try{
+   let data;
+   for(let attempt=0;attempt<5;attempt++){
+    const r=await fetch(api+'/oasis/roll',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify({encounterId:id})});
+    data=await r.json();
+    if(r.ok){rollingId=null;sync(data);return;}
+    if(r.status!==409||attempt===4)throw Error(data.error||'Unable to roll.');
+    await new Promise(resolve=>setTimeout(resolve,120));
+   }
+  }catch(e){console.error('Roll:',e);rollingId=null;overlayKey='';renderEncounter();const note=overlay?.querySelector('.wp-battle-countdown');if(note)note.textContent=e.message+' Tap Roll to retry.';}
+  finally{rollingId=null;}
+ }
+
+ async function finishResult(){
+  if(!encounter||!encounter.applied||acknowledged)return;
+  const id=encounter.id;
+  acknowledged=true;overlay?.remove();overlay=null;overlayKey='';
+  try{
+   const r=await fetch(api+'/oasis/okay',{method:'POST',credentials:'include',headers:auth(),body:JSON.stringify({encounterId:id})});
+   const data=await r.json();if(!r.ok)throw Error(data.error||'Unable to resume Oasis.');
+   sync(data);applyFreeze();
+   if(typeof loadOasis==='function')await loadOasis();
+  }catch(e){
+   console.error('Continue Oasis:',e);
+   if(encounter?.id===id){acknowledged=false;overlayKey='';renderEncounter();const note=overlay?.querySelector('.wp-battle-countdown');if(note)note.textContent=e.message+' Tap Okay to retry.';}
+  }
+ }
  function setText(node,value){if(node.textContent!==value)node.textContent=value;}
  function renderEncounter(){
-  if(!encounter||now()>=encounter.end_at){overlay?.remove();overlay=null;overlayKey='';return;}
-  const stage=now()<encounter.roll_at?'waiting':!encounter.applied?'rolling':'result';
+  if(requesting&&overlayKey==='contact')return;
+  if(!encounter||acknowledged||now()>=encounter.end_at){overlay?.remove();overlay=null;overlayKey='';return;}
+  const stage=rollingId===encounter.id?'rolling':now()<encounter.roll_at?'waiting':!encounter.applied?'rolling':'result';
   const key=encounter.id+':'+stage;
   if(!overlay){overlay=document.createElement('div');overlay.className='wp-battle-message';overlay.setAttribute('role','dialog');overlay.setAttribute('aria-label','Oasis battle');scene.append(overlay);}
   if(key!==overlayKey){
@@ -57,7 +89,7 @@
    overlay.append(dice);
    const note=document.createElement('small');note.className='wp-battle-countdown';overlay.append(note);
    if(stage==='waiting'&&[encounter.a,encounter.b].includes(ownerId)){const button=document.createElement('button');button.textContent='Roll';button.onclick=roll;overlay.append(button);}
-   if(stage==='result'){const button=document.createElement('button');button.textContent=acknowledged?'Okay ♡':'Okay';button.disabled=acknowledged;button.onclick=()=>{acknowledged=true;button.textContent='Okay ♡';button.disabled=true;};overlay.append(button);if(typeof loadOasis==='function')loadOasis();}
+   if(stage==='result'){const button=document.createElement('button');button.textContent=acknowledged?'Okay ♡':'Okay';button.disabled=acknowledged;button.onclick=finishResult;overlay.append(button);if(typeof loadOasis==='function')loadOasis();}
   }
   const actorName=id=>typeof actors!=='undefined'?actors.get(String(id))?.data.name:null;
   const labels=[encounter.a_name||actorName(encounter.a)||'Your Weebie',encounter.mushroom_id?'Eraser-Bot':encounter.b_name||actorName(encounter.b)||'Your Weebie'];

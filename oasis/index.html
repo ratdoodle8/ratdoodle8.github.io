@@ -82,7 +82,7 @@ h1 {
   transform: translateX(-50%);
   transform-origin: center bottom;
   pointer-events: none;
-  will-change: left, transform;
+  will-change: transform;
 }
 
 .weebie-info {
@@ -398,6 +398,23 @@ h1 {
 
 }
 
+
+/* Explicit bot dimensions and stacking across Firefox, Safari, and Chromium. */
+#oasis .wp-mushroom{position:absolute;display:block;visibility:visible;opacity:1;bottom:16%;left:0;width:50px;height:50px;object-fit:contain;z-index:4;pointer-events:none;will-change:transform}
+#oasis .weebie{z-index:5}
+#oasis .wp-battle-message{pointer-events:auto;z-index:100;max-height:90%;overflow:auto}
+@media(max-width:600px){#oasis .wp-mushroom{width:39px;height:39px}}
+
+/* Short effects animate only small existing elements, with no particles or layout changes. */
+#oasis .wp-battle-message{animation:oasis-pop 180ms ease-out}
+#oasis .wp-die-face{will-change:transform}
+#oasis .wp-battle-message button:active{transform:scale(.94)}
+#oasis .meet .weebie-body{animation:oasis-wiggle 280ms ease-out}
+#oasis .wp-mushroom.meet{animation:oasis-bot-wiggle 280ms ease-out}
+@keyframes oasis-pop{from{opacity:.4;scale:.94}to{opacity:1;scale:1}}
+@keyframes oasis-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg) scale(1.04)}60%{transform:rotate(7deg)}}
+@keyframes oasis-bot-wiggle{25%{rotate:-8deg}60%{rotate:6deg}}
+@media(prefers-reduced-motion:reduce){#oasis .wp-battle-message,#oasis .meet .weebie-body,#oasis .wp-mushroom.meet{animation:none!important}}
 </style>
 <link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-8">
 </head>
@@ -2297,12 +2314,9 @@ function checkInteractions(positions,now){
       const bot=a<0||b<0;
       if(a<0&&b<0)continue;
       // Check every Weebie/bot pair; another body cannot hide a contact.
-      if(!bot&&j!==i+1)continue;
+
       if(window.OasisBattle?!window.OasisBattle.overlap(first.actor,second.actor):Math.abs(first.x-second.x)>7)continue;
-      if(!bot){
-        if(hash(a*31+b*17+Math.floor(now/2200))<=.70)continue;
-        if(now<first.actor.interactionUntil||now<second.actor.interactionUntil)continue;
-      }
+
       if(window.OasisBattle){
         if(window.OasisBattle.trigger(a,b,now)){
           first.actor.interactionUntil=now+1800;second.actor.interactionUntil=now+1800;return;
@@ -2322,7 +2336,7 @@ function playInteraction(
   );
 
 
-  void actor.element.offsetWidth;
+
 
 
   actor.element.classList.add(
@@ -2367,6 +2381,7 @@ function animate(frameTime=performance.now()) {
 
   const positions =
     [];
+  const sceneWidth=oasis.clientWidth;
 
 
   for (
@@ -2403,12 +2418,11 @@ function animate(frameTime=performance.now()) {
         );
 
 
-      actor.element.style.left =
-        `${x}%`;
+      actor.element.style.left = "0";
 
 
       actor.element.style.transform =
-        `translateX(-50%) translateY(${-jump}px)`;
+        `translate(${x*sceneWidth/100}px, ${-jump}px) translateX(-50%)`;
 
 
       positions.push({
@@ -2441,7 +2455,7 @@ function animate(frameTime=performance.now()) {
 
 
   window.OasisBattle?.addMushrooms(positions,motionNow);
-  window.OasisBattle?.observeContacts(positions);
+  if(!window.OasisBattle?.isFrozen())window.OasisBattle?.observeContacts(positions);
 
   if(!window.OasisBattle?.isFrozen()) checkInteractions(
     positions,
@@ -2466,7 +2480,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js?v=encounters-8"></script>
+<script src="/shared/oasis-battles.js?v=contact-fix-11"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>
