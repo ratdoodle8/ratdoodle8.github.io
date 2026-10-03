@@ -399,7 +399,7 @@ h1 {
 }
 
 </style>
-<link rel="stylesheet" href="/shared/weebie-progression.css">
+<link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-2">
 </head>
 
 <body>
@@ -2315,7 +2315,9 @@ function checkInteractions(
 
 
     if (
-      distance > 7
+      window.OasisBattle
+        ? !window.OasisBattle.overlap(first.actor, second.actor)
+        : distance > 7
     ) {
       continue;
     }
@@ -2369,7 +2371,7 @@ function checkInteractions(
       now + 1800;
 
 
-    window.OasisBattle?.trigger(first.actor.data.id,second.actor.data.id,now);
+    if (window.OasisBattle && !window.OasisBattle.trigger(first.actor.data.id,second.actor.data.id,now)) continue;
     playInteraction(
       first.actor
     );
@@ -2504,6 +2506,7 @@ function animate() {
 
 
   window.OasisBattle?.addMushrooms(positions);
+  window.OasisBattle?.observeContacts(positions);
 
   if(!window.OasisBattle?.isFrozen()) checkInteractions(
     positions,
@@ -2530,7 +2533,7 @@ requestAnimationFrame(
 
 </script>
 
-<script src="/shared/oasis-battles.js"></script>
+<script src="/shared/oasis-battles.js?v=encounters-2"></script>
 <script src="/shared/weebie-progression.js"></script>
 </body>
 </html>
