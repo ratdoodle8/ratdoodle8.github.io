@@ -15,6 +15,11 @@
       "secondaryColor": {
         "name": "red",
         "hex": "#D94242"
+      },
+      "websiteStyle": {
+        "textColor": "#F6CC32",
+        "outlineColor": "#17131F",
+        "outlineWidth": "0.65px"
       }
     },
     {
@@ -111,6 +116,11 @@
       "secondaryColor": {
         "name": "violet",
         "hex": "#9457CC"
+      },
+      "websiteStyle": {
+        "textColor": "#F5F4EF",
+        "outlineColor": "#17131F",
+        "outlineWidth": "0.65px"
       }
     },
     {
@@ -127,6 +137,11 @@
       "secondaryColor": {
         "name": "pink",
         "hex": "#E89FBC"
+      },
+      "websiteStyle": {
+        "textColor": "#858A91",
+        "outlineColor": "#17131F",
+        "outlineWidth": "0.65px"
       }
     },
     {
@@ -143,6 +158,9 @@
       "secondaryColor": {
         "name": "black",
         "hex": "#191B22"
+      },
+      "websiteStyle": {
+        "textColor": "#42165F"
       }
     }
   ]

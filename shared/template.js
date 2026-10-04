@@ -83,6 +83,22 @@ a, h1, h2, h3, h4, p, li {
     -webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain;
     transform:translate(-50%, -50%);
 }
+body[data-core-number="1"], body[data-core-number="7"], body[data-core-number="8"] {
+    --core-outline:#17131F;
+}
+body[data-core-number="1"] :is(a,h1,h2,h3,h4,p,li,summary),
+body[data-core-number="7"] :is(a,h1,h2,h3,h4,p,li,summary),
+body[data-core-number="8"] :is(a,h1,h2,h3,h4,p,li,summary) {
+    -webkit-text-stroke:.65px var(--core-outline);
+    paint-order:stroke fill;
+    text-shadow:0 1px 0 var(--core-outline);
+}
+body[data-core-number="1"] a,
+body[data-core-number="7"] a,
+body[data-core-number="8"] a {
+    text-decoration-color:var(--core-outline);
+    text-decoration-thickness:2px;
+}
 header {
     width:95%;
     max-width:400px;
@@ -333,8 +349,9 @@ function formatListItem(item) {
 // ======================================================
 
 function buildPage(character, card, core) {
-    const accent = core?.primaryColor?.hex;
+    const accent = core?.websiteStyle?.textColor || core?.primaryColor?.hex;
     document.body.style.setProperty('--character-core-color', /^#[0-9a-f]{6}$/i.test(accent || '') ? accent : '#0007E6');
+    document.body.dataset.coreNumber = core?.number || '';
     document.title =
         exists(character.name)
         ? character.name
