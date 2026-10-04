@@ -19,7 +19,7 @@
       "websiteStyle": {
         "textColor": "#F6CC32",
         "outlineColor": "#17131F",
-        "outlineWidth": "0.65px"
+        "outlineWidth": "1.5px"
       }
     },
     {
@@ -120,7 +120,7 @@
       "websiteStyle": {
         "textColor": "#F5F4EF",
         "outlineColor": "#17131F",
-        "outlineWidth": "0.65px"
+        "outlineWidth": "1.5px"
       }
     },
     {
@@ -141,7 +141,7 @@
       "websiteStyle": {
         "textColor": "#858A91",
         "outlineColor": "#17131F",
-        "outlineWidth": "0.65px"
+        "outlineWidth": "1.5px"
       }
     },
     {

@@ -59,13 +59,18 @@ function addStyles() {
     const style = document.createElement("style");
 
     style.innerHTML = `
+@font-face {font-family:"Character Bubble";src:url("/shared/fonts/baloo2-bold.ttf") format("truetype");font-weight:700;font-display:swap;}
+@font-face {font-family:"Character Bubble";src:url("/shared/fonts/baloo2-extrabold.ttf") format("truetype");font-weight:800;font-display:swap;}
 
 body {
     --character-core-color:#0007E6;
     isolation:isolate;
     background-color:#bcc8cc;
     text-align:center;
-    font-family:Arial,sans-serif;
+    font-family:"Character Bubble","Arial Rounded MT Bold",ui-rounded,Arial,sans-serif;
+    font-weight:700;
+    font-size:18px;
+    line-height:1.6;
     color:var(--character-core-color, #0007E6);
 }
 
@@ -89,15 +94,25 @@ body[data-core-number="1"], body[data-core-number="7"], body[data-core-number="8
 body[data-core-number="1"] :is(a,h1,h2,h3,h4,p,li,summary),
 body[data-core-number="7"] :is(a,h1,h2,h3,h4,p,li,summary),
 body[data-core-number="8"] :is(a,h1,h2,h3,h4,p,li,summary) {
-    -webkit-text-stroke:.65px var(--core-outline);
+    font-weight:800;
+    -webkit-text-stroke:1.5px var(--core-outline);
     paint-order:stroke fill;
-    text-shadow:0 1px 0 var(--core-outline);
+    text-shadow:0 2px 0 var(--core-outline);
 }
 body[data-core-number="1"] a,
 body[data-core-number="7"] a,
 body[data-core-number="8"] a {
     text-decoration-color:var(--core-outline);
     text-decoration-thickness:2px;
+}
+h1,h2,h3,h4,strong {font-weight:800;line-height:1.25;}
+h1 {font-size:clamp(36px,7vw,48px);}
+h2 {font-size:32px;}
+h3 {font-size:26px;}
+h4 {font-size:22px;}
+body:is([data-core-number="1"],[data-core-number="7"],[data-core-number="8"]) :is(h1,h2,h3,h4) {
+    -webkit-text-stroke:2.6px var(--core-outline);
+    text-shadow:0 3px 0 var(--core-outline);
 }
 header {
     width:95%;
