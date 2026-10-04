@@ -1,0 +1,31 @@
+name: Index radio songs
+on:
+  push:
+    paths:
+      - 'songs/**'
+      - 'scripts/index-songs.py'
+      - '.github/workflows/radio-songs.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: radio-song-index
+  cancel-in-progress: false
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: python scripts/index-songs.py
+      - name: Save updated playlist
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add songs/playlist.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update radio song index"
+            git push
+          fi
