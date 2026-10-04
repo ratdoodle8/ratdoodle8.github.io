@@ -59,8 +59,8 @@ function addStyles() {
     const style = document.createElement("style");
 
     style.innerHTML = `
-@font-face {font-family:"Character Bubble";src:url("/shared/fonts/baloo2-bold.ttf") format("truetype");font-weight:700;font-display:swap;}
-@font-face {font-family:"Character Bubble";src:url("/shared/fonts/baloo2-extrabold.ttf") format("truetype");font-weight:800;font-display:swap;}
+@font-face {font-family:"Character Bubble";src:url("/shared/fonts/baloo2-bold.ttf?v=bubble3") format("truetype");font-weight:700;font-display:swap;}
+@font-face {font-family:"Character Bubble";src:url("/shared/fonts/baloo2-extrabold.ttf?v=bubble3") format("truetype");font-weight:800;font-display:swap;}
 
 body {
     --character-core-color:#0007E6;
