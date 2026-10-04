@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ratdoodle Pot</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#bcc8cc;color:#0007e6;font-family:Arial,sans-serif;text-align:center}.nav{position:absolute;top:18px;right:18px;display:flex;gap:18px}a{color:inherit}main{max-width:440px;margin:90px auto 30px;padding:20px}h1{font-size:30px}.pot{width:150px;height:105px;background:#dae0eb;border:4px solid #0007e6;border-radius:16px 16px 60px 60px;position:relative;margin:40px auto 30px;box-shadow:5px 6px 0 #8293ad}.pot:before,.pot:after{content:'';position:absolute;top:12px;width:24px;height:30px;border:4px solid #0007e6;border-radius:10px}.pot:before{left:-27px}.pot:after{right:-27px}.rim{position:absolute;top:-15px;left:-10px;width:162px;height:22px;background:#f1f1f6;border:4px solid #0007e6;border-radius:50%}.spark{font-size:36px;position:absolute;top:25px;left:53px}.shaking{animation:shake .22s ease-in-out infinite}button{font:inherit;font-weight:bold;color:#0007e6;background:#fff;border:2px solid #0007e6;border-radius:15px;padding:14px 25px;cursor:pointer;box-shadow:0 4px 0 #8293ad}button:disabled{opacity:.6;cursor:wait}button:active{transform:translateY(3px)}button:focus-visible{outline:3px solid #a338cc;outline-offset:4px}#status{min-height:44px;line-height:1.5;margin-top:22px}.reward{border:2px solid #0007e6;border-radius:20px;padding:18px;background:#d7dfe5}.reward img{width:150px;height:150px;object-fit:contain}.reward h2{font-size:23px;margin:10px 0}.reward p{margin:8px 0}.hidden{display:none}@keyframes shake{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}@media(prefers-reduced-motion:reduce){.shaking{animation:none}}
+</style></head><body><nav class="nav"><a href="/account/">Account</a><a href="/">Home</a></nav><main><h1>The Pot</h1><p>A little surprise for your inventory.</p><div class="pot" id="pot" aria-hidden="true"><div class="rim"></div><span class="spark">✦</span></div><button id="spawn">Get a random item</button><p id="status" role="status" aria-live="polite"></p><section id="reward" class="reward hidden" aria-label="Your new item"><img id="image" alt=""><h2 id="title"></h2><p id="type"></p><p>Added to your inventory!</p><a href="/account/#inventory">View inventory</a></section><p id="login" class="hidden"><a href="/login/?next=%2Fpot%2F">Log in</a> to use the pot.</p></main>
+<script>
+const API='https://ratdoodle-accounts.ratdoodle8.workers.dev', $=id=>document.getElementById(id);let pending=false;
+$('spawn').onclick=async()=>{
+ if(pending)return;pending=true;$('spawn').disabled=true;$('pot').classList.add('shaking');$('status').textContent='Finding a little surprise…';$('reward').classList.add('hidden');$('login').classList.add('hidden');
+ try{
+  const headers={'Content-Type':'application/json'};const token=localStorage.getItem('rd_session');if(token)headers.Authorization='Bearer '+token;
+  const response=await fetch(API+'/pot/claim',{method:'POST',credentials:'include',headers,body:'{}'});
+  let data;try{data=await response.json()}catch{throw Error('The pot could not respond. Check that the updated Worker is deployed.')}
+  if(!response.ok){if(response.status===401)$('login').classList.remove('hidden');throw Error(data.error||'The pot could not give an item.')}
+  if(!data.success||!data.item)throw Error('No item was confirmed.');
+  $('title').textContent=data.item.title;$('type').textContent=data.item.type==='swag'?'Swag':data.item.type||'';
+  const image=$('image');image.hidden=false;image.alt=data.item.title;image.onerror=()=>image.hidden=true;image.src=data.item.image;
+  $('status').textContent='You got '+data.item.title+'!';$('reward').classList.remove('hidden');
+ }catch(error){$('status').textContent=error.message}
+ finally{pending=false;$('spawn').disabled=false;$('pot').classList.remove('shaking')}
+};
+</script></body></html>
