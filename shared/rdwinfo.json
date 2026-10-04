@@ -7,7 +7,8 @@
     "coreLore": {
       "Fire": "Fire represents passion.",
       "Spirit": "Spirit represents memory."
-    }
+    },
+    "characterCoreType": 1
   },
   "A2": {
     "number": "A2",
@@ -16,7 +17,8 @@
     "description": "Rupert is a laid back line cook at Flip Flaps Diner, if you need the perfect stack of pancakes, you know who to ask! <br> Large, strong and stable, all Ruperts pals appreciate how hes always been a rock during hard times. He loves bringing everyone together to make sure everyone has a good time. This multifaceted mammal is many things, but most of all a big sweetie who can whip up some incredible grub for the crew. <br> Rupert is quite good at gaming and Plays PVP games with the gang frequently. He especially gets into it with Jot , Snel , and Stump <br> They can be found at Flip Flaps Diner, or at Doodle s place listening to the latest in-progress track for their niche online music animation project, Ratdoodle",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 2
   },
   "A3": {
     "number": "A3",
@@ -26,7 +28,8 @@
     "coreLore": {
       "Light": "swag"
     },
-    "editdate": "2026-09-20T04:39:30.394Z"
+    "editdate": "2026-09-20T04:39:30.394Z",
+    "characterCoreType": 3
   },
   "A4": {
     "number": "A4",
@@ -35,7 +38,8 @@
     "description": "Pastel is a recklessly ambitious exact-o knife of a scientist who is always searching for the greater truth of our reality. Her main focus of research is archeology, geology, and the barrier between life and death. <br> Her ultimate dream is to create an army of zombie fossils, form the largest metal band of all time (with the army of zombie fossils) and achieve world domination. After all, it would be better if she was God, and not this pussy who died on some stupid cross. <br> If Pastel ISNT in her lab staring at rocks or bringing something back from the dead, shes most likely outdoors on a research venture! or at a metal show knocking mfs out! <br> She likes to spend time hanging out with friends, not so much for the connection, but to update her file back in the lab of their strengths, weaknesses, and behaviors. It seems unlikely she will ever understand friendship, but maybe one day.",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 4
   },
   "A5": {
     "number": "A5",
@@ -44,7 +48,8 @@
     "description": "Jot is an ambitious, although sometimes clumsy, apprentice at the Potion Shop! <br> Jot usually carries with him a Scepter made from a gemstone he found, and his Magic Book of Spells, so he can remember how to recite spells! (he usually still recites them wrong anyway) Jot aspires to be the greatest wizard of all time!<br> You can find him Traveling Around in search of magic teachers, spells, and artifacts to help him along his quest.",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 5
   },
   "A6": {
     "number": "A6",
@@ -53,7 +58,8 @@
     "description": "Just like every other snail, Snel possesses Astral abilities. Unlike other snails however, specifically the abilities Snel was born with are much stronger than normal. She can travel through time, space, and consciousness just by blinking, or meditating. <br> When Snel was very young she experienced many times, visions and realities, while to others around her, she simply sat down for a few moments. <br> These abilities have lead to an abnormal life for Snel. Her ease of using advanced techniques at an early age lead to her growing up forced to attend specialized training courses, schools, going to far away lands and planets to hone her strengths with mystics and teachers of all the ancient Astral traditions, like the wise Monk teacher of the forest, Enhar <br> Due to experiencing such a potent clairsentience from such a young age, Snel frequently loses track of what really exists in front of her, when she is, or where she is. <br> This constant isolated experience has lead Snel to adopt a nomadic lifestyle, flying around in her space ship, going where the wind takes her, and doing what she can to not take anything too seriously. She tries to push her ship to go as fast as possible whenever she can, addicted to the adrenaline distracting her from her inner world. the hyperfocus of not colliding with a star at 10x light speed is one of the only things she's found that quiets the noise. <br> The attempt at accepting the simple joys of life always seems futile to our hero as the burden of enormous pressure of being able to do things others cant weighs on her more and more the stronger she gets. to see into realms unknown, to experience other worlds, universes and timelines play out to completion. The potential for greatness haunts her like a helmet she will never be big enough to wear.",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 6
   },
   "A7": {
     "number": "A7",
@@ -63,7 +69,8 @@
     "coreLore": {
       "Light": "swag"
     },
-    "editdate": "2026-08-18T04:17:42.835Z"
+    "editdate": "2026-08-18T04:17:42.835Z",
+    "characterCoreType": 7
   },
   "A8": {
     "number": "A8",
@@ -72,7 +79,8 @@
     "description": "Pebble is a Weebie Doodle stumbled upon directly after crash landing in dulrow. Pebble had gone feral, lost to the mind control of the eraser until Doodle freed her mind by destroying it! Ever since that day, Pebble has loved to follow Doodle around, no matter where! <br> Pebble loves destruction, evil, and conquest",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 8
   },
   "A9": {
     "number": "A9",
@@ -81,7 +89,8 @@
     "description": "Not much is known about this mysterious gangster robot warrior. They have been seen flying through the skies of the forgotten valley, troubling the wildlife by installing erasers to drain the life force of the world! <br> their aura is cloaked in mystery and strange purple energy called Anivore.",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 9
   },
   "P1": {
     "number": "P1",
@@ -164,7 +173,6 @@
       "Light": "swag"
     }
   },
-
   "S1": {
     "number": "S1",
     "name": "J.P. Riley Investigator",
@@ -246,5 +254,4 @@
       "Light": "swag"
     }
   }
-
 }

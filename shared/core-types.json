@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "coreTypes": [
+    {
+      "number": 1,
+      "name": "Glitter Core",
+      "planet": "Dul'row",
+      "code": "GLi",
+      "units": "Glitter Sparks",
+      "chakra": "root",
+      "primaryColor": {
+        "name": "Yellow",
+        "hex": "#F6CC32"
+      },
+      "secondaryColor": {
+        "name": "red",
+        "hex": "#D94242"
+      }
+    },
+    {
+      "number": 2,
+      "name": "Life Core",
+      "planet": "LOROS",
+      "code": "Li",
+      "units": "Dream Seeds",
+      "chakra": "throat",
+      "primaryColor": {
+        "name": "Brown",
+        "hex": "#805437"
+      },
+      "secondaryColor": {
+        "name": "teal",
+        "hex": "#168F8B"
+      }
+    },
+    {
+      "number": 3,
+      "name": "Grit Core",
+      "planet": "Grumlut",
+      "code": "GRi",
+      "units": "#1 Smelly Burger Combo",
+      "chakra": "solar plexis",
+      "primaryColor": {
+        "name": "Red",
+        "hex": "#D93636"
+      },
+      "secondaryColor": {
+        "name": "Yellow",
+        "hex": "#F4C842"
+      }
+    },
+    {
+      "number": 4,
+      "name": "Death Core",
+      "planet": "DEAONOS",
+      "code": "DEA",
+      "units": "n/a",
+      "chakra": "heart",
+      "primaryColor": {
+        "name": "Pink",
+        "hex": "#E76CA5"
+      },
+      "secondaryColor": {
+        "name": "Green",
+        "hex": "#54A868"
+      }
+    },
+    {
+      "number": 5,
+      "name": "Magic Core",
+      "planet": "LEAONOS",
+      "code": "LEA",
+      "units": "the third point",
+      "chakra": "sacral",
+      "primaryColor": {
+        "name": "blue",
+        "hex": "#315ED9"
+      },
+      "secondaryColor": {
+        "name": "orange",
+        "hex": "#ED8A35"
+      }
+    },
+    {
+      "number": 6,
+      "name": "Astral Core",
+      "planet": "RAL-DONOS",
+      "code": "RAL",
+      "units": "n/a",
+      "chakra": "CROWN",
+      "primaryColor": {
+        "name": "GREEN",
+        "hex": "#34834F"
+      },
+      "secondaryColor": {
+        "name": "indigo",
+        "hex": "#51429B"
+      }
+    },
+    {
+      "number": 7,
+      "name": "Pressure Core",
+      "planet": "PRi-DONOS",
+      "code": "PRi",
+      "units": "n/a",
+      "chakra": "third eye",
+      "primaryColor": {
+        "name": "white",
+        "hex": "#F5F4EF"
+      },
+      "secondaryColor": {
+        "name": "violet",
+        "hex": "#9457CC"
+      }
+    },
+    {
+      "number": 8,
+      "name": "All Core",
+      "planet": "AL-DONOS",
+      "code": "AL",
+      "units": "n/a",
+      "chakra": "enlightenment",
+      "primaryColor": {
+        "name": "grey",
+        "hex": "#858A91"
+      },
+      "secondaryColor": {
+        "name": "pink",
+        "hex": "#E89FBC"
+      }
+    },
+    {
+      "number": 9,
+      "name": "Fear Core",
+      "planet": "iLGAR",
+      "code": "iLG",
+      "units": "n/a",
+      "chakra": "illusion",
+      "primaryColor": {
+        "name": "silver",
+        "hex": "#BBC2CC"
+      },
+      "secondaryColor": {
+        "name": "black",
+        "hex": "#191B22"
+      }
+    }
+  ]
+}

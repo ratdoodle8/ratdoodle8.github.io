@@ -61,16 +61,28 @@ function addStyles() {
     style.innerHTML = `
 
 body {
+    --character-core-color:#0007E6;
+    isolation:isolate;
     background-color:#bcc8cc;
     text-align:center;
     font-family:Arial,sans-serif;
-    color:#0007E6;
+    color:var(--character-core-color, #0007E6);
 }
 
-h1, h2, h3, h4, p, li {
-    color:#0007E6;
+a, h1, h2, h3, h4, p, li {
+    color:var(--character-core-color, #0007E6);
 }
 
+#character-silhouette {
+    position:fixed;
+    top:50%;left:50%;
+    width:min(130vw, 1400px);height:125vh;
+    z-index:-1;pointer-events:none;opacity:.15;
+    background:var(--silhouette-color, #888);
+    mask-repeat:no-repeat;mask-position:center;mask-size:contain;
+    -webkit-mask-repeat:no-repeat;-webkit-mask-position:center;-webkit-mask-size:contain;
+    transform:translate(-50%, -50%);
+}
 header {
     width:95%;
     max-width:400px;
@@ -90,7 +102,7 @@ header {
 .back-button {
     display:inline-block;
     background-color:white;
-    color:#0007E6;
+    color:var(--character-core-color, #0007E6);
     text-decoration:none;
     padding:14px 24px;
     margin:30px auto;
@@ -185,7 +197,13 @@ async function loadCharacter() {
         const card =
             destiny[characterID] || {};
 
-        buildPage(character, card);
+        let cores = [];
+        try {
+            const coreResponse = await fetch('/shared/core-types.json');
+            if (coreResponse.ok) cores = (await coreResponse.json()).coreTypes || [];
+        } catch (error) { console.error('Core types unavailable:', error); }
+        const core = cores.find(c => c.number === Number(character.characterCoreType));
+        buildPage(character, card, core);
     } catch (error) {
         console.error(error);
 
@@ -314,7 +332,9 @@ function formatListItem(item) {
 // Build Page
 // ======================================================
 
-function buildPage(character, card) {
+function buildPage(character, card, core) {
+    const accent = core?.primaryColor?.hex;
+    document.body.style.setProperty('--character-core-color', /^#[0-9a-f]{6}$/i.test(accent || '') ? accent : '#0007E6');
     document.title =
         exists(character.name)
         ? character.name
@@ -350,6 +370,7 @@ ${exists(character.subname) ? `
 </header>
 
 <section id="rdw">
+${core ? `<p class="character-core-stat">Core Type: ${core.number} — ${core.name}</p>` : ""}
 
 ${createImageSection()}
 
@@ -515,6 +536,7 @@ ${exists(card.coreType) ? `
 
 `;
 
+    setupCharacterSilhouette();
     sizeImageCrops();
 
     document.querySelectorAll("details").forEach(dropdown => {
@@ -522,4 +544,51 @@ ${exists(card.coreType) ? `
     });
 
     window.addEventListener("resize", sizeImageCrops);
+}
+// Preserve the PNG alpha shape; sample visible pixels for an alpha-weighted average.
+function averageVisibleColor(data) {
+    let r=0,g=0,b=0,weight=0;
+    for(let i=0;i<data.length;i+=4) {
+        const alpha=data[i+3]/255;
+        r+=data[i]*alpha;g+=data[i+1]*alpha;b+=data[i+2]*alpha;weight+=alpha;
+    }
+    if(!weight)return null;
+    return 'rgb('+[r,g,b].map(v=>Math.round(v/weight)).join(', ')+')';
+}
+function setupCharacterSilhouette() {
+    const source=new Image();
+    source.onload=()=>{
+        const canvas=document.createElement('canvas');
+        const ratio=Math.min(1,128/Math.max(source.naturalWidth,source.naturalHeight));
+        canvas.width=Math.max(1,Math.round(source.naturalWidth*ratio));
+        canvas.height=Math.max(1,Math.round(source.naturalHeight*ratio));
+        const context=canvas.getContext('2d',{willReadFrequently:true});
+        if(!context)return;
+        try {
+            context.drawImage(source,0,0,canvas.width,canvas.height);
+            const color=averageVisibleColor(context.getImageData(0,0,canvas.width,canvas.height).data);
+            if(!color)return;
+            const layer=document.createElement('div');
+            layer.id='character-silhouette';layer.setAttribute('aria-hidden','true');
+            layer.style.setProperty('--silhouette-color',color);
+            layer.style.maskImage='url("'+source.src+'")';
+            layer.style.webkitMaskImage='url("'+source.src+'")';
+            document.body.prepend(layer);
+            const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+            let pending=false;
+            const draw=()=>{
+                pending=false;
+                const fraction=window.scrollY/Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+                const offset=reduced.matches?0:(fraction-.5)*window.innerHeight*.3;
+                const rotation=reduced.matches?0:(fraction-.5)*8;
+                layer.style.transform='translate(-50%, calc(-50% + '+offset+'px)) rotate('+rotation+'deg)';
+            };
+            const schedule=()=>{if(!pending){pending=true;requestAnimationFrame(draw);}};
+            window.addEventListener('scroll',schedule,{passive:true});
+            window.addEventListener('resize',schedule);
+            reduced.addEventListener?.('change',schedule);
+            draw();
+        } catch(error) { console.error('Character silhouette unavailable:',error); }
+    };
+    source.src='/'+encodeURIComponent(characterID)+'/CHARIMAGE/1.png';
 }
