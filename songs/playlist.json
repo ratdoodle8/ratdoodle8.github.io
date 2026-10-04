@@ -1,3 +1,39 @@
 {
-  "tracks": []
+  "tracks": [
+    {
+      "title": "First Song Title",
+      "artist": "Ratdoodle",
+      "album": "DONT LET ME",
+      "src": "/songs/RATDOODLE/blindbox/1.wav",
+      "cover": "/songs/RATDOODLE/blindbox/cover.png"
+    },
+    {
+      "title": "Second Song Title",
+      "artist": "Ratdoodle",
+      "album": "DONT LET ME",
+      "src": "/songs/RATDOODLE/blindbox/2.wav",
+      "cover": "/songs/RATDOODLE/blindbox/cover.png"
+    },
+    {
+      "title": "Third Song Title",
+      "artist": "Ratdoodle",
+      "album": "DONT LET ME",
+      "src": "/songs/RATDOODLE/blindbox/3.wav",
+      "cover": "/songs/RATDOODLE/blindbox/cover.png"
+    },
+    {
+      "title": "4",
+      "artist": "Ratdoodle",
+      "album": "DONT LET ME",
+      "src": "/songs/RATDOODLE/blindbox/4.wav",
+      "cover": "/songs/RATDOODLE/blindbox/cover.png"
+    },
+    {
+      "title": "5",
+      "artist": "Ratdoodle",
+      "album": "DONT LET ME",
+      "src": "/songs/RATDOODLE/blindbox/5.wav",
+      "cover": "/songs/RATDOODLE/blindbox/cover.png"
+    }
+  ]
 }
