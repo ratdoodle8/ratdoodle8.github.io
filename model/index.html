@@ -1,0 +1,383 @@
+Ratdoodle, paste this into **`/model/index.html`**. Keep filenames consecutive: `ModelPicsA1-1.png`, `ModelPicsA1-2.png`, etc.
+
+It automatically generates and caches smaller previews after images first load. No extra image files needed.
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Models · Ratdoodle</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#bcc8cc;
+  color:#0007e6;
+  font-family:Arial,sans-serif;
+}
+nav{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding:15px;
+  flex-wrap:wrap;
+}
+nav a{
+  color:inherit;
+  text-decoration:none;
+  font-weight:bold;
+  border:2px solid #0007e6;
+  padding:8px 12px;
+}
+nav a:hover{
+  background:#0007e6;
+  color:#bcc8cc;
+}
+main{
+  width:min(500px,calc(100% - 32px));
+  margin:20px auto 60px;
+  text-align:center;
+}
+h1{font-size:30px}
+#status{font-size:14px}
+#gallery{display:grid;gap:20px}
+figure{margin:0}
+figure a{
+  display:block;
+  position:relative;
+  overflow:hidden;
+  border:2px solid #0007e6;
+  aspect-ratio:1;
+  background:#b1bec5;
+}
+img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.preview{
+  position:absolute;
+  inset:0;
+  height:100%;
+  object-fit:contain;
+}
+.full{
+  position:relative;
+  opacity:0;
+  transition:opacity .2s;
+}
+.ready{aspect-ratio:auto}
+.ready .full{opacity:1}
+.ready .preview,.ready .label{display:none}
+.label{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size:14px;
+}
+figcaption{
+  font-size:13px;
+  font-weight:bold;
+  padding:8px;
+}
+a:focus-visible{
+  outline:3px solid white;
+  outline-offset:3px;
+}
+@media(prefers-reduced-motion:reduce){
+  .full{transition:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/characters">All Characters</a>
+  <a href="/homereal">Home</a>
+</nav>
+
+<main>
+  <h1>Models</h1>
+  <p id="status" role="status">Finding pictures…</p>
+  <div id="gallery"></div>
+  <noscript>Enable JavaScript to display pictures.</noscript>
+</main>
+
+<script>
+'use strict';
+
+const folder=new URL('ModelPicsA1/',location.href);
+const gallery=document.getElementById('gallery');
+const status=document.getElementById('status');
+
+// Automatically store generated previews in the visitor's browser.
+const database=new Promise(resolve=>{
+  try{
+    const request=indexedDB.open('ratdoodle-model-previews',1);
+
+    request.onupgradeneeded=()=>{
+      request.result.createObjectStore('previews');
+    };
+
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>resolve(null);
+    request.onblocked=()=>resolve(null);
+  }catch(_){
+    resolve(null);
+  }
+});
+
+async function cached(key){
+  const db=await database;
+  if(!db)return null;
+
+  return new Promise(resolve=>{
+    try{
+      const request=db
+        .transaction('previews')
+        .objectStore('previews')
+        .get(key);
+
+      request.onsuccess=()=>resolve(request.result||null);
+      request.onerror=()=>resolve(null);
+    }catch(_){
+      resolve(null);
+    }
+  });
+}
+
+async function savePreview(key,img){
+  try{
+    const db=await database;
+    if(!db)return;
+
+    const scale=Math.min(
+      1,
+      240/Math.max(img.naturalWidth,img.naturalHeight)
+    );
+
+    const canvas=document.createElement('canvas');
+
+    canvas.width=Math.max(
+      1,
+      Math.round(img.naturalWidth*scale)
+    );
+
+    canvas.height=Math.max(
+      1,
+      Math.round(img.naturalHeight*scale)
+    );
+
+    canvas.getContext('2d').drawImage(
+      img,0,0,canvas.width,canvas.height
+    );
+
+    const blob=await new Promise(resolve=>{
+      canvas.toBlob(resolve,'image/webp',0.7);
+    });
+
+    if(blob){
+      const tx=db.transaction('previews','readwrite');
+      tx.onerror=()=>{};
+      tx.objectStore('previews').put(blob,key);
+    }
+  }catch(_){}
+}
+
+async function probe(url){
+  let response=await fetch(url,{
+    method:'HEAD',
+    cache:'no-cache',
+    signal:AbortSignal.timeout(15000)
+  });
+
+  if(response.status===405||response.status===501){
+    response=await fetch(url,{
+      signal:AbortSignal.timeout(15000)
+    });
+
+    if(response.body)await response.body.cancel();
+  }
+
+  if(response.status===404||response.status===410){
+    return null;
+  }
+
+  if(!response.ok){
+    throw Error('HTTP '+response.status);
+  }
+
+  if(
+    (response.headers.get('content-type')||'')
+      .includes('text/html')
+  ){
+    return null;
+  }
+
+  return response.headers.get('etag')
+    ||response.headers.get('last-modified')
+    ||'original';
+}
+
+async function load(link){
+  if(link.dataset.started)return;
+  link.dataset.started='yes';
+
+  const full=link.querySelector('.full');
+  let previewURL=null;
+
+  const blob=await Promise.race([
+    cached(link.dataset.key),
+    new Promise(resolve=>{
+      setTimeout(()=>resolve(null),250);
+    })
+  ]);
+
+  if(blob){
+    const preview=new Image();
+    preview.className='preview';
+    preview.alt='';
+
+    previewURL=URL.createObjectURL(blob);
+
+    preview.onload=()=>{
+      if(!link.classList.contains('ready')){
+        link.style.aspectRatio=
+          preview.naturalWidth+'/'+preview.naturalHeight;
+      }
+    };
+
+    link.prepend(preview);
+    preview.src=previewURL;
+  }
+
+  full.onload=async()=>{
+    try{
+      await full.decode();
+    }catch(_){}
+
+    link.classList.add('ready');
+    link.style.removeProperty('aspect-ratio');
+
+    if(previewURL){
+      URL.revokeObjectURL(previewURL);
+    }
+
+    if(!blob){
+      savePreview(link.dataset.key,full);
+    }
+  };
+
+  full.onerror=()=>{
+    link.querySelector('.label').textContent=
+      'Click to open picture';
+
+    if(previewURL){
+      URL.revokeObjectURL(previewURL);
+    }
+  };
+
+  full.src=link.href;
+}
+
+const observer='IntersectionObserver' in window
+  ?new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      if(entry.isIntersecting){
+        observer.unobserve(entry.target);
+        load(entry.target);
+      }
+    }
+  },{rootMargin:'200px 0px'})
+  :null;
+
+function add(n,url,version){
+  const figure=document.createElement('figure');
+  const link=document.createElement('a');
+
+  link.href=url;
+  link.target='_blank';
+  link.rel='noopener';
+
+  link.setAttribute(
+    'aria-label',
+    'Open model picture '+n+' at full size'
+  );
+
+  link.dataset.key=url+'|'+version;
+
+  const label=document.createElement('span');
+  label.className='label';
+  label.textContent='Loading picture '+n+'…';
+
+  const full=document.createElement('img');
+  full.className='full';
+  full.alt='Model A1 — picture '+n;
+  full.decoding='async';
+
+  if(n===1){
+    full.fetchPriority='high';
+  }
+
+  link.append(label,full);
+
+  const caption=document.createElement('figcaption');
+  caption.textContent='Model A1 · '+n;
+
+  figure.append(link,caption);
+  gallery.append(figure);
+
+  if(observer){
+    observer.observe(link);
+  }else{
+    load(link);
+  }
+}
+
+(async()=>{
+  let count=0;
+
+  try{
+    for(let n=1;;n++){
+      const url=new URL(
+        'ModelPicsA1-'+n+'.png',
+        folder
+      ).href;
+
+      const version=await probe(url);
+
+      if(version===null)break;
+
+      add(n,url,version);
+      count=n;
+
+      status.textContent=
+        count+' picture'+(count===1?'':'s')+' found…';
+    }
+
+    status.textContent=count
+      ?count+' picture'+(count===1?'':'s')
+      :'No pictures found.';
+  }catch(error){
+    status.textContent=
+      'Could not finish checking pictures. Refresh to retry.';
+
+    console.error(error);
+  }
+})();
+</script>
+</body>
+
+    <a
+      class="training-link"
+      href="/shop"
+    >
+      SHOP
+    </a>
+
+
+</html>
+```
