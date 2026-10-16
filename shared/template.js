@@ -65,6 +65,8 @@ function addStyles() {
 body {
     --character-core-color:#0007E6;
     isolation:isolate;
+    position:relative;
+    min-height:calc(100vh - 16px);
     background-color:#bcc8cc;
     text-align:center;
     font-family:"Character Bubble","Arial Rounded MT Bold",ui-rounded,Arial,sans-serif;
@@ -177,6 +179,51 @@ section {
 details {
     width:95%;
     margin:auto;
+}
+
+
+#core-symbol-grid {
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    z-index:-1;
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    width:clamp(180px, 28vw, 300px);
+    box-sizing:border-box;
+    padding:12px;
+    gap:8px;
+    border:2px solid currentColor;
+    color:var(--character-core-color);
+    opacity:.32;
+    pointer-events:none;
+}
+body #core-symbol-grid .core-symbol,
+body #core-symbol-grid a.core-symbol:is(:link,:visited,:hover,:active) {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-width:0;
+    aspect-ratio:1;
+    padding:0;
+    margin:0;
+    border:0;
+    background:transparent;
+    color:inherit !important;
+    font-family:"Segoe UI Symbol","Apple Symbols","Noto Sans Symbols 2",sans-serif;
+    font-size:clamp(38px, 6vw, 64px);
+    font-weight:400 !important;
+    line-height:1;
+    text-decoration:none !important;
+    -webkit-text-stroke:0 !important;
+    text-shadow:none !important;
+    transform:none;
+    cursor:default;
+}
+#core-symbol-grid a.core-symbol {pointer-events:auto;}
+#core-symbol-grid a.core-symbol:focus-visible {
+    outline:2px solid currentColor;
+    outline-offset:2px;
 }
 
 summary {
@@ -568,6 +615,7 @@ ${exists(card.coreType) ? `
 
 `;
 
+    setupCoreSymbolGrid(core);
     setupCharacterSilhouette();
     sizeImageCrops();
 
@@ -623,4 +671,34 @@ function setupCharacterSilhouette() {
         } catch(error) { console.error('Character silhouette unavailable:',error); }
     };
     source.src='/'+encodeURIComponent(characterID)+'/CHARIMAGE/1.png';
+}
+
+// Shared symbols keyed by core name; existing core numbers stay unchanged.
+function setupCoreSymbolGrid(core) {
+    const symbols = {
+        "glitter core":"☢", "fear core":"∩", "magic core":"⨁",
+        "grit core":"◵", "death core":"⛧", "pressure core":"⦺",
+        "life core":"⟟", "astral core":"✪", "all core":"(÷)"
+    };
+    const coreName = String(core?.name || "").trim().toLowerCase();
+    const symbol = symbols[coreName];
+    if (!symbol) return;
+    document.getElementById("core-symbol-grid")?.remove();
+    const grid = document.createElement("div");
+    grid.id = "core-symbol-grid";
+    for (let index = 0; index < 9; index++) {
+        const linked = characterID === "A1" && coreName === "glitter core" && index === 3;
+        const cell = document.createElement(linked ? "a" : "span");
+        cell.className = "core-symbol";
+        // Text presentation prevents an emoji-colored radioactive symbol.
+        cell.textContent = symbol === "☢" ? symbol + "\uFE0E" : symbol;
+        if (linked) {
+            cell.href = "https://docs.google.com/forms/d/e/1FAIpQLSfEL3jxA_7qPjj73Y69t0eYhverjGrXaKYpZ8Iu9yGT-0gVlg/viewform";
+            cell.setAttribute("aria-label", "Glitter symbol");
+        } else {
+            cell.setAttribute("aria-hidden", "true");
+        }
+        grid.appendChild(cell);
+    }
+    document.body.appendChild(grid);
 }
