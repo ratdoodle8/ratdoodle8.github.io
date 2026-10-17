@@ -45,7 +45,7 @@
     "number": "A5",
     "name": "Jot",
     "subname": "the Chameleon",
-    "description": "Jot is an ambitious, although sometimes clumsy, apprentice at the Potion Shop! <br> Jot usually carries with him a Scepter made from a gemstone he found, and his Magic Book of Spells, so he can remember how to recite spells! (he usually still recites them wrong anyway) Jot aspires to be the greatest wizard of all time!<br> You can find him <a href=\"/jots-travels">Traveling Around</a>Traveling Around in search of magic teachers, spells, and artifacts to help him along his quest.",
+    "description": "Jot is an ambitious, although sometimes clumsy, apprentice at the Potion Shop! <br> Jot usually carries with him a Scepter made from a gemstone he found, and his Magic Book of Spells, so he can remember how to recite spells! (he usually still recites them wrong anyway) Jot aspires to be the greatest wizard of all time!<br> You can find him <a href=\"/jots-travels">Traveling Around</a> in search of magic teachers, spells, and artifacts to help him along his quest.",
     "coreLore": {
       "Light": "swag"
     },
