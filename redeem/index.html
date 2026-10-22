@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Redeem | Ratdoodle</title>
+<link rel="stylesheet" href="/shared/item-features.css?v=items1">
+<style>*{box-sizing:border-box}body{margin:0;background:#bcc8cc;color:#0007e6;font:18px/1.6 Arial,sans-serif;text-align:center}a{color:inherit}nav{display:flex;justify-content:flex-end;gap:18px;padding:15px 20px}main{max-width:420px;margin:45px auto;padding:15px}form{border:2px solid #0007e6;padding:22px}input{display:block;width:100%;margin:12px 0;padding:12px;font:inherit}button{font:inherit;padding:8px 16px;color:inherit;background:white;border:2px solid #0007e6;cursor:pointer}#message{min-height:28px}label{display:block}</style></head>
+<body><nav><a href="/account/">Account</a><a href="/">Home</a></nav><main><h1>Redeem</h1><form id="redeemForm"><label for="code">Enter your item code</label><input id="code" maxlength="128" required autocomplete="off" spellcheck="false"><button id="redeemButton" type="submit">Redeem</button><p id="message" role="status"></p></form></main>
+<script src="/shared/item-features.js?v=items1"></script>
+<script>
+(()=>{'use strict';const form=document.getElementById('redeemForm'),input=document.getElementById('code'),button=document.getElementById('redeemButton'),message=document.getElementById('message');let key='',lastCode='',busy=false;
+form.onsubmit=async event=>{event.preventDefault();if(busy)return;const code=input.value.trim().toUpperCase();if(!code)return;if(lastCode!==code||!key){key=crypto.randomUUID().replace(/-/g,'');lastCode=code;}busy=true;button.disabled=true;input.disabled=true;message.textContent='Redeeming…';try{const data=await RatdoodleItems.request('/items/redeem',{code,requestId:key});message.textContent='Your item is in your inventory!';RatdoodleItems.showItem(data.item,'Item received!');input.value='';key='';}catch(error){message.textContent=error.message;RatdoodleItems.notify(error.message);}finally{busy=false;button.disabled=false;input.disabled=false;}};
+})();
+</script></body></html>

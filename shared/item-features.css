@@ -1,0 +1,13 @@
+.inventory-card {position:relative;}
+.inventory-card .rd-item-gear {position:absolute;right:4px;top:4px;width:30px;height:30px;min-width:0;margin:0;padding:0;border:1px solid #0007e6;background:#bcc8cc;color:#0007e6;line-height:1;cursor:pointer;font-size:22px;}
+.rd-item-dialog {max-width:min(420px,calc(100vw - 28px));width:100%;box-sizing:border-box;padding:22px;border:2px solid #0007e6;background:#bcc8cc;color:#0007e6;text-align:center;font:16px/1.5 Arial,sans-serif;overflow-wrap:anywhere;}
+.rd-item-dialog::backdrop {background:#0008;}
+.rd-item-dialog h2 {margin:0 0 14px;}
+.rd-item-dialog img {display:block;max-width:250px;max-height:250px;width:auto;height:auto;margin:0 auto 15px;}
+.rd-item-dialog button {display:block;margin:12px auto 0;font:inherit;padding:8px 16px;color:#0007e6;background:white;border:2px solid #0007e6;cursor:pointer;}
+.rd-item-dialog button:disabled {opacity:.6;cursor:wait;}
+.rd-item-dialog input[type=text] {display:block;max-width:100%;width:100%;padding:10px;font:inherit;box-sizing:border-box;}
+.rd-item-dialog label {display:block;margin:12px 0;}
+.rd-item-dialog input[type=checkbox] {width:auto;}
+.rd-item-feedback {min-height:24px;}
+.rd-item-dialog :focus-visible {outline:3px solid #0007e6;outline-offset:3px;}

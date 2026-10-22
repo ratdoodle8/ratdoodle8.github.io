@@ -425,6 +425,7 @@ h1 {
 #oasis .fight-cooldown .weebie-body{animation:oasis-rest-flash 1100ms ease-in-out infinite}
 </style>
 <link rel="stylesheet" href="/shared/weebie-progression.css?v=encounters-8">
+<script src="/shared/weebie-costumes.js?v=items1"></script>
 </head>
 
 <body>
@@ -1105,6 +1106,8 @@ function updateOasisLists(
           outline
         );
 
+
+        window.WeebieCostumes?.render(preview,weebie.equipment);
 
         imageCell.appendChild(
           preview
@@ -1813,6 +1816,8 @@ function updateActorAppearance(
     eyelashes
       ? "/shared/Weebie-Outline.png"
       : "/shared/Weebie-Outline2.png";
+
+  window.WeebieCostumes?.render(actor.body,weebie.equipment);
 
 }
 

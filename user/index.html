@@ -83,6 +83,7 @@
       display: none;
     }
   </style>
+<script src="/shared/weebie-costumes.js?v=items1"></script>
 </head>
 
 <body>
@@ -375,6 +376,7 @@
         COLORS[
           weebie.secondaryColor
         ] || "#FFFFFF";
+      window.WeebieCostumes?.render(document.getElementById("weebieImage"),weebie.equipment);
     }
 
 

@@ -307,6 +307,7 @@
 
   </style>
 <link rel="stylesheet" href="/shared/weebie-progression.css?v=account-restore-1">
+<link rel="stylesheet" href="/shared/item-features.css?v=items1">
 </head>
 
 
@@ -1711,8 +1712,8 @@ async function loadInventory(){
     const response=await fetch(API+'/inventory',{method:'GET',credentials:'include',headers:authHeaders()});
     const data=await response.json();
     if(!response.ok)throw new Error(data.error||'Inventory request failed ('+response.status+').');
-    currentInventory=Array.isArray(data.items)?data.items:[];
-    renderInventory();inventoryMessage.textContent='';renderEquippedLayers();
+    currentInventory=Array.isArray(data.items)?data.items.filter(item=>Number(item.quantity)>0):[];
+    renderInventory();inventoryMessage.textContent='';renderEquippedLayers();window.RatdoodleItems?.checkGifts();
   }catch(error){
     console.error(error);inventoryPanel.style.display='block';inventoryEmpty.style.display='none';
     inventoryMessage.replaceChildren();
@@ -1819,6 +1820,7 @@ function renderInventory() {
     card.appendChild(title);
     card.appendChild(type);
     card.appendChild(quantity);
+    window.RatdoodleItems?.addOptions(card,item);
 
 
     if (
@@ -2859,5 +2861,6 @@ loadAccount();
 </script>
 
 <script src="/shared/weebie-progression.js?v=account-restore-1"></script>
+<script src="/shared/item-features.js?v=items1"></script>
 </body>
 </html>

@@ -54,7 +54,7 @@
   alerts();
  }
  function makeDialog(title){
-  if(dialog)return null;
+  if(dialog||document.querySelector('dialog[open]'))return null;
   const d=el('dialog',undefined,'wp-dialog');d.append(el('h2',title));document.body.append(d);dialog=d;
   d.addEventListener('cancel',e=>e.preventDefault());d.showModal();return d;
  }
@@ -81,7 +81,7 @@
   later.onclick=()=>{dismissedPoints=state.weebieId+':'+state.pointsEntitled;closeDialog();render();};
   form.append(feedback,save,later);form.onsubmit=async e=>{e.preventDefault();const values=Object.fromEntries(Object.entries(inputs).map(([k,v])=>[k,Number(v.value)]));const sum=Object.values(values).reduce((a,b)=>a+b,0);if(sum<1||sum>state.unspentPoints){feedback.textContent='Choose between 1 and '+state.unspentPoints+' points.';return;}save.disabled=true;try{state=await request('/progression/allocate',values);closeDialog();render();}catch(error){feedback.textContent=error.message;save.disabled=false;}};d.append(form);
  }
- function alerts(){if(dialog)return;if(state.pendingRewards.length){itemAlert(state.pendingRewards[0]);return;}if(state.unspentPoints&&dismissedPoints!==state.weebieId+':'+state.pointsEntitled)pointAlert();}
+ function alerts(){if(dialog||document.querySelector('dialog[open]'))return;if(state.pendingRewards.length){itemAlert(state.pendingRewards[0]);return;}if(state.unspentPoints&&dismissedPoints!==state.weebieId+':'+state.pointsEntitled)pointAlert();}
  async function refresh(){show();if(busy||document.hidden)return;busy=true;try{state=await request('/progression');render();}catch(e){if(e.status!==401)console.error(e);showStatus(e.status===401?'Sign in to load your private progression.':'Progression could not load. Your saved data has not been removed.');}finally{busy=false;}}
  // Trusted input records attention. Merely leaving a visible tab open never renews attention.
  for(const type of ['pointerdown','keydown','touchstart','wheel'])document.addEventListener(type,e=>{if(e.isTrusted&&!document.hidden){lastInput=Date.now();inputPending=true;}},{passive:true});

@@ -2576,6 +2576,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
   html, body { overflow-x: clip; }
 }
 </style>
+<script src="/shared/weebie-costumes.js?v=items1"></script>
 </head>
 
 
@@ -4187,6 +4188,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
       */
 
       showPushupDown();
+      window.WeebieCostumes?.render(document.getElementById("weebieImage"),currentWeebie.equipment);
 
       /* V85: sync effect colors directly to the loaded Weebie's real colors. */
       const effectColor1V85 = COLORS[currentWeebie.primary_color] || "#F5F5F5";

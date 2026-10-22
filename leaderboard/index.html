@@ -223,6 +223,7 @@
       }
     }
   </style>
+<script src="/shared/weebie-costumes.js?v=items1"></script>
 </head>
 
 <body>
@@ -522,6 +523,7 @@ function makeWeebiePic(weebie) {
   );
 
 
+  window.WeebieCostumes?.render(pic,weebie.equipment);
   return pic;
 }
 
