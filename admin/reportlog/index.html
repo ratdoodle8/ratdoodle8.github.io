@@ -1,935 +1,399 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Report Log</title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 30px 14px 60px;
-
-            background-color: #bcc8cc;
-            color: #0007E6;
-
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-
-        main {
-            width: 100%;
-            max-width: 1100px;
-
-            margin: 0 auto;
-        }
-
-        h1,
-        p,
-        label,
-        a {
-            color: #0007E6;
-        }
-
-        h1 {
-            margin: 0 0 30px;
-        }
-
-
-        /* ============================================= */
-        /* LOGIN                                         */
-        /* ============================================= */
-
-        #login-area {
-            width: 100%;
-            max-width: 400px;
-
-            margin: 0 auto;
-        }
-
-        .field {
-            width: 100%;
-
-            margin-bottom: 22px;
-
-            text-align: left;
-        }
-
-        label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-weight: bold;
-        }
-
-        input,
-        select {
-            width: 100%;
-
-            padding: 11px 12px;
-
-            border: 0;
-
-            border-radius: 8px;
-
-            background-color: white;
-            color: #0007E6;
-
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-        }
-
-        input:focus,
-        select:focus {
-            outline: 2px solid #0007E6;
-        }
-
-
-        /* ============================================= */
-        /* BUTTONS                                       */
-        /* ============================================= */
-
-        button,
-        .button {
-            display: inline-block;
-
-            border: 0;
-
-            background-color: white;
-            color: #0007E6;
-
-            padding: 13px 22px;
-
-            border-radius: 25px;
-
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            font-weight: bold;
-
-            text-decoration: none;
-
-            cursor: pointer;
-        }
-
-        button:hover,
-        .button:hover {
-            transform: scale(1.04);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-
-            cursor: default;
-
-            transform: none;
-        }
-
-        .button-row {
-            display: flex;
-
-            justify-content: center;
-            flex-wrap: wrap;
-
-            gap: 10px;
-
-            margin-top: 25px;
-        }
-
-
-        /* ============================================= */
-        /* STATUS                                        */
-        /* ============================================= */
-
-        #status {
-            min-height: 22px;
-
-            margin: 20px auto;
-
-            line-height: 1.4;
-        }
-
-        #status.error {
-            font-weight: bold;
-        }
-
-
-        /* ============================================= */
-        /* REPORT LOG                                    */
-        /* ============================================= */
-
-        #report-area {
-            display: none;
-        }
-
-        .sort-area {
-            width: 100%;
-            max-width: 250px;
-
-            margin: 0 auto 30px;
-        }
-
-        .sort-area label {
-            text-align: center;
-        }
-
-        #reports {
-            width: 100%;
-        }
-
-        .report {
-            width: 100%;
-
-            margin-bottom: 25px;
-            padding: 20px;
-
-            background-color: white;
-
-            border-radius: 10px;
-
-            text-align: left;
-        }
-
-        .report-name {
-            margin: 0 0 6px;
-
-            font-weight: bold;
-        }
-
-        .reported-username {
-            margin: 0 0 6px;
-
-            font-size: 13px;
-
-            font-weight: bold;
-        }
-
-        .report-date {
-            margin: 0 0 18px;
-
-            font-size: 12px;
-
-            opacity: 0.75;
-        }
-
-        .report-body {
-            margin: 0;
-
-            white-space: pre-wrap;
-            overflow-wrap: anywhere;
-
-            line-height: 1.5;
-        }
-
-
-        /* ============================================= */
-        /* REPORT IMAGE                                  */
-        /* ============================================= */
-
-        .report-image {
-            display: block;
-
-            width: auto;
-            max-width: min(100%, 1000px);
-            height: auto;
-
-            margin: 18px auto 0;
-
-            object-fit: contain;
-        }
-
-
-        #empty-message {
-            display: none;
-        }
-
-    </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Log</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 30px 14px 60px;
+      background: #bcc8cc;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h1 { margin: 0 0 30px; }
+
+    h1, p, label, a { color: #0007E6; }
+
+    #login-form {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .field {
+      width: 100%;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 0;
+      border-radius: 8px;
+      background: white;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus { outline: 2px solid #0007E6; }
+
+    button, .button {
+      display: inline-block;
+      border: 0;
+      border-radius: 25px;
+      padding: 13px 22px;
+      background: white;
+      color: #0007E6;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    button:hover, .button:hover { transform: scale(1.04); }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+      transform: none;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    #status {
+      min-height: 22px;
+      margin: 20px auto;
+      line-height: 1.4;
+    }
+
+    #status.error { font-weight: bold; }
+
+    #report-area { display: none; }
+
+    .sort-area {
+      width: 100%;
+      max-width: 250px;
+      margin: 0 auto 30px;
+    }
+
+    .sort-area label { text-align: center; }
+
+    #reports { width: 100%; }
+
+    .report {
+      width: 100%;
+      margin-bottom: 25px;
+      padding: 20px;
+      border-radius: 10px;
+      background: white;
+      text-align: left;
+    }
+
+    .report-name {
+      margin: 0 0 6px;
+      font-weight: bold;
+    }
+
+    .reported-username {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .report-date {
+      margin: 0 0 18px;
+      font-size: 12px;
+      opacity: 0.75;
+    }
+
+    .report-body {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+    }
+
+    .report-image {
+      display: block;
+      max-width: min(100%, 1000px);
+      height: auto;
+      margin: 18px auto 0;
+      object-fit: contain;
+    }
+
+    .image-error {
+      margin: 18px 0 0;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    #empty-message { display: none; }
+  </style>
 </head>
 
-
 <body>
+  <main>
+    <h1>REPORT LOG</h1>
 
-    <main>
-
-        <h1>
-            REPORT LOG
-        </h1>
-
-
-        <!-- ============================================= -->
-        <!-- ADMIN LOGIN                                   -->
-        <!-- ============================================= -->
-
-        <div id="login-area">
-
-            <div class="field">
-
-                <label for="admin-key">
-                    Admin Key
-                </label>
-
-                <input
-                    id="admin-key"
-                    type="password"
-                    autocomplete="current-password"
-                >
-
-            </div>
-
-
-            <button
-                id="view-button"
-                type="button"
-            >
-                View Report Log
-            </button>
-
+    <form id="login-form">
+      <div id="login-area">
+        <div class="field">
+          <label for="admin-key">Admin Key</label>
+          <input
+            id="admin-key"
+            type="password"
+            autocomplete="current-password"
+          >
         </div>
 
+        <button id="view-button" type="submit">View Report Log</button>
+      </div>
+    </form>
 
-        <p id="status"></p>
+    <p id="status"></p>
 
+    <div id="report-area">
+      <div class="sort-area">
+        <label for="sort">Sort</label>
+        <select id="sort">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+      </div>
 
-        <!-- ============================================= -->
-        <!-- REPORT LOG                                    -->
-        <!-- ============================================= -->
+      <p id="empty-message">No reports.</p>
+      <div id="reports"></div>
+    </div>
 
-        <div id="report-area">
+    <div class="button-row">
+      <a class="button" href="/">Home</a>
+    </div>
+  </main>
 
-            <div class="sort-area">
+  <script>
+    const WORKER_URL = "https://news-upload.ratdoodle8.workers.dev";
+    const SITE_URL = "https://ratdoodle.com";
 
-                <label for="sort">
-                    Sort
-                </label>
+    const loginForm = document.getElementById("login-form");
+    const loginArea = document.getElementById("login-area");
+    const adminKeyInput = document.getElementById("admin-key");
+    const viewButton = document.getElementById("view-button");
+    const status = document.getElementById("status");
+    const reportArea = document.getElementById("report-area");
+    const reportsContainer = document.getElementById("reports");
+    const emptyMessage = document.getElementById("empty-message");
+    const sortSelect = document.getElementById("sort");
 
-                <select id="sort">
+    let reports = [];
 
-                    <option value="newest">
-                        Newest
-                    </option>
+    const savedAdminKey = sessionStorage.getItem("ratdoodle-admin-key");
+    if (savedAdminKey) adminKeyInput.value = savedAdminKey;
 
-                    <option value="oldest">
-                        Oldest
-                    </option>
+    function showStatus(message, type = "") {
+      status.textContent = message;
+      status.className = type;
+    }
 
-                </select>
+    async function loadReports() {
+      const adminKey = adminKeyInput.value.trim();
 
-            </div>
+      if (!adminKey) {
+        showStatus("Enter the admin key.", "error");
+        return;
+      }
 
+      viewButton.disabled = true;
+      viewButton.textContent = "Loading...";
+      showStatus("Loading reports...");
 
-            <p id="empty-message">
-                No reports.
-            </p>
+      try {
+        const response = await fetch(`${WORKER_URL}/admin/reportlog`, {
+          method: "GET",
+          headers: { "X-Admin-Key": adminKey }
+        });
 
-
-            <div id="reports"></div>
-
-        </div>
-
-
-        <div class="button-row">
-
-            <a
-                class="button"
-                href="/"
-            >
-                Home
-            </a>
-
-        </div>
-
-    </main>
-
-
-    <script>
-
-        // ======================================================
-        // SETTINGS
-        // ======================================================
-
-        const WORKER_URL =
-            "https://news-upload.ratdoodle8.workers.dev";
-
-        const SITE_URL =
-            "https://ratdoodle.com";
-
-
-        // ======================================================
-        // ELEMENTS
-        // ======================================================
-
-        const loginArea =
-            document.getElementById(
-                "login-area"
-            );
-
-        const adminKeyInput =
-            document.getElementById(
-                "admin-key"
-            );
-
-        const viewButton =
-            document.getElementById(
-                "view-button"
-            );
-
-        const status =
-            document.getElementById(
-                "status"
-            );
-
-        const reportArea =
-            document.getElementById(
-                "report-area"
-            );
-
-        const reportsContainer =
-            document.getElementById(
-                "reports"
-            );
-
-        const emptyMessage =
-            document.getElementById(
-                "empty-message"
-            );
-
-        const sortSelect =
-            document.getElementById(
-                "sort"
-            );
-
-
-        let reports = [];
-
-
-        // ======================================================
-        // SAVED ADMIN KEY
-        // ======================================================
-
-        const savedAdminKey =
-            sessionStorage.getItem(
-                "ratdoodle-admin-key"
-            );
-
-
-        if (savedAdminKey) {
-
-            adminKeyInput.value =
-                savedAdminKey;
-
+        let result = {};
+        try {
+          result = await response.json();
+        } catch {
+          // The Worker did not return JSON.
         }
 
+        if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            sessionStorage.removeItem("ratdoodle-admin-key");
+          }
 
-        // ======================================================
-        // STATUS
-        // ======================================================
-
-        function showStatus(
-            message,
-            type = ""
-        ) {
-
-            status.textContent =
-                message;
-
-            status.className =
-                type;
-
+          throw new Error(
+            result.error ||
+            result.message ||
+            `Load failed with status ${response.status}.`
+          );
         }
 
-
-        // ======================================================
-        // LOAD REPORTS
-        // ======================================================
-
-        async function loadReports() {
-
-            const adminKey =
-                adminKeyInput.value.trim();
-
-
-            if (!adminKey) {
-
-                showStatus(
-                    "Enter the admin key.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            viewButton.disabled =
-                true;
-
-            viewButton.textContent =
-                "Loading...";
-
-
-            showStatus(
-                "Loading reports..."
-            );
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        WORKER_URL +
-                        "/admin/reportlog",
-                        {
-                            method: "GET",
-
-                            headers: {
-
-                                "X-Admin-Key":
-                                    adminKey
-
-                            }
-                        }
-                    );
-
-
-                let result = {};
-
-
-                try {
-
-                    result =
-                        await response.json();
-
-                } catch {
-
-                    // Worker did not return JSON.
-
-                }
-
-
-                if (!response.ok) {
-
-                    if (
-                        response.status === 401 ||
-                        response.status === 403
-                    ) {
-
-                        sessionStorage.removeItem(
-                            "ratdoodle-admin-key"
-                        );
-
-                    }
-
-
-                    throw new Error(
-                        result.error ||
-                        result.message ||
-                        `Load failed with status ${response.status}.`
-                    );
-
-                }
-
-
-                sessionStorage.setItem(
-                    "ratdoodle-admin-key",
-                    adminKey
-                );
-
-
-                if (
-                    Array.isArray(
-                        result.reports
-                    )
-                ) {
-
-                    reports =
-                        result.reports;
-
-                } else {
-
-                    reports =
-                        Object.entries(
-                            result.reports || {}
-                        ).map(
-                            ([number, report]) => ({
-
-                                number:
-                                    Number(number),
-
-                                ...report
-
-                            })
-                        );
-
-                }
-
-
-                loginArea.style.display =
-                    "none";
-
-                reportArea.style.display =
-                    "block";
-
-
-                showStatus(
-                    ""
-                );
-
-
-                renderReports();
-
-
-            } catch (error) {
-
-                console.error(
-                    error
-                );
-
-
-                showStatus(
-                    error.message ||
-                    "Unable to load reports.",
-                    "error"
-                );
-
-
-            } finally {
-
-                viewButton.disabled =
-                    false;
-
-                viewButton.textContent =
-                    "View Report Log";
-
-            }
-
+        sessionStorage.setItem("ratdoodle-admin-key", adminKey);
+
+        if (Array.isArray(result.reports)) {
+          reports = result.reports;
+        } else {
+          reports = Object.entries(result.reports || {}).map(
+            ([number, report]) => ({
+              number: Number(number),
+              ...report
+            })
+          );
         }
 
+        loginArea.style.display = "none";
+        reportArea.style.display = "block";
+        showStatus("");
+        renderReports();
+      } catch (error) {
+        console.error(error);
+        showStatus(error.message || "Unable to load reports.", "error");
+      } finally {
+        viewButton.disabled = false;
+        viewButton.textContent = "View Report Log";
+      }
+    }
 
-        // ======================================================
-        // REPORT IMAGE URL
-        // ======================================================
+    function getReportImageURL(imagePath) {
+      if (!imagePath) return "";
 
-        function getReportImageURL(
-            imagePath
-        ) {
+      const value = String(imagePath).trim().replaceAll("\\", "/");
 
-            if (!imagePath) {
+      if (/^https?:\/\//i.test(value)) {
+        return value;
+      }
 
-                return "";
+      const clean = value.replace(/^\/+/, "");
+      const lower = clean.toLowerCase();
 
-            }
+      if (lower.startsWith("shared/reportimages/")) {
+        return new URL(`/${clean}`, SITE_URL).href;
+      }
 
+      if (lower.startsWith("reportimages/")) {
+        return new URL(`/shared/${clean}`, SITE_URL).href;
+      }
 
-            if (
-                imagePath.startsWith(
-                    "https://"
-                ) ||
-                imagePath.startsWith(
-                    "http://"
-                )
-            ) {
+      if (lower.startsWith("shared/")) {
+        return new URL(`/${clean}`, SITE_URL).href;
+      }
 
-                return imagePath;
+      if (clean.includes("/")) {
+        return new URL(`/${clean}`, SITE_URL).href;
+      }
 
-            }
+      // Worker records contain only the stored filename, e.g. "3.jpg".
+      return new URL(
+        `/shared/reportimages/${encodeURIComponent(clean)}`,
+        SITE_URL
+      ).href;
+    }
 
+    function renderReports() {
+      reportsContainer.replaceChildren();
 
-            if (
-                imagePath.startsWith("/")
-            ) {
+      const sorted = [...reports].sort((a, b) => {
+        const aTime = new Date(a.date || 0).getTime();
+        const bTime = new Date(b.date || 0).getTime();
 
-                return (
-                    SITE_URL +
-                    imagePath
-                );
+        if (sortSelect.value === "oldest") return aTime - bTime;
+        return bTime - aTime;
+      });
 
-            }
+      emptyMessage.style.display = sorted.length ? "none" : "block";
 
+      for (const report of sorted) {
+        const article = document.createElement("article");
+        article.className = "report";
 
-            return (
-                SITE_URL +
-                "/" +
-                imagePath
-            );
+        const name = document.createElement("p");
+        name.className = "report-name";
+        name.textContent = report.name || "Anonymous";
+        article.appendChild(name);
 
+        if (report.reportedUsername && String(report.reportedUsername).trim()) {
+          const reportedUsername = document.createElement("p");
+          reportedUsername.className = "reported-username";
+          reportedUsername.textContent =
+            `Reported User: ${String(report.reportedUsername).trim()}`;
+          article.appendChild(reportedUsername);
         }
 
-
-        // ======================================================
-        // RENDER REPORTS
-        // ======================================================
-
-        function renderReports() {
-
-            reportsContainer.innerHTML =
-                "";
-
-
-            const sorted =
-                [...reports].sort(
-                    (a, b) => {
-
-                        const aTime =
-                            new Date(
-                                a.date
-                            ).getTime();
-
-                        const bTime =
-                            new Date(
-                                b.date
-                            ).getTime();
-
-
-                        if (
-                            sortSelect.value ===
-                            "oldest"
-                        ) {
-
-                            return aTime - bTime;
-
-                        }
-
-
-                        return bTime - aTime;
-
-                    }
-                );
-
-
-            emptyMessage.style.display =
-                sorted.length
-                    ? "none"
-                    : "block";
-
-
-            for (const report of sorted) {
-
-                const article =
-                    document.createElement(
-                        "article"
-                    );
-
-                article.className =
-                    "report";
-
-
-                // ==========================================
-                // REPORTER NAME
-                // ==========================================
-
-                const name =
-                    document.createElement(
-                        "p"
-                    );
-
-                name.className =
-                    "report-name";
-
-
-                name.textContent =
-                    report.name ||
-                    "Anonymous";
-
-
-                article.appendChild(
-                    name
-                );
-
-
-                // ==========================================
-                // REPORTED USERNAME
-                // ==========================================
-
-                if (
-                    report.reportedUsername &&
-                    String(
-                        report.reportedUsername
-                    ).trim()
-                ) {
-
-                    const reportedUsername =
-                        document.createElement(
-                            "p"
-                        );
-
-
-                    reportedUsername.className =
-                        "reported-username";
-
-
-                    reportedUsername.textContent =
-                        "Reported User: " +
-                        String(
-                            report.reportedUsername
-                        ).trim();
-
-
-                    article.appendChild(
-                        reportedUsername
-                    );
-
-                }
-
-
-                // ==========================================
-                // DATE
-                // ==========================================
-
-                const date =
-                    document.createElement(
-                        "p"
-                    );
-
-                date.className =
-                    "report-date";
-
-
-                if (report.date) {
-
-                    const parsedDate =
-                        new Date(
-                            report.date
-                        );
-
-
-                    date.textContent =
-                        Number.isNaN(
-                            parsedDate.getTime()
-                        )
-                            ? report.date
-                            : parsedDate.toLocaleString();
-
-                } else {
-
-                    date.textContent =
-                        "";
-
-                }
-
-
-                article.appendChild(
-                    date
-                );
-
-
-                // ==========================================
-                // BODY
-                // ==========================================
-
-                const body =
-                    document.createElement(
-                        "p"
-                    );
-
-                body.className =
-                    "report-body";
-
-
-                body.textContent =
-                    report.body || "";
-
-
-                article.appendChild(
-                    body
-                );
-
-
-                // ==========================================
-                // IMAGE
-                // ==========================================
-
-                if (
-                    report.image &&
-                    String(
-                        report.image
-                    ).trim()
-                ) {
-
-                    const image =
-                        document.createElement(
-                            "img"
-                        );
-
-
-                    image.className =
-                        "report-image";
-
-
-                    image.src =
-                        getReportImageURL(
-                            String(
-                                report.image
-                            ).trim()
-                        );
-
-
-                    image.alt =
-                        "Report attachment";
-
-
-                    article.appendChild(
-                        image
-                    );
-
-                }
-
-
-                reportsContainer.appendChild(
-                    article
-                );
-
-            }
-
+        const date = document.createElement("p");
+        date.className = "report-date";
+
+        if (report.date) {
+          const parsedDate = new Date(report.date);
+          date.textContent = Number.isNaN(parsedDate.getTime())
+            ? report.date
+            : parsedDate.toLocaleString();
         }
 
+        article.appendChild(date);
 
-        // ======================================================
-        // EVENTS
-        // ======================================================
+        const body = document.createElement("p");
+        body.className = "report-body";
+        body.textContent = report.body || "";
+        article.appendChild(body);
 
-        viewButton.addEventListener(
-            "click",
-            loadReports
-        );
+        if (report.image && String(report.image).trim()) {
+          const image = document.createElement("img");
+          image.className = "report-image";
+          image.src = getReportImageURL(report.image);
+          image.alt = "Report attachment";
 
+          image.addEventListener("error", () => {
+            const message = document.createElement("p");
+            message.className = "image-error";
+            message.textContent =
+              `Could not load report attachment: ${image.src}`;
+            image.replaceWith(message);
+          }, { once: true });
 
-        adminKeyInput.addEventListener(
-            "keydown",
-            event => {
+          article.appendChild(image);
+        }
 
-                if (
-                    event.key ===
-                    "Enter"
-                ) {
+        reportsContainer.appendChild(article);
+      }
+    }
 
-                    loadReports();
+    loginForm.addEventListener("submit", event => {
+      event.preventDefault();
+      loadReports();
+    });
 
-                }
-
-            }
-        );
-
-
-        sortSelect.addEventListener(
-            "change",
-            renderReports
-        );
-
-    </script>
-
+    sortSelect.addEventListener("change", renderReports);
+  </script>
 </body>
-
 </html>
