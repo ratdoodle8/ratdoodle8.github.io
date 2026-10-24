@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Admin | Ratdoodle</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:28px 16px;background:#bcc8cc;color:#0007e6;font-family:Arial,sans-serif;text-align:center}.corner{position:absolute;right:12px;top:12px;display:flex;gap:18px}a{color:#0007e6}.page{max-width:1000px;margin:38px auto 0}h1{margin-bottom:8px}.panel,.card{border:2px solid #0007e6;background:#c9d3d6;padding:18px;margin:18px auto}.panel{max-width:600px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;text-align:left}.card{margin:0;background:#bcc8cc;padding:14px}.card img{display:block;width:100%;height:150px;object-fit:contain}.card h2{text-align:center;font-size:19px;margin:8px 0}.field{margin:10px 0}.field label{display:block;font-size:14px;margin-bottom:4px}.field input,.field select{width:100%;font:16px Arial,sans-serif;padding:9px;border:2px solid #0007e6;background:white;color:#111}.check{display:flex;align-items:center;gap:8px;margin:10px 0}.check input{width:auto}.button{font:bold 16px Arial,sans-serif;color:#0007e6;background:#bcc8cc;border:2px solid #0007e6;padding:10px 14px;cursor:pointer}.button:disabled{opacity:.5}.message{min-height:22px}.ids{font-size:12px;overflow-wrap:anywhere;color:#222}.hidden{display:none}.muted{font-size:13px;line-height:1.45}
+@media(max-width:500px){body{padding:20px 12px}.corner{position:static;justify-content:center;margin-bottom:22px}.page{margin-top:0}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav class="corner"><a href="/store/">Public Store</a><a href="/">Home</a></nav>
+<main class="page">
+<h1>Store Admin</h1>
+<p>All wearable items from the Worker catalog appear here. Daily selection happens automatically.</p>
+<section id="loginPanel" class="panel">
+<p>Enter the existing Worker admin key to manage store listings.</p>
+<div class="field"><label for="adminKey">Admin key</label><input id="adminKey" type="password" autocomplete="current-password"></div>
+<button id="loadButton" class="button" type="button">Open catalog</button><p id="loginMessage" class="message" role="status"></p>
+</section>
+<section id="catalogPanel" class="hidden">
+<p id="status" class="message" role="status"></p><div id="grid" class="grid"></div>
+</section>
+</main>
+<script>
+const API='https://ratdoodle-accounts.ratdoodle8.workers.dev';let adminKey='';
+const loginPanel=document.getElementById('loginPanel'),catalogPanel=document.getElementById('catalogPanel'),grid=document.getElementById('grid'),status=document.getElementById('status'),loginMessage=document.getElementById('loginMessage');
+async function api(path,options={}){const headers={...(options.headers||{}),'X-Admin-Key':adminKey};if(options.body)headers['Content-Type']='application/json';const r=await fetch(API+path,{...options,headers,credentials:'include',cache:'no-store'});const data=await r.json();if(!r.ok)throw new Error(data.error||'Request failed.');return data;}
+document.getElementById('loadButton').addEventListener('click',async()=>{adminKey=document.getElementById('adminKey').value.trim();if(!adminKey){loginMessage.textContent='Enter the admin key.';return;}loginMessage.textContent='Loading catalog…';try{const data=await api('/store/admin/catalog');loginPanel.classList.add('hidden');catalogPanel.classList.remove('hidden');render(data.items||[]);}catch(error){loginMessage.textContent=error.message;adminKey='';}});
+function render(items){grid.replaceChildren();status.textContent='Automatic rotation: 3 Swag items and 1 SwagRare item, daily at 6:00 a.m. Chicago time.';for(const item of items){const card=document.createElement('article');card.className='card';const img=document.createElement('img');img.src=item.image||'';img.alt=item.title||'';const title=document.createElement('h2');title.textContent=item.title+' · '+item.id;const cat=document.createElement('div');cat.className='field';const cl=document.createElement('label');cl.textContent='Category';const category=document.createElement('select');for(const v of ['Swag','SwagRare']){const o=document.createElement('option');o.value=v;o.textContent=v;category.appendChild(o);}category.value=item.category;cat.append(cl,category);
+const priceField=document.createElement('div');priceField.className='field';const pl=document.createElement('label');pl.textContent='Price (USD)';const price=document.createElement('input');price.type='number';price.min='0.50';price.max='1000';price.step='0.01';price.value=(item.priceCents/100).toFixed(2);priceField.append(pl,price);
+const stockWrap=document.createElement('div');stockWrap.className='field';const stockLabel=document.createElement('label');stockLabel.textContent='Quantity';const stock=document.createElement('input');stock.type='number';stock.min='0';stock.step='1';stock.value=String(Math.max(0,item.stockQuantity));const unlimited=document.createElement('label');unlimited.className='check';const uncheck=document.createElement('input');uncheck.type='checkbox';uncheck.checked=item.stockQuantity<0;unlimited.append(uncheck,document.createTextNode('Unlimited quantity'));uncheck.addEventListener('change',()=>stock.disabled=uncheck.checked);stock.disabled=uncheck.checked;stockWrap.append(stockLabel,stock,unlimited);
+const pub=document.createElement('label');pub.className='check';const publicCheck=document.createElement('input');publicCheck.type='checkbox';publicCheck.checked=item.isPublic;pub.append(publicCheck,document.createTextNode('Public store eligible'));
+const productField=document.createElement('div');productField.className='field';const prodLabel=document.createElement('label');prodLabel.textContent='Stripe Product ID';const prod=document.createElement('input');prod.value=item.stripeProductId;prod.placeholder='Created automatically if blank';prodField.append(prodLabel,prod);
+const ids=document.createElement('p');ids.className='ids';ids.textContent='Current Price ID: '+(item.stripePriceId||'not set');const save=document.createElement('button');save.className='button';save.type='button';save.textContent='Save item settings';save.addEventListener('click',async()=>{save.disabled=true;status.textContent='Saving '+item.title+'…';try{const result=await api('/store/admin/item',{method:'POST',body:JSON.stringify({itemId:item.id,category:category.value,priceCents:Math.round(Number(price.value)*100),stockQuantity:uncheck.checked?-1:Number(stock.value),isPublic:publicCheck.checked,stripeProductId:prod.value.trim()})});ids.textContent='Current Price ID: '+result.priceId;prod.value=result.productId;status.textContent=item.title+' saved.';if(Number(result.priceCents)!==item.priceCents)status.textContent+=' Stripe price was updated.';}catch(error){status.textContent=error.message;}finally{save.disabled=false;}});
+card.append(img,title,cat,priceField,stockWrap,pub,productField,ids,save);grid.appendChild(card);}}
+</script>
+</body>
+</html>

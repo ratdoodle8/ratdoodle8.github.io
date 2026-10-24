@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratdoodle Store</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:28px 16px;background:#bcc8cc;color:#0007e6;font-family:Arial,sans-serif;text-align:center}.corner{position:absolute;right:12px;top:12px;display:flex;gap:18px}.corner a,a{color:#0007e6}.page{max-width:980px;margin:38px auto 0}h1{margin-bottom:8px}.intro{margin:0 auto 22px;max-width:650px;line-height:1.5}.panel{border:2px solid #0007e6;background:#c9d3d6;padding:18px;margin:18px auto;max-width:760px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}.card{border:2px solid #0007e6;background:#bcc8cc;padding:14px;display:flex;flex-direction:column;align-items:center;min-height:320px}.card img{width:100%;height:170px;object-fit:contain}.card h2{font-size:19px;margin:10px 0 4px}.badge{font-size:13px;font-weight:bold;margin:4px}.price{font-size:20px;font-weight:bold;margin:8px}.stock{font-size:14px;min-height:18px}.button{font: bold 16px Arial,sans-serif;color:#0007e6;background:#bcc8cc;border:2px solid #0007e6;padding:10px 16px;cursor:pointer;margin-top:auto}.button:disabled{opacity:.55;cursor:default}.message{min-height:22px;margin:14px 0}.rare{background:#e6d8a7}.empty{padding:25px}.small{font-size:13px}
+@media(max-width:500px){body{padding:20px 12px}.corner{position:static;justify-content:center;margin-bottom:22px}.page{margin-top:0}.grid{grid-template-columns:1fr}.card{min-height:300px}}
+</style>
+</head>
+<body>
+<nav class="corner"><a href="/account/">Account</a><a href="/">Home</a></nav>
+<main class="page">
+<h1>Ratdoodle Store</h1>
+<p class="intro">A small rotating collection of wearables. The selection refreshes every day at 6:00 a.m. Chicago time.</p>
+<section class="panel"><p id="message" class="message" role="status">Loading today’s items…</p><div id="grid" class="grid"></div></section>
+<p class="small"><a href="/account/">Purchased wearables appear in your account inventory.</a></p>
+</main>
+<script>
+const API='https://ratdoodle-accounts.ratdoodle8.workers.dev';
+const grid=document.getElementById('grid');const message=document.getElementById('message');
+function showMessage(text){message.textContent=text;}
+async function loadStore(){
+ grid.replaceChildren();showMessage('Loading today’s items…');
+ try{
+  const response=await fetch(API+'/store/catalog',{credentials:'include',cache:'no-store'});const data=await response.json();
+  if(!response.ok)throw new Error(data.error||'The store could not load.');
+  const items=Array.isArray(data.items)?data.items:[];
+  if(!items.length){showMessage('No items are available in today’s rotation.');return;}
+  showMessage('Today’s lineup · refreshes at 6:00 a.m. Chicago time');
+  for(const item of items){
+   const card=document.createElement('article');card.className='card'+(item.category==='SwagRare'?' rare':'');
+   const image=document.createElement('img');image.src=item.image||'';image.alt=item.title||'Wearable';image.loading='lazy';
+   const title=document.createElement('h2');title.textContent=item.title||'Wearable';
+   const badge=document.createElement('div');badge.className='badge';badge.textContent=item.category==='SwagRare'?'SwagRare · rare':'Swag';
+   const price=document.createElement('div');price.className='price';price.textContent='$'+Number(item.price).toFixed(2);
+   const stock=document.createElement('div');stock.className='stock';stock.textContent=item.unlimited?'Unlimited quantity':(item.available?item.quantity+' available':'Sold out');
+   const buy=document.createElement('button');buy.className='button';buy.type='button';buy.textContent=item.available?'Buy':'Sold out';buy.disabled=!item.available;
+   buy.addEventListener('click',async()=>{
+    buy.disabled=true;showMessage('Opening secure checkout…');
+    try{const r=await fetch(API+'/store/checkout',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({itemId:item.id})});const result=await r.json();if(!r.ok)throw new Error(result.error||'Checkout could not start.');if(!result.url)throw new Error('Stripe did not return a checkout link.');location.assign(result.url);}
+    catch(error){showMessage(error.message+' You may need to log in first.');buy.disabled=false;}
+   });
+   card.append(image,title,badge,price,stock,buy);grid.appendChild(card);
+  }
+ }catch(error){showMessage(error.message||'The store could not load.');}
+}
+const params=new URLSearchParams(location.search);if(params.get('purchase')==='success')showMessage('Checkout complete. Your wearable will appear in your inventory shortly.');else if(params.get('purchase')==='cancelled')showMessage('Checkout was cancelled. No payment was completed.');
+loadStore();
+</script>
+</body>
+</html>
