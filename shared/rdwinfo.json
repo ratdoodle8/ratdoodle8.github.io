@@ -99,7 +99,8 @@
     "description": "GLi Core - The Man Who Grows Flowers (in the Garden of Hope, the Elder of Hope)",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 1
   },
   "P2": {
     "number": "P2",
@@ -108,7 +109,8 @@
     "description": "Li Core - The Emerald Spirit",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 2
   },
   "P3": {
     "number": "P3",
@@ -117,7 +119,8 @@
     "description": "GRi Core - ",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 3
   },
   "P4": {
     "number": "P4",
@@ -126,7 +129,8 @@
     "description": "DEA Core - ",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 4
   },
   "P5": {
     "number": "P5",
@@ -135,7 +139,8 @@
     "description": "LEA Core - ",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 5
   },
   "P6": {
     "number": "P6",
@@ -144,7 +149,8 @@
     "description": "GLi Core - The Man Who Grows Flowers (in the Garden of Hope, the Elder of Hope)",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 6
   },
   "P7": {
     "number": "P7",
@@ -153,7 +159,8 @@
     "description": "PRi Core - ",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 7
   },
   "P8": {
     "number": "P8",
@@ -162,7 +169,8 @@
     "description": "AL Core - The Phonenix of Gold",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 8
   },
   "P9": {
     "number": "P9",
@@ -171,7 +179,8 @@
     "description": "iLG Core - ",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 9
   },
   "S1": {
     "number": "S1",
@@ -180,7 +189,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 4
   },
   "S2": {
     "number": "S2",
@@ -189,7 +199,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 6
   },
   "S3": {
     "number": "S3",
@@ -198,7 +209,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 3
   },
   "S4": {
     "number": "S4",
@@ -207,7 +219,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 7
   },
   "S5": {
     "number": "S5",
@@ -216,7 +229,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 3
   },
   "S7": {
     "number": "S7",
@@ -225,7 +239,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 9
   },
   "S8": {
     "number": "S8",
@@ -234,7 +249,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 6
   },
   "S9": {
     "number": "S9",
@@ -243,7 +259,8 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 2
   },
   "S10": {
     "number": "S10",
@@ -252,6 +269,7 @@
     "description": "- - -",
     "coreLore": {
       "Light": "swag"
-    }
+    },
+    "characterCoreType": 7
   }
 }
