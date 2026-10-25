@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#bcc8cc">
+<title>Post Timer — Beet by Beet</title>
+<style>
+  :root{--paper:#eaf0ef;--ink:#0007e6;--blue:#162ad8;--pink:#ff66a6;--yellow:#ffe45c;--green:#72db76;--purple:#a48bff;--line:#1824b6;--shadow:5px 6px 0 rgba(15,27,159,.2)}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background-color:#bcc8cc;color:var(--ink);font-family:Arial,Helvetica,sans-serif;background-image:radial-gradient(#fff 1.5px,transparent 1.5px);background-size:19px 19px}
+  button{font:inherit}
+  .page{width:min(1050px,calc(100% - 28px));margin:0 auto;padding:20px 0 44px}
+  .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;font-weight:900;letter-spacing:.04em}
+  .topline a{color:var(--ink);text-decoration:none;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:8px 13px;box-shadow:3px 3px 0 var(--ink)}
+  .hero{text-align:center;padding:22px 12px 16px}
+  .eyebrow{font-weight:900;text-transform:uppercase;letter-spacing:.14em;font-size:.8rem}
+  h1{font-size:clamp(2.5rem,8vw,5rem);line-height:.92;margin:9px 0;color:var(--ink);text-shadow:3px 3px 0 var(--yellow),6px 6px 0 #fff}
+  .subtitle{font-weight:700;font-size:1.05rem;margin:16px auto 0;max-width:650px;line-height:1.5}
+  .panel{background:rgba(255,255,255,.93);border:3px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);padding:clamp(16px,3vw,28px);margin:16px 0}
+  .clock-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .clock{border:3px solid var(--ink);border-radius:18px;text-align:center;padding:12px;background:#fff}
+  .clock.current{background:#fff1f7}
+  .clock.overall{background:#eef0ff}
+  .clock-label{font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:.8rem}
+  .digits{font-variant-numeric:tabular-nums;font-weight:1000;letter-spacing:.025em;font-size:clamp(2.6rem,9vw,5.4rem);line-height:1.12;margin-top:3px;color:#111987}
+  .step-name{font-weight:900;font-size:1rem;min-height:1.4em}
+  .pep-talk{margin:14px 0 0;text-align:center;min-height:56px;display:grid;place-items:center;padding:10px 15px;border-radius:16px;background:var(--yellow);border:2px solid var(--ink);font-size:clamp(1.05rem,3vw,1.45rem);font-weight:1000;line-height:1.25;transform:rotate(-.4deg)}
+  .progress-head{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:0 0 9px;font-weight:900}
+  .progress-head strong{font-size:1.15rem}
+  .progress-head span{font-size:.9rem;text-align:right}
+  .beet-track{position:relative;display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:5px;padding:18px 8px 9px;border:3px solid var(--ink);border-radius:19px;background:linear-gradient(#f9fcff,#d9e7ff);overflow:hidden;box-shadow:inset 0 -5px 0 rgba(28,40,158,.08)}
+  .beet-track:before{content:"";position:absolute;left:15px;right:15px;top:51px;height:6px;background:#b9c1f4;border-radius:8px}
+  .beet:nth-child(7),.beet:nth-child(13){border-left:2px dashed rgba(22,42,216,.35);padding-left:3px}
+  .beet{position:relative;z-index:1;display:flex;min-width:0;flex-direction:column;align-items:center;gap:4px}
+  .beet-face{width:clamp(26px,5vw,43px);height:clamp(31px,5.8vw,49px);position:relative;display:grid;place-items:center;background:#db4b9a;border:2px solid #721866;border-radius:47% 48% 53% 52% / 40% 42% 62% 62%;box-shadow:0 3px 0 #a92b77;transform:rotate(var(--tilt,0deg));transition:filter .3s,transform .35s,background .3s;filter:saturate(.56);}
+  .beet-face:before{content:"";position:absolute;width:55%;height:14px;left:22%;top:-10px;background:var(--leaf,#47a94d);clip-path:polygon(50% 100%,0 0,48% 40%,70% 0,62% 53%,100% 12%);border-radius:4px}
+  .beet-face:after{content:"";position:absolute;width:2px;height:9px;left:49%;bottom:-9px;background:#7b3a55;transform:rotate(15deg)}
+  .eyes{position:relative;font-size:11px;letter-spacing:2px;font-weight:1000;color:#31114e;line-height:1;margin-top:6px;white-space:nowrap}
+  .mouth{position:absolute;left:50%;top:21px;width:8px;height:4px;border-bottom:2px solid #31114e;border-radius:50%;transform:translateX(-50%)}
+  .beet-label{font-size:clamp(.48rem,1.2vw,.68rem);font-weight:900;line-height:1;white-space:nowrap;color:#252777}
+  .beet.done .beet-face,.beet.active .beet-face{filter:none;background:#ff5aa5;transform:translateY(-4px) rotate(var(--tilt,0deg)) scale(1.08);box-shadow:0 4px 0 #a92b77,0 0 0 3px #ffe45c}
+  .beet.done .eyes,.beet.active .eyes{font-size:12px}
+  .beet.done .mouth,.beet.active .mouth{width:10px;height:6px;border-bottom:3px solid #31114e}
+  .beet.done .beet-face{background:#ff69aa}
+  .beet.active .beet-face{animation:bob .75s ease-in-out infinite alternate}
+  @keyframes bob{to{transform:translateY(-7px) rotate(var(--tilt,0deg)) scale(1.12)}}
+  .section-divider{grid-column:span 6;height:0;border-top:2px dashed rgba(22,42,216,.35);margin:6px 3px 1px}
+  .section-key{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+  .key{font-size:.8rem;font-weight:800;text-align:center;border-radius:11px;padding:8px 4px;background:#f3f4ff;border:1.5px solid #aab1f3}
+  .key b{display:block;color:var(--ink);margin-bottom:2px}
+  .controls{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .btn{border:3px solid var(--ink);border-radius:14px;padding:11px 21px;font-weight:1000;color:var(--ink);background:#fff;box-shadow:3px 4px 0 var(--ink);cursor:pointer;transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translateY(-2px);box-shadow:3px 6px 0 var(--ink)}.btn:active{transform:translate(2px,3px);box-shadow:1px 1px 0 var(--ink)}
+  .btn.go{background:var(--green)}.btn.pause{background:#c7beff}.btn.reset{background:#ffe45c}.btn.last{background:#ffb8d3}
+  .btn:focus-visible{outline:4px solid #ff7e33;outline-offset:3px}
+  .how h2{font-size:1.55rem;margin:0 0 11px}
+  .how p{line-height:1.55;margin:8px 0;font-weight:600}
+  .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:13px}
+  .how-card{padding:12px;border-radius:14px;border:2px solid var(--ink);background:#f6f7ff;line-height:1.45}
+  .how-card strong{display:block;font-size:1.03rem;margin-bottom:5px}
+  .tiny-note{font-size:.86rem;color:#333b93}
+  .status{font-weight:800;text-align:center;margin:13px 0 0;min-height:1.2em}
+  @media(max-width:620px){.page{width:min(100% - 18px,1050px);padding-top:10px}.clock-row{gap:8px}.clock{padding:9px 5px}.digits{font-size:clamp(2.05rem,11vw,3.3rem)}.beet-track{gap:2px;padding:16px 4px 8px}.beet-face{width:clamp(18px,5.5vw,31px);height:clamp(23px,6.6vw,37px)}.eyes{font-size:8px;letter-spacing:1px}.mouth{top:16px}.beet-track:before{top:42px;left:8px;right:8px}.beet-label{font-size:7px}.section-key{gap:4px}.key{font-size:.66rem;padding:7px 2px}.how-grid{grid-template-columns:1fr}.btn{padding:10px 15px}.pep-talk{min-height:50px}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="topline"><span>RATDOODLE FOCUS TOOLS</span><a href="/">HOME</a></div>
+  <header class="hero">
+    <div class="eyebrow">A tiny step-by-step posting party</div>
+    <h1>POST TIMER</h1>
+    <p class="subtitle">One little task at a time. Your beet buddies wake up as you finish each step. Keep moving, keep it simple, get that TikTok posted!</p>
+  </header>
+  <section class="panel" aria-label="Post timer controls and progress">
+    <div class="clock-row">
+      <div class="clock current"><div class="clock-label">This step</div><div class="digits" id="stepClock" aria-live="off">05:00</div><div class="step-name" id="stepName">Section 1 · Step 1 of 6</div></div>
+      <div class="clock overall"><div class="clock-label">Time left in session</div><div class="digits" id="totalClock">35:30</div><div class="step-name" id="overallLabel">18 steps · 3 sections</div></div>
+    </div>
+    <div class="pep-talk" id="pepTalk" aria-live="polite">Your first beet is snoozing. Press GO when you’re ready!</div>
+    <div style="margin-top:22px">
+      <div class="progress-head"><strong>Beet Buddy Progress</strong><span id="progressLabel">0 of 18 beets awake</span></div>
+      <div class="beet-track" id="beetTrack" role="img" aria-label="Progress: 0 of 18 steps completed"></div>
+      <div class="section-key" aria-label="Section timing guide">
+        <div class="key"><b>1 · Get ready</b>5:00 + five 2:30 steps</div>
+        <div class="key"><b>2 · Make it</b>six 1:30 steps</div>
+        <div class="key"><b>3 · Post it</b>six 1:30 steps</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn go" id="goBtn" type="button">▶ GO</button>
+      <button class="btn pause" id="pauseBtn" type="button">Ⅱ PAUSE</button>
+      <button class="btn reset" id="resetBtn" type="button">↻ RESET SESSION</button>
+      <button class="btn last" id="lastBtn" type="button">⟲ RESET THIS TIMER</button>
+    </div>
+    <div class="status" id="status" aria-live="polite">Ready when you are. Your timer will keep going while this page stays open.</div>
+  </section>
+  <section class="panel how">
+    <h2>How your beet buddies work</h2>
+    <p>There are <strong>three sections with six timed steps each</strong>. Start at the first step, focus on just that task, and let the timer move you along. When a step ends, its beet wakes up, celebrates, and the next step starts automatically. The little progress bar is your visual trail from “still sleepy” to “we did it!”</p>
+    <div class="how-grid">
+      <div class="how-card"><strong>① Get ready · 17½ minutes</strong>Give the first task a full <b>5 minutes</b>. The next five get <b>2½ minutes each</b>.</div>
+      <div class="how-card"><strong>② Make it · 9 minutes</strong>Six steps, with <b>1½ minutes for each one</b>. Keep the momentum and make the video.</div>
+      <div class="how-card"><strong>③ Post it · 9 minutes</strong>Another six <b>1½-minute steps</b> to finish the posting process. The whole session is <b>35½ minutes</b>.</div>
+    </div>
+    <p><strong>GO</strong> starts the session or resumes a pause. <strong>PAUSE</strong> freezes both clocks. <strong>RESET THIS TIMER</strong> restarts only the step you’re on, while <strong>RESET SESSION</strong> puts all 18 steps back to the beginning. Starting a fresh session plays its own sound; each finished step has a small celebratory jingle; finishing all 18 has a bigger finale.</p>
+    <p class="tiny-note">Sound starts after you press GO, because browsers need a tap before they can play audio. You can leave the tab open while you work; if you close or refresh it, the timer starts over.</p>
+  </section>
+</main>
+<script>
+(() => {
+  'use strict';
+  const durations = [300,150,150,150,150,150, ...Array(12).fill(90)];
+  const sections = ['Get ready','Make it','Post it'];
+  const pep = [
+    ["Fresh start! One tiny task is all you need to think about.","You’re building momentum, beet by beet!","Nice work showing up. Keep your attention on this one step.","You’ve got a rhythm now. Just keep going!","Look at you, making progress happen.","First section nearly done—you’re doing great!"],
+    ["New section, same capable you. Let’s make something!","Every little choice is getting you closer.","Keep it playful. It doesn’t have to be perfect to move forward.","You’re in the middle of it—and still moving!","That progress is real. Stay with this step.","Section two is almost in the bag. You’ve got this!"],
+    ["Final section! Your beet buddies are rooting for you.","You’re closer than you were a minute ago.","One focused step, then the next. That’s the whole trick.","You’ve come this far—keep the little streak alive!","Nearly there. Finish this tiny piece.","Last step! Bring it home, you can do this!"]
+  ];
+  const $ = id => document.getElementById(id);
+  const stepClock=$('stepClock'), totalClock=$('totalClock'), stepName=$('stepName'), pepTalk=$('pepTalk');
+  const progressLabel=$('progressLabel'), beetTrack=$('beetTrack'), status=$('status');
+  let index=0, remaining=durations[0], completed=0, running=false, finished=false, ticker=null, audioCtx=null, lastPep=-1;
+  const fmt = s => {s=Math.max(0,Math.ceil(s)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+  const totalRemaining = () => remaining + durations.slice(index+1).reduce((a,b)=>a+b,0);
+  function buildBeets(){
+    beetTrack.innerHTML='';
+    durations.forEach((_,i)=>{
+      const beet=document.createElement('div');beet.className='beet';beet.dataset.index=i;
+      beet.style.setProperty('--tilt',`${[-5,2,5,-2,4,-4][i%6]}deg`);
+      const face=document.createElement('div');face.className='beet-face';face.innerHTML='<span class="eyes">• •</span><span class="mouth"></span>';
+      const label=document.createElement('span');label.className='beet-label';label.textContent=String(i+1).padStart(2,'0');
+      beet.append(face,label);beetTrack.appendChild(beet);
+    });
+  }
+  function render(){
+    stepClock.textContent=fmt(remaining); totalClock.textContent=fmt(totalRemaining());
+    if(finished){stepName.textContent='All done!';$('overallLabel').textContent='You finished your session';}
+    else {const sec=Math.floor(index/6), n=index%6+1;stepName.textContent=`Section ${sec+1} · Step ${n} of 6`; $('overallLabel').textContent=`${18-completed} steps left · ${sections[sec]}`;}
+    progressLabel.textContent=`${completed} of 18 beets awake`;
+    beetTrack.setAttribute('aria-label',`Progress: ${completed} of 18 steps completed`);
+    [...beetTrack.querySelectorAll('.beet')].forEach((el,i)=>{el.classList.toggle('done',i<completed);el.classList.toggle('active',!finished && i===index && running)});
+    const pct=completed/18;
+    const mood=Math.min(5,Math.floor(pct*6));
+    if(!running && !finished && completed===0) pepTalk.textContent='Your first beet is snoozing. Press GO when you’re ready!';
+    else if(finished) pepTalk.textContent='All 18 beets are awake! You did it—your post is out in the world!';
+    else if(!running) pepTalk.textContent='Paused for a breather. Your beets will be right here when you’re ready.';
+    else {
+      const currentSection=Math.floor(index/6), progress=1-remaining/durations[index];
+      const stage=Math.min(5,Math.floor(progress*6));
+      const overallStage=Math.min(5,Math.floor((completed+progress)/18*6));
+      const chosen=completed===0 && index===0 ? stage : overallStage;
+      if(chosen!==lastPep){pepTalk.textContent=pep[currentSection][Math.min(5, Math.max(stage, chosen))];lastPep=chosen}
+    }
+  }
+  function sound(kind){
+    try{
+      audioCtx ||= new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==='suspended') audioCtx.resume();
+      const now=audioCtx.currentTime;
+      const sets={start:[[523.25,0,.14],[659.25,.11,.14],[783.99,.22,.22]],step:[[659.25,0,.12],[783.99,.1,.14],[987.77,.2,.22]],finish:[[523.25,0,.16],[659.25,.12,.16],[783.99,.24,.16],[1046.5,.36,.38],[783.99,.75,.12],[1046.5,.88,.38]]};
+      for(const [freq,offset,length] of sets[kind]){
+        const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+        osc.type=kind==='start'?'triangle':'sine'; osc.frequency.setValueAtTime(freq,now+offset);
+        gain.gain.setValueAtTime(.0001,now+offset);gain.gain.exponentialRampToValueAtTime(kind==='finish'?.16:.11,now+offset+.018);gain.gain.exponentialRampToValueAtTime(.0001,now+offset+length);
+        osc.connect(gain);gain.connect(audioCtx.destination);osc.start(now+offset);osc.stop(now+offset+length+.03);
+      }
+    }catch(_){/* Audio is an enhancement; the timer still works if unavailable. */}
+  }
+  function stopTicker(){if(ticker){clearInterval(ticker);ticker=null}}
+  function startNew(){index=0;completed=0;remaining=durations[0];finished=false;lastPep=-1;running=true;sound('start');status.textContent='Session started! Your first beet buddy is on the clock.';stopTicker();ticker=setInterval(tick,200);render()}
+  function tick(){
+    if(!running)return;
+    remaining=Math.max(0,remaining-.2);
+    if(remaining<=0){completed++;if(completed>=durations.length){running=false;finished=true;remaining=0;stopTicker();sound('finish');status.textContent='Session complete! All 18 steps are done.';render();return}
+      sound('step');index++;remaining=durations[index];lastPep=-1;status.textContent=`Step ${completed} complete! Beet ${completed} woke up. On to the next one.`;
+    }
+    render();
+  }
+  $('goBtn').addEventListener('click',()=>{if(finished){startNew();return}if(running)return;if(completed===0&&index===0&&remaining===durations[0]){startNew();return}running=true;audioCtx?.resume?.();status.textContent='Timer resumed. You’re doing great.';ticker=setInterval(tick,200);render()});
+  $('pauseBtn').addEventListener('click',()=>{if(!running)return;running=false;stopTicker();status.textContent='Paused. Take a breath; your time is saved.';render()});
+  $('resetBtn').addEventListener('click',()=>{stopTicker();index=0;completed=0;remaining=durations[0];running=false;finished=false;lastPep=-1;status.textContent='Session reset. Press GO whenever you’re ready.';render()});
+  $('lastBtn').addEventListener('click',()=>{stopTicker();if(finished){index=durations.length-1;completed=durations.length-1}remaining=durations[index];running=false;finished=false;lastPep=-1;status.textContent='This step is reset to its full time. Press GO to start it again.';render()});
+  buildBeets();render();
+})();
+</script>
+</body>
+</html>
