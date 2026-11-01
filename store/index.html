@@ -5,15 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ratdoodle Store</title>
 <style>
-*{box-sizing:border-box}body{margin:0;padding:28px 16px;background:#bcc8cc;color:#0007e6;font-family:Arial,sans-serif;text-align:center}.corner{position:absolute;right:12px;top:12px;display:flex;gap:18px}.corner a,a{color:#0007e6}.page{max-width:980px;margin:38px auto 0}h1{margin-bottom:8px}.intro{margin:0 auto 22px;max-width:650px;line-height:1.5}.panel{border:2px solid #0007e6;background:#c9d3d6;padding:18px;margin:18px auto;max-width:760px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}.card{border:2px solid #0007e6;background:#bcc8cc;padding:14px;display:flex;flex-direction:column;align-items:center;min-height:320px}.card img{width:100%;height:170px;object-fit:contain}.card h2{font-size:19px;margin:10px 0 4px}.price{font-size:20px;font-weight:bold;margin:8px}.stock{font-size:14px;min-height:18px}.button{font: bold 16px Arial,sans-serif;color:#0007e6;background:#bcc8cc;border:2px solid #0007e6;padding:10px 16px;cursor:pointer;margin-top:auto}.button:disabled{opacity:.55;cursor:default}.message{min-height:22px;margin:14px 0}.empty{padding:25px}.small{font-size:13px}
+*{box-sizing:border-box}body{margin:0;padding:28px 16px;background:#bcc8cc;color:#0007e6;font-family:Arial,sans-serif;text-align:center}.corner{position:absolute;right:12px;top:12px;display:flex;gap:18px}.corner a,a{color:#0007e6}.page{max-width:980px;margin:38px auto 0}.login-page{width:100%;max-width:420px;margin:0 auto}.login-page h1,.login-page h2{margin-top:0}.login-page form{border:2px solid #0007e6;padding:20px;margin-top:20px;background:#bcc8cc}.login-page label{display:block;text-align:left;margin-top:14px;margin-bottom:5px}.login-page input{width:100%;font-family:Arial,sans-serif;font-size:16px;padding:10px;border:2px solid #0007e6;background:white;color:black}.login-page button{width:100%;margin-top:18px;border:2px solid #0007e6;background:#bcc8cc;color:#0007e6;cursor:pointer;font-weight:bold}.login-page button:disabled{opacity:.6;cursor:default}.login-page .message{min-height:22px;margin-top:12px}.login-page .small{font-size:14px}body.login-mode{padding:30px 15px}.corner[hidden]{display:none!important}h1{margin-bottom:8px}.intro{margin:0 auto 22px;max-width:650px;line-height:1.5}.panel{border:2px solid #0007e6;background:#c9d3d6;padding:18px;margin:18px auto;max-width:760px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}.card{border:2px solid #0007e6;background:#bcc8cc;padding:14px;display:flex;flex-direction:column;align-items:center;min-height:320px}.card img{width:100%;height:170px;object-fit:contain}.card h2{font-size:19px;margin:10px 0 4px}.price{font-size:20px;font-weight:bold;margin:8px}.stock{font-size:14px;min-height:18px}.button{font: bold 16px Arial,sans-serif;color:#0007e6;background:#bcc8cc;border:2px solid #0007e6;padding:10px 16px;cursor:pointer;margin-top:auto}.button:disabled{opacity:.55;cursor:default}.message{min-height:22px;margin:14px 0}.empty{padding:25px}.small{font-size:13px}
 @media(max-width:500px){body{padding:20px 12px}.corner{position:static;justify-content:center;margin-bottom:22px}.page{margin-top:0}.grid{grid-template-columns:1fr}.card{min-height:300px}}
 </style>
 </head>
-<body>
-<nav class="corner"><a href="/account/">Account</a><a href="/">Home</a></nav>
-<main class="page" id="loginGate">
-<h1>Weebie Store</h1>
-<section class="panel"><p id="gateMessage" class="message" role="status">Checking your login…</p><p><a href="/login/">Log in</a> · <a href="/account/">Account</a></p></section>
+<body class="login-mode">
+<nav class="corner" id="storeNav" hidden><a href="/account/">Account</a><a href="/">Home</a></nav>
+<main class="login-page" id="loginGate">
+<h1>Log In</h1>
+<form id="loginForm">
+<label for="username">Username</label>
+<input id="username" name="username" type="text" autocomplete="username" required>
+<label for="password">Password</label>
+<input id="password" name="password" type="password" autocomplete="current-password" required>
+<button id="loginButton" type="submit">Log In</button>
+</form>
+<div id="gateMessage" class="message" role="status"></div>
+<p class="small">Don't have an account? <a href="/signup/">Sign up</a></p>
+<p class="small"><a href="/account/">Account</a> · <a href="/">Home</a></p>
 </main>
 <main class="page" id="storeContent" hidden>
 <h1>Ratdoodle Store</h1>
@@ -23,16 +32,32 @@
 </main>
 <script>
 const API='https://ratdoodle-accounts.ratdoodle8.workers.dev';
-const grid=document.getElementById('grid');const message=document.getElementById('message');const loginGate=document.getElementById('loginGate');const gateMessage=document.getElementById('gateMessage');const storeContent=document.getElementById('storeContent');
+const grid=document.getElementById('grid');const message=document.getElementById('message');const loginGate=document.getElementById('loginGate');const gateMessage=document.getElementById('gateMessage');const storeContent=document.getElementById('storeContent');const loginForm=document.getElementById('loginForm');const loginButton=document.getElementById('loginButton');
+const SESSION_KEY='rd_session';
+function authHeaders(includeJson=false){const headers={};const token=localStorage.getItem(SESSION_KEY);if(token)headers.Authorization='Bearer '+token;if(includeJson)headers['Content-Type']='application/json';return headers;}
 function showMessage(text){message.textContent=text;}
-function requireLogin(text='You must be logged in to view the Weebie Store.'){storeContent.hidden=true;loginGate.hidden=false;gateMessage.textContent=text;}
+function requireLogin(text='You must be logged in to view the Weebie Store.'){document.body.classList.add('login-mode');document.getElementById('storeNav').hidden=true;storeContent.hidden=true;loginGate.hidden=false;gateMessage.textContent=text;}
+loginForm.addEventListener('submit',async event=>{
+ event.preventDefault();loginButton.disabled=true;gateMessage.textContent='Logging in…';
+ const username=document.getElementById('username').value.trim();const password=document.getElementById('password').value;
+ try{
+  const response=await fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
+  const data=await response.json();
+  if(!response.ok){gateMessage.textContent=data.error||'Unable to log in.';loginButton.disabled=false;return;}
+  if(!data.sessionToken){gateMessage.textContent='Login server did not return a session.';loginButton.disabled=false;return;}
+  localStorage.setItem(SESSION_KEY,data.sessionToken);
+  if(data.passwordResetRequired){location.href='/account/';return;}
+  gateMessage.textContent='Logged in. Loading the Weebie Store…';
+  await loadStore();
+ }catch(error){gateMessage.textContent='Unable to connect to the account server.';loginButton.disabled=false;}
+});
 async function loadStore(){
  grid.replaceChildren();showMessage('Loading today’s items…');
  try{
-  const response=await fetch(API+'/store/catalog',{credentials:'include',cache:'no-store'});const data=await response.json();
-  if(response.status===401){requireLogin();return;}
+  const response=await fetch(API+'/store/catalog',{credentials:'include',headers:authHeaders(),cache:'no-store'});const data=await response.json();
+  if(response.status===401){localStorage.removeItem(SESSION_KEY);requireLogin();loginButton.disabled=false;return;}
   if(!response.ok)throw new Error(data.error||'The store could not load.');
-  loginGate.hidden=true;storeContent.hidden=false;
+  loginGate.hidden=true;storeContent.hidden=false;document.body.classList.remove('login-mode');document.getElementById('storeNav').hidden=false;
   const items=Array.isArray(data.items)?data.items:[];
   if(!items.length){showMessage('No items are available in today’s rotation.');return;}
   showMessage('Today’s lineup · refreshes at 6:00 a.m. Chicago time');
@@ -45,7 +70,7 @@ async function loadStore(){
    const buy=document.createElement('button');buy.className='button';buy.type='button';buy.textContent=item.available?'Buy':'Sold out';buy.disabled=!item.available;
    buy.addEventListener('click',async()=>{
     buy.disabled=true;showMessage('Opening secure checkout…');
-    try{const r=await fetch(API+'/store/checkout',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({itemId:item.id})});const result=await r.json();if(r.status===401){requireLogin('Your login session expired. Log in again to view the Weebie Store.');return;}if(!r.ok)throw new Error(result.error||'Checkout could not start.');if(!result.url)throw new Error('Stripe did not return a checkout link.');location.assign(result.url);}
+    try{const r=await fetch(API+'/store/checkout',{method:'POST',credentials:'include',headers:authHeaders(true),body:JSON.stringify({itemId:item.id})});const result=await r.json();if(r.status===401){localStorage.removeItem(SESSION_KEY);requireLogin('Your login session expired. Log in to continue.');loginButton.disabled=false;return;}if(!r.ok)throw new Error(result.error||'Checkout could not start.');if(!result.url)throw new Error('Stripe did not return a checkout link.');location.assign(result.url);}
     catch(error){showMessage(error.message||'Checkout could not start.');buy.disabled=false;}
    });
    card.append(image,title,price,stock,buy);grid.appendChild(card);
