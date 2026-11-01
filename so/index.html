@@ -465,9 +465,14 @@ h1, #releaseButton, .oasis-list-box { display: none !important; }
   background: transparent !important;
 }
 #ground {
-  height: 16%;
-  background: linear-gradient(180deg, rgba(138,160,110,.72), rgba(138,160,110,.92));
-  border-top: 2px solid #0007E6;
+  height: 0;
+  background: transparent;
+  border-top: 0;
+}
+#oasis .weebie,
+#oasis .death-marker,
+#oasis .wp-mushroom {
+  bottom: 0;
 }
 #oasisLoadError {
   position: absolute !important;
@@ -483,6 +488,62 @@ h1, #releaseButton, .oasis-list-box { display: none !important; }
   color: #0007E6;
   font: bold 12px Arial, sans-serif;
 }
+/* Text-only clarity pass for the moving spectator labels. */
+#oasis .weebie-info,
+#oasis .death-info,
+#oasis .wp-battle-message,
+#oasis .oasis-untouchable-badge {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 800;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+#oasis .weebie-info {
+  font-size: 17px;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.95);
+  -webkit-text-stroke: .25px #0007E6;
+}
+#oasis .weebie-name {
+  display: table;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(0,0,0,.84);
+  color: #fff;
+  font-size: 19px;
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: .01em;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(0,0,0,.95);
+  -webkit-text-stroke: 0;
+}
+#oasis .weebie-timer {
+  display: table;
+  margin: 3px auto 0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0,0,0,.76);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-shadow: none;
+  -webkit-text-stroke: 0;
+}
+#oasis .death-info {
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.25;
+  text-shadow: 0 1px 2px rgba(0,0,0,.95);
+  -webkit-text-stroke: .3px #fff;
+}
+#oasis .death-skull { font-size: 25px; font-weight: 900; }
+#oasis .oasis-untouchable-badge { font-weight: 900; letter-spacing: .02em; }
+#oasis .wp-battle-message { font-size: 16px; line-height: 1.25; }
 @media (max-width: 600px) {
   #oasis { width: min(100vw, 100vh); height: min(100vw, 100vh); }
 }
