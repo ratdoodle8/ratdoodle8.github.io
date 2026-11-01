@@ -716,7 +716,7 @@ async function loadAccount() {
 ===================================================== */
 
 releaseButton.addEventListener(
-  "click",
+  "spectator-release-disabled",
   async () => {
 
     if (
@@ -824,14 +824,15 @@ releaseButton.addEventListener(
 
 let oasisLoadPending=false;
 async function loadOasis() {
-  if(oasisLoadPending||document.hidden)return;
+  if(oasisLoadPending||!spectatorActive())return;
   oasisLoadPending=true;
+  spectatorController = new AbortController();
 
   try {
 
     const response = await fetch(
       `${API}/oasis/spectator`,
-      { method: "GET", cache: "no-store" }
+      { method: "GET", cache: "no-store", signal: spectatorController.signal }
     );
 
 
@@ -871,6 +872,7 @@ async function loadOasis() {
       data.deaths || []
     );
     try{window.OasisBattle?.sync(data);}catch(error){console.error('Oasis battle display:',error);}
+    spectatorFailures = 0;
 
 
 
@@ -878,6 +880,8 @@ async function loadOasis() {
   }
 
   catch (error) {
+    if(error.name === "AbortError")return;
+    spectatorFailures = Math.min(3, spectatorFailures + 1);
     let note=document.getElementById('oasisLoadError');if(!note){note=document.createElement('p');note.id='oasisLoadError';oasis.after(note);}note.textContent='Oasis could not refresh: '+error.message;
 
     console.error(
@@ -887,7 +891,7 @@ async function loadOasis() {
 
   }
 
-  finally { oasisLoadPending=false; }
+  finally { oasisLoadPending=false; spectatorController = null; }
 }
 
 
@@ -1546,24 +1550,42 @@ function updateMyReleaseState(
    POLLING
 ===================================================== */
 
-function startPolling() {
+// Only an actually loaded, visible spectator document polls.
+// No background timer survives hiding or unloading the browser source.
+const SPECTATOR_POLL_MS = 15000;
+let spectatorPollTimer = null;
+let spectatorController = null;
+let spectatorStopped = false;
+let spectatorFailures = 0;
 
-  if (pollRunning) {
-    return;
-  }
-
-
-  pollRunning =
-    true;
-
-
-  setInterval(
-    loadOasis,
-    2000
-  );
-
+function spectatorActive() {
+  return !spectatorStopped && !document.hidden && document.visibilityState !== "hidden";
 }
-
+function stopSpectator() {
+  if (spectatorPollTimer !== null) clearTimeout(spectatorPollTimer);
+  spectatorPollTimer = null;
+  spectatorController?.abort();
+  spectatorController = null;
+}
+function scheduleSpectator(delay = SPECTATOR_POLL_MS) {
+  if (!spectatorActive() || spectatorPollTimer !== null) return;
+  spectatorPollTimer = setTimeout(async () => {
+    spectatorPollTimer = null;
+    if (!spectatorActive()) return;
+    await loadOasis();
+    scheduleSpectator(Math.min(120000, SPECTATOR_POLL_MS * Math.pow(2, spectatorFailures)));
+  }, delay);
+}
+function startPolling() {
+  if (!spectatorActive()) return;
+  scheduleSpectator();
+}
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopSpectator();
+  else { void loadOasis(); startPolling(); startSpectatorAnimation(); }
+});
+window.addEventListener("pagehide", () => { spectatorStopped = true; stopSpectator(); stopSpectatorAnimation(); });
+window.addEventListener("pageshow", () => { spectatorStopped = false; void loadOasis(); startPolling(); startSpectatorAnimation(); });
 
 /* =====================================================
    LIVING WEEBIES
@@ -2415,10 +2437,21 @@ function playInteraction(
 ===================================================== */
 
 let lastOasisFrame=-Infinity,lastOasisTimer=-Infinity;
+let spectatorAnimationId = null;
+function startSpectatorAnimation() {
+  if (!spectatorActive() || spectatorAnimationId !== null) return;
+  spectatorAnimationId = requestAnimationFrame(animate);
+}
+function stopSpectatorAnimation() {
+  if (spectatorAnimationId !== null) cancelAnimationFrame(spectatorAnimationId);
+  spectatorAnimationId = null;
+}
 function animate(frameTime=performance.now()) {
-  requestAnimationFrame(animate);
+  spectatorAnimationId = null;
+  if (!spectatorActive()) return;
+  spectatorAnimationId = requestAnimationFrame(animate);
   // Absolute server time drives movement; screen refresh rate never advances it.
-  if(document.hidden||frameTime-lastOasisFrame<1000/30-0.5)return;
+  if(document.hidden||frameTime-lastOasisFrame<1000/15-0.5)return;
   lastOasisFrame=frameTime;
   const refreshTimers=frameTime-lastOasisTimer>=250;
   if(refreshTimers)lastOasisTimer=frameTime;
@@ -2507,12 +2540,9 @@ function animate(frameTime=performance.now()) {
 
 
   window.OasisBattle?.addMushrooms(positions,motionNow);
-  if(!window.OasisBattle?.isFrozen())window.OasisBattle?.observeContacts(positions);
+  // Read-only spectator: never report contacts or initiate battles.
 
-  if(!window.OasisBattle?.isFrozen()) checkInteractions(
-    positions,
-    motionNow
-  );
+  // Battle initiation belongs exclusively to the original Oasis.
 
 
 
@@ -2524,11 +2554,7 @@ function animate(frameTime=performance.now()) {
    START
 ===================================================== */
 
-loadAccount();
-
-requestAnimationFrame(
-  animate
-);
+startSpectatorAnimation();
 
 </script>
 
