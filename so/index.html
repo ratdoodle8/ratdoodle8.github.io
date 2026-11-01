@@ -1,0 +1,2477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Spectator Oasis | Ratdoodle</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Arial, sans-serif;
+  background: #bcc8cc;
+  color: #0007E6;
+}
+
+body {
+  text-align: center;
+  padding: 20px;
+}
+
+h1 {
+  margin: 10px 0 6px;
+}
+
+#status {
+  min-height: 22px;
+  margin: 8px 0;
+}
+
+#releaseButton {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  padding: 10px 16px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+#releaseButton:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+#oasis {
+  position: relative;
+  width: min(100%, 1000px);
+  height: 560px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 2px solid #0007E6;
+  background: #bcc8cc;
+}
+
+#ground {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 16%;
+  background: #8aa06e;
+  border-top: 2px solid #0007E6;
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   LIVING WEEBIES
+===================================================== */
+
+.weebie {
+  position: absolute;
+  width: 120px;
+  height: 160px;
+  left: 50%;
+  bottom: 16%;
+  transform: translateX(-50%);
+  transform-origin: center bottom;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.weebie-info {
+  position: absolute;
+  left: 50%;
+  bottom: 122px;
+  transform: translateX(-50%);
+  width: 170px;
+  z-index: 20;
+  font-size: 14px;
+  line-height: 1.15;
+  text-shadow:
+    1px 1px 0 #bcc8cc,
+    -1px -1px 0 #bcc8cc,
+    1px -1px 0 #bcc8cc,
+    -1px 1px 0 #bcc8cc;
+}
+
+.weebie-name {
+  font-weight: bold;
+}
+
+.weebie-timer {
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.weebie-body {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  left: 10px;
+  bottom: 0;
+  transform-origin: center bottom;
+}
+
+.weebie-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.color-layer {
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.color1,
+.color2 {
+  position: absolute;
+  inset: 0;
+}
+
+
+/* =====================================================
+   INTERACTION
+===================================================== */
+
+.meet .weebie-body {
+  animation: meetAnimation 400ms ease-in-out;
+}
+
+@keyframes meetAnimation {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  35% {
+    transform: translateY(-13px) rotate(-5deg);
+  }
+
+  70% {
+    transform: translateY(-5px) rotate(5deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+
+/* =====================================================
+   DEATH MARKERS
+===================================================== */
+
+.death-marker {
+  position: absolute;
+  bottom: 15%;
+  width: 140px;
+  transform: translateX(-50%);
+  color: red;
+  text-align: center;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.death-info {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  width: 180px;
+  color: red;
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: bold;
+}
+
+.death-skull {
+  font-size: 22px;
+  line-height: 22px;
+  color: red;
+}
+
+.death-name,
+.death-time,
+.death-cooldown {
+  color: red;
+}
+
+.death-x {
+  position: absolute;
+  left: 50%;
+  bottom: -11px;
+  transform: translateX(-50%);
+  color: red;
+  font-family: Arial, sans-serif;
+  font-weight: bold;
+  font-size: 34px;
+  line-height: 34px;
+}
+
+
+/* =====================================================
+   OASIS INFORMATION BOXES
+===================================================== */
+
+.oasis-list-box {
+  width: min(100%, 1000px);
+  margin: 18px auto 0;
+  padding: 16px;
+  border: 2px solid #0007E6;
+  background: #bcc8cc;
+  text-align: left;
+}
+
+.oasis-list-box h2 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 20px;
+}
+
+#currentOasisBox,
+#recentlyDeceasedBox {
+  display: none;
+}
+
+#currentOasisList {
+  overflow-x: auto;
+}
+
+
+/* =====================================================
+   CURRENT OASIS TABLE
+===================================================== */
+
+.oasis-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.oasis-table th,
+.oasis-table td {
+  padding: 8px;
+  border: 1px solid #0007E6;
+  vertical-align: middle;
+}
+
+.oasis-table th {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.oasis-table a {
+  color: #0007E6;
+  text-decoration: underline;
+}
+
+.oasis-table-weebie {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto;
+}
+
+.oasis-table-color,
+.oasis-table-outline {
+  position: absolute;
+  inset: 0;
+  width: 60px;
+  height: 60px;
+}
+
+.oasis-table-color {
+  -webkit-mask-size: contain;
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.oasis-table-outline {
+  object-fit: contain;
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   RECENTLY DECEASED
+===================================================== */
+
+.oasis-list-row {
+  padding: 8px 4px;
+  border-bottom: 1px solid #0007E6;
+}
+
+.oasis-list-row:last-child {
+  border-bottom: none;
+}
+
+.oasis-list-name {
+  font-weight: bold;
+}
+
+.oasis-list-death {
+  color: red;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    padding: 10px;
+  }
+
+  #oasis {
+    height: 480px;
+  }
+
+  .weebie {
+    width: 90px;
+    height: 130px;
+  }
+
+  .weebie-body {
+    width: 78px;
+    height: 78px;
+    left: 6px;
+  }
+
+  .weebie-info {
+    bottom: 96px;
+    width: 130px;
+    font-size: 12px;
+  }
+
+  .weebie-timer {
+    font-size: 11px;
+  }
+
+  .death-info {
+    width: 140px;
+    font-size: 11px;
+  }
+
+  .oasis-list-box {
+    padding: 10px;
+  }
+
+  .oasis-table {
+    font-size: 12px;
+  }
+
+  .oasis-table th,
+  .oasis-table td {
+    padding: 6px;
+  }
+
+  .oasis-table-weebie,
+  .oasis-table-color,
+  .oasis-table-outline {
+    width: 48px;
+    height: 48px;
+  }
+
+}
+
+
+/* Explicit bot dimensions and stacking across Firefox, Safari, and Chromium. */
+#oasis .wp-mushroom{position:absolute;display:block;visibility:visible;opacity:1;bottom:16%;left:0;width:50px;height:50px;object-fit:contain;z-index:4;pointer-events:none;will-change:transform}
+#oasis .weebie{z-index:5}
+#oasis .wp-battle-message{pointer-events:auto;z-index:100;max-height:90%;overflow:auto}
+@media(max-width:600px){#oasis .wp-mushroom{width:39px;height:39px}}
+
+/* Short effects animate only small existing elements, with no particles or layout changes. */
+#oasis .wp-battle-message{animation:oasis-pop 180ms ease-out}
+#oasis .wp-die-face{will-change:transform}
+#oasis .wp-battle-message button:active{transform:scale(.94)}
+#oasis .meet .weebie-body{animation:oasis-wiggle 280ms ease-out}
+#oasis .wp-mushroom.meet{animation:oasis-bot-wiggle 280ms ease-out}
+@keyframes oasis-pop{from{opacity:.4;scale:.94}to{opacity:1;scale:1}}
+@keyframes oasis-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg) scale(1.04)}60%{transform:rotate(7deg)}}
+@keyframes oasis-bot-wiggle{25%{rotate:-8deg}60%{rotate:6deg}}
+@media(prefers-reduced-motion:reduce){#oasis .wp-battle-message,#oasis .meet .weebie-body,#oasis .wp-mushroom.meet{animation:none!important}}
+
+#oasis .fight-cooldown .weebie-body,#oasis .wp-mushroom.fight-cooldown{animation:oasis-rest-flash 800ms ease-in-out infinite;animation-play-state:running!important}
+@keyframes oasis-rest-flash{0%,100%{opacity:1}50%{opacity:.45}}
+@media(prefers-reduced-motion:reduce){#oasis .fight-cooldown .weebie-body,#oasis .wp-mushroom.fight-cooldown{animation:none!important;opacity:.7}}
+
+#oasis .fight-cooldown .weebie-body{outline:3px dashed #0007E6;outline-offset:5px;border-radius:50%;box-shadow:0 0 0 7px #bcc8ccaa}
+#oasis .oasis-untouchable-badge{position:absolute;left:50%;bottom:-25px;transform:translateX(-50%);min-width:128px;white-space:nowrap;padding:4px 6px;border:2px solid #0007E6;border-radius:5px;background:#0007E6;color:#fff;font:bold 10px Arial,sans-serif;z-index:40;pointer-events:none}
+#oasis .fight-cooldown .weebie-body{animation:oasis-rest-flash 1100ms ease-in-out infinite}
+
+
+/* Streamlabs Spectator Oasis: transparent, full-height browser-source canvas. */
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden;
+  background: transparent !important;
+}
+body { display: flex; align-items: center; justify-content: center; text-align: left; }
+h1, #releaseButton, .oasis-list-box { display: none !important; }
+#status {
+  display: block;
+  position: absolute;
+  z-index: 200;
+  top: 10px;
+  left: 10px;
+  min-height: 0;
+  margin: 0;
+  padding: 5px 8px;
+  border: 1px solid #0007E6;
+  border-radius: 6px;
+  background: rgba(255,255,255,.9);
+  color: #0007E6;
+  font: bold 12px Arial, sans-serif;
+}
+#status:empty { display: none; }
+#oasis {
+  position: relative;
+  width: min(100vw, 100vh);
+  max-width: none;
+  height: min(100vw, 100vh);
+  aspect-ratio: 1 / 1;
+  margin: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent !important;
+}
+#ground {
+  height: 16%;
+  background: linear-gradient(180deg, rgba(138,160,110,.72), rgba(138,160,110,.92));
+  border-top: 2px solid #0007E6;
+}
+#oasisLoadError {
+  position: absolute !important;
+  z-index: 200;
+  top: 10px;
+  left: 10px;
+  max-width: calc(100vw - 20px);
+  margin: 0 !important;
+  padding: 6px 9px;
+  border: 1px solid #0007E6;
+  border-radius: 6px;
+  background: rgba(255,255,255,.92);
+  color: #0007E6;
+  font: bold 12px Arial, sans-serif;
+}
+@media (max-width: 600px) {
+  #oasis { width: min(100vw, 100vh); height: min(100vw, 100vh); }
+}
+
+</style>
+<script src="/shared/weebie-costumes.js?v=items1"></script>
+</head>
+
+<body>
+
+<h1>Oasis</h1>
+
+<button id="releaseButton" type="button">
+  Release your Weebie into the Oasis!
+</button>
+
+<div id="status"></div>
+
+<div id="oasis">
+  <div id="ground"></div>
+</div>
+
+
+<div
+  class="oasis-list-box"
+  id="currentOasisBox"
+>
+  <h2>Weebies Currently in Oasis</h2>
+
+  <div id="currentOasisList"></div>
+</div>
+
+
+<div
+  class="oasis-list-box"
+  id="recentlyDeceasedBox"
+>
+  <h2>Recently Deceased</h2>
+
+  <div id="recentlyDeceasedList"></div>
+</div>
+
+
+<div class="oasis-list-box">
+
+  <h2>Oasis Info Log</h2>
+
+  <div id="oasisInfoLog">
+    No information yet.
+  </div>
+
+</div>
+
+
+<script>
+
+const API =
+  "https://ratdoodle-accounts.ratdoodle8.workers.dev";
+
+
+const COLORS = {
+  "Teal": "#24B5A5",
+  "Tan": "#C9A875",
+  "Red": "#E04444",
+  "Pink": "#ee89f0",
+  "Blue": "#4A8FE7",
+  "Lime Green": "#8FD14F",
+  "White": "#F5F5F5",
+  "Purple": "#ed15ff",
+  "Silver": "#B8BEC4"
+};
+
+
+const oasis =
+  document.getElementById(
+    "oasis"
+  );
+
+const releaseButton =
+  document.getElementById(
+    "releaseButton"
+  );
+
+const statusText =
+  document.getElementById(
+    "status"
+  );
+
+
+const actors =
+  new Map();
+
+const deathMarkers =
+  new Map();
+
+
+let serverOffset =
+  0;
+
+let loggedIn =
+  false;
+
+let hasWeebie =
+  false;
+
+let myWeebieName =
+  null;
+
+let pollRunning =
+  false;
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+function getSessionToken() {
+
+  return localStorage.getItem(
+    "rd_session"
+  );
+
+}
+
+
+function authHeaders(
+  includeJson = false
+) {
+
+  const headers = {};
+
+  const token =
+    getSessionToken();
+
+
+  if (token) {
+
+    headers.Authorization =
+      `Bearer ${token}`;
+
+  }
+
+
+  if (includeJson) {
+
+    headers["Content-Type"] =
+      "application/json";
+
+  }
+
+
+  return headers;
+
+}
+
+
+/* =====================================================
+   ACCOUNT
+===================================================== */
+
+async function loadAccount() {
+  // Spectator mode is public and does not request account identity.
+  await loadOasis();
+  startPolling();
+}
+
+
+/* =====================================================
+   RELEASE
+===================================================== */
+
+releaseButton.addEventListener(
+  "click",
+  async () => {
+
+    if (
+      !loggedIn ||
+      !hasWeebie ||
+      releaseButton.disabled
+    ) {
+      return;
+    }
+
+
+    releaseButton.disabled =
+      true;
+
+    statusText.textContent =
+      "Releasing...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${API}/oasis/release`,
+          {
+            method: "POST",
+
+            credentials:
+              "include",
+
+            headers:
+              authHeaders(true),
+
+            body:
+              JSON.stringify({})
+          }
+        );
+
+
+      let data;
+      try{data=await response.json();}catch{throw new Error('Release server returned HTTP '+response.status+' without a valid response.');}
+
+
+      if (!response.ok) {
+
+        if (
+          data.state ===
+          "alive"
+        ) {
+
+          statusText.textContent =
+            "Your Weebie is already in the Oasis.";
+
+        }
+
+        else if (
+          data.state ===
+          "cooldown"
+        ) {
+
+          statusText.textContent =
+            "Your Weebie is on cooldown.";
+
+        }
+
+        else {
+
+          statusText.textContent =
+            data.error ||
+            "Release failed.";
+
+        }
+
+
+        await loadOasis();
+
+        return;
+
+      }
+
+
+      statusText.textContent =
+        "Weebie released!";
+
+
+      await loadOasis();
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      statusText.textContent = 'Release could not connect: '+error.message;
+    }finally{
+      releaseButton.disabled=false;
+      void loadOasis();
+    }
+  }
+);
+
+
+/* =====================================================
+   LOAD OASIS
+===================================================== */
+
+let oasisLoadPending=false;
+async function loadOasis() {
+  if(oasisLoadPending||document.hidden)return;
+  oasisLoadPending=true;
+
+  try {
+
+    const response = await fetch(
+      `${API}/oasis/spectator`,
+      { method: "GET", cache: "no-store" }
+    );
+
+
+    const data =
+      await response.json();
+    let errorNote=document.getElementById('oasisLoadError');if(errorNote)errorNote.remove();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Unable to load Oasis."
+      );
+
+    }
+
+
+    if (data.serverTime) {
+
+      serverOffset =
+        new Date(
+          data.serverTime
+        ).getTime() -
+        Date.now();
+
+    }
+
+
+    if(!Array.isArray(data.weebies)||!Array.isArray(data.deaths))throw new Error('Oasis returned an incomplete response.');
+    syncWeebies(
+      data.weebies || []
+    );
+
+
+    syncDeaths(
+      data.deaths || []
+    );
+    try{window.OasisBattle?.sync(data);}catch(error){console.error('Oasis battle display:',error);}
+
+
+
+
+  }
+
+  catch (error) {
+    let note=document.getElementById('oasisLoadError');if(!note){note=document.createElement('p');note.id='oasisLoadError';oasis.after(note);}note.textContent='Oasis could not refresh: '+error.message;
+
+    console.error(
+      "Oasis update failed:",
+      error
+    );
+
+  }
+
+  finally { oasisLoadPending=false; }
+}
+
+
+/* =====================================================
+   OASIS LISTS
+===================================================== */
+
+function updateOasisLists(
+  weebies,
+  deaths
+) {
+
+  const currentBox =
+    document.getElementById(
+      "currentOasisBox"
+    );
+
+  const currentList =
+    document.getElementById(
+      "currentOasisList"
+    );
+
+  const deceasedBox =
+    document.getElementById(
+      "recentlyDeceasedBox"
+    );
+
+  const deceasedList =
+    document.getElementById(
+      "recentlyDeceasedList"
+    );
+
+
+  currentList.innerHTML =
+    "";
+
+  deceasedList.innerHTML =
+    "";
+
+
+  if (
+    weebies.length > 0
+  ) {
+
+    currentBox.style.display =
+      "block";
+
+
+    const now =
+      Date.now() +
+      serverOffset;
+
+
+    /*
+      Oasis # is based ONLY on current
+      time remaining.
+
+      Most time remaining = #1.
+
+      This does not alter the normal
+      XP leaderboard placement.
+    */
+
+    const sortedWeebies =
+      [...weebies].sort(
+        (a, b) => {
+
+          const aRemaining =
+            new Date(
+              a.expiresAt
+            ).getTime() -
+            now;
+
+          const bRemaining =
+            new Date(
+              b.expiresAt
+            ).getTime() -
+            now;
+
+
+          return (
+            bRemaining -
+            aRemaining
+          );
+
+        }
+      );
+
+
+    const table =
+      document.createElement(
+        "table"
+      );
+
+    table.className =
+      "oasis-table";
+
+
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Weebie</th>
+          <th>Name</th>
+          <th>Time Remaining</th>
+          <th>XP</th>
+          <th>Owner</th>
+          <th>Leaderboard Placement</th>
+        </tr>
+      </thead>
+
+      <tbody></tbody>
+    `;
+
+
+    const tbody =
+      table.querySelector(
+        "tbody"
+      );
+
+
+    sortedWeebies.forEach(
+      (
+        weebie,
+        index
+      ) => {
+
+        const row =
+          document.createElement(
+            "tr"
+          );
+
+
+        /* OASIS PLACEMENT */
+
+        const oasisPlacement =
+          document.createElement(
+            "td"
+          );
+
+        oasisPlacement.textContent =
+          index + 1;
+
+
+        /* WEEBIE IMAGE */
+
+        const imageCell =
+          document.createElement(
+            "td"
+          );
+
+
+        const preview =
+          document.createElement(
+            "div"
+          );
+
+        preview.className =
+          "oasis-table-weebie";
+
+
+        const primary =
+          COLORS[
+            weebie.primaryColor
+          ] ||
+          weebie.primaryColor ||
+          "#F5F5F5";
+
+
+        const secondary =
+          COLORS[
+            weebie.secondaryColor
+          ] ||
+          weebie.secondaryColor ||
+          "#F5F5F5";
+
+
+        const eyelashes =
+          String(
+            weebie.eyelashes ||
+            "Yes"
+          ).toLowerCase() ===
+          "yes";
+
+
+        const color1 =
+          document.createElement(
+            "div"
+          );
+
+        color1.className =
+          "oasis-table-color";
+
+        color1.style.background =
+          primary;
+
+        color1.style.webkitMaskImage =
+          'url("/shared/Weebie-Color1.png")';
+
+        color1.style.maskImage =
+          'url("/shared/Weebie-Color1.png")';
+
+
+        const color2 =
+          document.createElement(
+            "div"
+          );
+
+        color2.className =
+          "oasis-table-color";
+
+        color2.style.background =
+          secondary;
+
+
+        const color2Image =
+          eyelashes
+            ? "/shared/Weebie-Color2.png"
+            : "/shared/Weebie-Color2a.png";
+
+
+        color2.style.webkitMaskImage =
+          `url("${color2Image}")`;
+
+        color2.style.maskImage =
+          `url("${color2Image}")`;
+
+
+        const outline =
+          document.createElement(
+            "img"
+          );
+
+        outline.className =
+          "oasis-table-outline";
+
+        outline.src =
+          eyelashes
+            ? "/shared/Weebie-Outline.png"
+            : "/shared/Weebie-Outline2.png";
+
+
+        preview.appendChild(
+          color1
+        );
+
+        preview.appendChild(
+          color2
+        );
+
+        preview.appendChild(
+          outline
+        );
+
+
+        window.WeebieCostumes?.render(preview,weebie.equipment);
+
+        imageCell.appendChild(
+          preview
+        );
+
+
+        /* NAME */
+
+        const nameCell =
+          document.createElement(
+            "td"
+          );
+
+        nameCell.textContent =
+          weebie.name ||
+          "Weebie";
+
+
+        /* TIME REMAINING */
+
+        const timeCell =
+          document.createElement(
+            "td"
+          );
+
+
+        const expires =
+          new Date(
+            weebie.expiresAt
+          ).getTime();
+
+
+        const remaining =
+          Math.max(
+            0,
+            expires - now
+          );
+
+
+        const totalSeconds =
+          Math.ceil(
+            remaining /
+            1000
+          );
+
+
+        const minutes =
+          Math.floor(
+            totalSeconds /
+            60
+          );
+
+
+        const seconds =
+          totalSeconds %
+          60;
+
+
+        timeCell.textContent =
+          `${minutes}:${String(
+            seconds
+          ).padStart(2, "0")}`;
+
+
+        /* XP */
+
+        const xpCell =
+          document.createElement(
+            "td"
+          );
+
+        xpCell.textContent =
+          Number(
+            weebie.xp || 0
+          );
+
+
+        const levelLabel=document.createElement('div');
+        levelLabel.textContent='Level '+Number(weebie.level||0);
+        levelLabel.style.fontSize='12px';xpCell.appendChild(levelLabel);
+
+        /* OWNER */
+
+        const ownerCell =
+          document.createElement(
+            "td"
+          );
+
+
+        if (
+          weebie.private
+        ) {
+
+          ownerCell.textContent =
+            weebie.owner ||
+            weebie.name ||
+            "Whisp";
+
+        }
+
+        else if (
+          weebie.owner
+        ) {
+
+          const ownerLink =
+            document.createElement(
+              "a"
+            );
+
+          ownerLink.textContent =
+            weebie.owner;
+
+          ownerLink.href =
+            `/user/${encodeURIComponent(
+              weebie.owner
+            )}`;
+
+          ownerCell.appendChild(
+            ownerLink
+          );
+
+        }
+
+        else {
+
+          ownerCell.textContent =
+            "-";
+
+        }
+
+
+        /* LEADERBOARD PLACEMENT */
+
+        const leaderboardCell =
+          document.createElement(
+            "td"
+          );
+
+
+        const placement =
+          Number(
+            weebie.placement ||
+            0
+          );
+
+
+        leaderboardCell.textContent =
+          placement > 0
+            ? `#${placement}`
+            : "-";
+
+
+        row.appendChild(
+          oasisPlacement
+        );
+
+        row.appendChild(
+          imageCell
+        );
+
+        row.appendChild(
+          nameCell
+        );
+
+        row.appendChild(
+          timeCell
+        );
+
+        row.appendChild(
+          xpCell
+        );
+
+        row.appendChild(
+          ownerCell
+        );
+
+        row.appendChild(
+          leaderboardCell
+        );
+
+
+        tbody.appendChild(
+          row
+        );
+
+      }
+    );
+
+
+    currentList.appendChild(
+      table
+    );
+
+  }
+
+  else {
+
+    currentBox.style.display =
+      "none";
+
+  }
+
+
+  /* RECENTLY DECEASED */
+
+  if (
+    deaths.length > 0
+  ) {
+
+    deceasedBox.style.display =
+      "block";
+
+
+    for (
+      const death
+      of deaths
+    ) {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "oasis-list-row oasis-list-death";
+
+
+      const died =
+        new Date(
+          death.diedAt
+        ).getTime();
+
+
+      const elapsed =
+        Math.max(
+          0,
+          (
+            Date.now() +
+            serverOffset
+          ) -
+          died
+        );
+
+
+      const totalSeconds =
+        Math.floor(
+          elapsed /
+          1000
+        );
+
+
+      const minutes =
+        Math.floor(
+          totalSeconds /
+          60
+        );
+
+
+      const seconds =
+        totalSeconds %
+        60;
+
+
+      row.innerHTML =
+        `☠ <span class="oasis-list-name">${
+          escapeHtml(
+            death.name ||
+            "Weebie"
+          )
+        }</span> — died ${
+          minutes
+        }:${String(
+          seconds
+        ).padStart(2, "0")} ago`;
+
+
+      deceasedList.appendChild(
+        row
+      );
+
+    }
+
+  }
+
+  else {
+
+    deceasedBox.style.display =
+      "none";
+
+  }
+
+}
+
+
+function escapeHtml(
+  value
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    String(
+      value ?? ""
+    );
+
+  return div.innerHTML;
+
+}
+/* =====================================================
+   OWNER RELEASE STATE
+===================================================== */
+
+function updateMyReleaseState(
+  weebies,
+  deaths
+) {
+
+  if (
+    !loggedIn ||
+    !hasWeebie
+  ) {
+
+    releaseButton.disabled =
+      true;
+
+    return;
+
+  }
+
+
+  const living =
+    weebies.find(
+      weebie =>
+        weebie.name ===
+        myWeebieName
+    );
+
+
+  if (living) {
+
+    releaseButton.disabled =
+      true;
+
+    statusText.textContent =
+      "Your Weebie is in the Oasis.";
+
+    return;
+
+  }
+
+
+  const dead =
+    deaths.find(
+      death =>
+        death.name ===
+        myWeebieName
+    );
+
+
+  if (dead) {
+
+    releaseButton.disabled =
+      true;
+
+    statusText.textContent =
+      "Your Weebie is on cooldown.";
+
+    return;
+
+  }
+
+
+  releaseButton.disabled =
+    false;
+
+
+  if (
+    statusText.textContent ===
+      "Your Weebie is in the Oasis." ||
+    statusText.textContent ===
+      "Your Weebie is on cooldown." ||
+    statusText.textContent ===
+      "Weebie released!" ||
+    statusText.textContent ===
+      "Releasing..."
+  ) {
+
+    statusText.textContent =
+      "";
+
+  }
+
+}
+
+
+/* =====================================================
+   POLLING
+===================================================== */
+
+function startPolling() {
+
+  if (pollRunning) {
+    return;
+  }
+
+
+  pollRunning =
+    true;
+
+
+  setInterval(
+    loadOasis,
+    2000
+  );
+
+}
+
+
+/* =====================================================
+   LIVING WEEBIES
+===================================================== */
+
+function syncWeebies(
+  weebies
+) {
+
+  const activeIds =
+    new Set();
+
+
+  for (
+    const weebie
+    of weebies
+  ) {
+
+    const id =
+      String(
+        weebie.id
+      );
+
+
+    activeIds.add(
+      id
+    );
+
+
+    if (
+      !actors.has(id)
+    ) {
+
+      createActor(
+        weebie
+      );
+
+    }
+
+
+    const actor =
+      actors.get(
+        id
+      );
+
+
+    actor.data =
+      weebie;
+
+
+    updateActorAppearance(
+      actor,
+      weebie
+    );
+
+  }
+
+
+  for (
+    const [id, actor]
+    of actors
+  ) {
+
+    if (
+      !activeIds.has(id)
+    ) {
+
+      actor.element.remove();
+
+      actors.delete(
+        id
+      );
+
+    }
+
+  }
+
+}
+
+
+/* =====================================================
+   CREATE WEEBIE
+===================================================== */
+
+function createActor(
+  weebie
+) {
+
+  const element =
+    document.createElement(
+      "div"
+    );
+
+
+  element.className =
+    "weebie";
+
+
+  const info =
+    document.createElement(
+      "div"
+    );
+
+  info.className =
+    "weebie-info";
+
+
+  const name =
+    document.createElement(
+      "div"
+    );
+
+  name.className =
+    "weebie-name";
+
+
+  const timer =
+    document.createElement(
+      "div"
+    );
+
+  timer.className =
+    "weebie-timer";
+
+
+  info.appendChild(
+    name
+  );
+
+  info.appendChild(
+    timer
+  );
+
+
+  const body =
+    document.createElement(
+      "div"
+    );
+
+  body.className =
+    "weebie-body";
+
+
+  const color1 =
+    document.createElement(
+      "div"
+    );
+
+  color1.className =
+    "color-layer color1";
+
+
+  const color2 =
+    document.createElement(
+      "div"
+    );
+
+  color2.className =
+    "color-layer color2";
+
+
+  const outline =
+    document.createElement(
+      "img"
+    );
+
+  outline.className =
+    "weebie-layer";
+
+
+  body.appendChild(
+    color1
+  );
+
+  body.appendChild(
+    color2
+  );
+
+  body.appendChild(
+    outline
+  );
+
+
+  element.appendChild(
+    info
+  );
+
+  element.appendChild(
+    body
+  );
+
+
+  oasis.appendChild(
+    element
+  );
+
+
+  actors.set(
+    String(
+      weebie.id
+    ),
+    {
+      element,
+      body,
+      name,
+      timer,
+      color1,
+      color2,
+      outline,
+      data:
+        weebie,
+      interactionUntil:
+        0
+    }
+  );
+
+}
+
+
+/* =====================================================
+   WEEBIE APPEARANCE
+===================================================== */
+
+function updateActorAppearance(
+  actor,
+  weebie
+) {
+
+  actor.name.textContent =
+    weebie.name ||
+    "Weebie";
+
+
+  const primary =
+    COLORS[
+      weebie.primaryColor
+    ] ||
+    weebie.primaryColor ||
+    "#F5F5F5";
+
+
+  const secondary =
+    COLORS[
+      weebie.secondaryColor
+    ] ||
+    weebie.secondaryColor ||
+    "#F5F5F5";
+
+
+  const eyelashes =
+    String(
+      weebie.eyelashes ||
+      "Yes"
+    ).toLowerCase() ===
+    "yes";
+
+
+  actor.color1.style.background =
+    primary;
+
+
+  actor.color1.style.webkitMaskImage =
+    'url("/shared/Weebie-Color1.png")';
+
+  actor.color1.style.maskImage =
+    'url("/shared/Weebie-Color1.png")';
+
+
+  const color2Image =
+    eyelashes
+      ? "/shared/Weebie-Color2.png"
+      : "/shared/Weebie-Color2a.png";
+
+
+  actor.color2.style.background =
+    secondary;
+
+  actor.color2.style.webkitMaskImage =
+    `url("${color2Image}")`;
+
+  actor.color2.style.maskImage =
+    `url("${color2Image}")`;
+
+
+  actor.outline.src =
+    eyelashes
+      ? "/shared/Weebie-Outline.png"
+      : "/shared/Weebie-Outline2.png";
+
+  window.WeebieCostumes?.render(actor.body,weebie.equipment);
+
+}
+
+
+/* =====================================================
+   DEATH MARKERS
+===================================================== */
+
+function syncDeaths(
+  deaths
+) {
+
+  const activeIds =
+    new Set();
+
+
+  for (
+    const death
+    of deaths
+  ) {
+
+    const id =
+      String(
+        death.id
+      );
+
+
+    activeIds.add(
+      id
+    );
+
+
+    if (
+      !deathMarkers.has(id)
+    ) {
+
+      createDeathMarker(
+        death
+      );
+
+    }
+
+
+    const marker =
+      deathMarkers.get(
+        id
+      );
+
+
+    marker.data =
+      death;
+
+
+    marker.element.style.left =
+      `${Number(death.deathX ?? death.x ?? 50)}%`;
+
+
+    marker.name.textContent =
+      death.name;
+
+  }
+
+
+  for (
+    const [id, marker]
+    of deathMarkers
+  ) {
+
+    if (
+      !activeIds.has(id)
+    ) {
+
+      marker.element.remove();
+
+      deathMarkers.delete(
+        id
+      );
+
+    }
+
+  }
+
+}
+
+
+function createDeathMarker(
+  death
+) {
+
+  const element =
+    document.createElement(
+      "div"
+    );
+
+
+  element.className =
+    "death-marker";
+
+
+  const info =
+    document.createElement(
+      "div"
+    );
+
+  info.className =
+    "death-info";
+
+
+  const skull =
+    document.createElement(
+      "div"
+    );
+
+  skull.className =
+    "death-skull";
+
+  skull.textContent =
+    "☠";
+
+
+  const name =
+    document.createElement(
+      "div"
+    );
+
+  name.className =
+    "death-name";
+
+
+  const time =
+    document.createElement(
+      "div"
+    );
+
+  time.className =
+    "death-time";
+
+
+  const cooldown =
+    document.createElement(
+      "div"
+    );
+
+  cooldown.className =
+    "death-cooldown";
+
+
+  const x =
+    document.createElement(
+      "div"
+    );
+
+  x.className =
+    "death-x";
+
+  x.textContent =
+    "X";
+
+
+  info.appendChild(
+    skull
+  );
+
+  info.appendChild(
+    name
+  );
+
+  info.appendChild(
+    time
+  );
+
+  info.appendChild(
+    cooldown
+  );
+
+
+  element.appendChild(
+    info
+  );
+
+  element.appendChild(
+    x
+  );
+
+
+  oasis.appendChild(
+    element
+  );
+
+
+  deathMarkers.set(
+    String(
+      death.id
+    ),
+    {
+      element,
+      name,
+      time,
+      cooldown,
+      data:
+        death
+    }
+  );
+
+}
+
+
+/* =====================================================
+   MOVEMENT
+===================================================== */
+
+function hash(
+  number
+) {
+
+  const x =
+    Math.sin(
+      Number(number) *
+      12.9898
+    ) *
+    43758.5453;
+
+
+  return (
+    x -
+    Math.floor(x)
+  );
+
+}
+
+
+function getHorizontalPosition(
+  weebie,
+  time
+) {
+
+  const phase =
+    hash(
+      weebie.id
+    ) *
+    Math.PI *
+    2;
+
+
+  const speed =
+    0.00022 +
+    (
+      hash(
+        Number(
+          weebie.id
+        ) +
+        77
+      ) *
+      0.00018
+    );
+
+
+  return (
+    10 +
+    (
+      80 *
+      (
+        (
+          Math.sin(
+            time *
+            speed +
+            phase
+          ) +
+          1
+        ) /
+        2
+      )
+    )
+  );
+
+}
+
+
+function getJumpHeight(
+  weebie,
+  time
+) {
+
+  const id =
+    Number(
+      weebie.id
+    );
+
+
+  const cycleLength =
+    2300 +
+    (
+      hash(
+        id + 150
+      ) *
+      2600
+    );
+
+
+  const offset =
+    hash(
+      id + 300
+    ) *
+    cycleLength;
+
+
+  const cycle =
+    (
+      time +
+      offset
+    ) %
+    cycleLength;
+
+
+  const jumpDuration =
+    620;
+
+
+  if (
+    cycle >
+    jumpDuration
+  ) {
+
+    return 0;
+
+  }
+
+
+  const progress =
+    cycle /
+    jumpDuration;
+
+
+  return (
+    Math.sin(
+      progress *
+      Math.PI
+    ) *
+    38
+  );
+
+}
+
+
+/* =====================================================
+   LIVING TIMER
+===================================================== */
+
+function updateLivingTimer(
+  actor,
+  now
+) {
+
+  const expires =
+    new Date(
+      actor.data.expiresAt
+    ).getTime();
+
+
+  const remaining =
+    Math.max(
+      0,
+      expires -
+      now
+    );
+
+
+  const totalSeconds =
+    Math.ceil(
+      remaining /
+      1000
+    );
+
+
+  const minutes =
+    Math.floor(
+      totalSeconds /
+      60
+    );
+
+
+  const seconds =
+    totalSeconds %
+    60;
+
+
+  actor.timer.textContent =
+    `${minutes}:${String(
+      seconds
+    ).padStart(2, "0")}`;
+
+
+  if (
+    remaining <= 0
+  ) {
+
+    actor.element.style.display =
+      "none";
+
+  }
+
+  else {
+
+    actor.element.style.display =
+      "";
+
+  }
+
+}
+
+
+/* =====================================================
+   DEATH TIMER
+===================================================== */
+
+function updateDeathMarker(
+  marker,
+  now
+) {
+
+  const diedAt =
+    new Date(
+      marker.data.diedAt
+    ).getTime();
+
+
+  const cooldownUntil =
+    new Date(
+      marker.data.cooldownUntil
+    ).getTime();
+
+
+  const sinceDeath =
+    Math.max(
+      0,
+      now -
+      diedAt
+    );
+
+
+  const sinceSeconds =
+    Math.floor(
+      sinceDeath /
+      1000
+    );
+
+
+  const sinceMinutes =
+    Math.floor(
+      sinceSeconds /
+      60
+    );
+
+
+  const sinceRemainingSeconds =
+    sinceSeconds %
+    60;
+
+
+  marker.time.textContent =
+    `Died: ${sinceMinutes}:${String(
+      sinceRemainingSeconds
+    ).padStart(2, "0")} ago`;
+
+
+  const cooldownRemaining =
+    Math.max(
+      0,
+      cooldownUntil -
+      now
+    );
+
+
+  const cooldownSeconds =
+    Math.ceil(
+      cooldownRemaining /
+      1000
+    );
+
+
+  marker.cooldown.textContent =
+    `Cooldown: ${cooldownSeconds}`;
+
+
+  if (
+    cooldownRemaining <= 0
+  ) {
+
+    marker.element.remove();
+
+    deathMarkers.delete(
+      String(
+        marker.data.id
+      )
+    );
+
+  }
+
+}
+/* =====================================================
+   INTERACTIONS
+===================================================== */
+
+function checkInteractions(positions,now){
+  positions.sort((a,b)=>a.x-b.x);
+  for(let i=0;i<positions.length;i++){
+    for(let j=i+1;j<positions.length;j++){
+      const first=positions[i],second=positions[j];
+      const a=Number(first.actor.data.id),b=Number(second.actor.data.id);
+      const bot=a<0||b<0;
+      if(a<0&&b<0)continue;
+      // Check every Weebie/bot pair; another body cannot hide a contact.
+
+      if(window.OasisBattle?!window.OasisBattle.overlap(first.actor,second.actor):Math.abs(first.x-second.x)>7)continue;
+
+      if(window.OasisBattle){
+        if(window.OasisBattle.trigger(a,b,now)){
+          first.actor.interactionUntil=now+1800;second.actor.interactionUntil=now+1800;return;
+        }
+      }else{playInteraction(first.actor);playInteraction(second.actor);}
+    }
+  }
+}
+
+
+function playInteraction(
+  actor
+) {
+
+  actor.element.classList.remove(
+    "meet"
+  );
+
+
+
+
+
+  actor.element.classList.add(
+    "meet"
+  );
+
+
+  setTimeout(
+    () => {
+
+      actor.element.classList.remove(
+        "meet"
+      );
+
+    },
+    400
+  );
+
+}
+
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+let lastOasisFrame=-Infinity,lastOasisTimer=-Infinity;
+function animate(frameTime=performance.now()) {
+  requestAnimationFrame(animate);
+  // Absolute server time drives movement; screen refresh rate never advances it.
+  if(document.hidden||frameTime-lastOasisFrame<1000/30-0.5)return;
+  lastOasisFrame=frameTime;
+  const refreshTimers=frameTime-lastOasisTimer>=250;
+  if(refreshTimers)lastOasisTimer=frameTime;
+
+  const now =
+    Date.now() +
+    serverOffset;
+
+
+  const timerNow=window.OasisBattle?.timerTime(now) ?? now;
+  const motionNow=window.OasisBattle?.motionTime(now) ?? now;
+
+  const positions =
+    [];
+  const sceneWidth=oasis.clientWidth;
+
+
+  for (
+    const actor
+    of actors.values()
+  ) {
+
+    const weebie =
+      actor.data;
+
+
+    const expires =
+      new Date(
+        weebie.expiresAt
+      ).getTime();
+
+
+    if (
+      now <
+      expires
+    ) {
+
+      const x =
+        getHorizontalPosition(
+          weebie,
+          motionNow
+        );
+
+
+      const jump =
+        getJumpHeight(
+          weebie,
+          motionNow
+        );
+
+
+      actor.element.style.left = "0";
+
+
+      actor.element.style.transform =
+        `translate(${x*sceneWidth/100}px, ${-jump}px) translateX(-50%)`;
+
+
+      positions.push({
+        actor,
+        x
+      });
+
+    }
+
+
+    if(refreshTimers) updateLivingTimer(
+      actor,
+      timerNow
+    );
+
+  }
+
+
+  for (
+    const marker
+    of deathMarkers.values()
+  ) {
+
+    if(refreshTimers) updateDeathMarker(
+      marker,
+      timerNow
+    );
+
+  }
+
+
+  window.OasisBattle?.addMushrooms(positions,motionNow);
+  if(!window.OasisBattle?.isFrozen())window.OasisBattle?.observeContacts(positions);
+
+  if(!window.OasisBattle?.isFrozen()) checkInteractions(
+    positions,
+    motionNow
+  );
+
+
+
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadAccount();
+
+requestAnimationFrame(
+  animate
+);
+
+</script>
+
+<script src="/shared/oasis-battles.js?v=residents-restore-14"></script>
+
+</body>
+</html>
