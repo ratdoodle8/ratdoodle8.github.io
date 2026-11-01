@@ -11,7 +11,11 @@
 </head>
 <body>
 <nav class="corner"><a href="/account/">Account</a><a href="/">Home</a></nav>
-<main class="page">
+<main class="page" id="loginGate">
+<h1>Weebie Store</h1>
+<section class="panel"><p id="gateMessage" class="message" role="status">Checking your login…</p><p><a href="/login/">Log in</a> · <a href="/account/">Account</a></p></section>
+</main>
+<main class="page" id="storeContent" hidden>
 <h1>Ratdoodle Store</h1>
 <p class="intro">A small rotating collection of Swag. The selection refreshes every day at 6:00 a.m. Chicago time.</p>
 <section class="panel"><p id="message" class="message" role="status">Loading today’s items…</p><div id="grid" class="grid"></div></section>
@@ -19,13 +23,16 @@
 </main>
 <script>
 const API='https://ratdoodle-accounts.ratdoodle8.workers.dev';
-const grid=document.getElementById('grid');const message=document.getElementById('message');
+const grid=document.getElementById('grid');const message=document.getElementById('message');const loginGate=document.getElementById('loginGate');const gateMessage=document.getElementById('gateMessage');const storeContent=document.getElementById('storeContent');
 function showMessage(text){message.textContent=text;}
+function requireLogin(text='You must be logged in to view the Weebie Store.'){storeContent.hidden=true;loginGate.hidden=false;gateMessage.textContent=text;}
 async function loadStore(){
  grid.replaceChildren();showMessage('Loading today’s items…');
  try{
   const response=await fetch(API+'/store/catalog',{credentials:'include',cache:'no-store'});const data=await response.json();
+  if(response.status===401){requireLogin();return;}
   if(!response.ok)throw new Error(data.error||'The store could not load.');
+  loginGate.hidden=true;storeContent.hidden=false;
   const items=Array.isArray(data.items)?data.items:[];
   if(!items.length){showMessage('No items are available in today’s rotation.');return;}
   showMessage('Today’s lineup · refreshes at 6:00 a.m. Chicago time');
@@ -38,8 +45,8 @@ async function loadStore(){
    const buy=document.createElement('button');buy.className='button';buy.type='button';buy.textContent=item.available?'Buy':'Sold out';buy.disabled=!item.available;
    buy.addEventListener('click',async()=>{
     buy.disabled=true;showMessage('Opening secure checkout…');
-    try{const r=await fetch(API+'/store/checkout',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({itemId:item.id})});const result=await r.json();if(!r.ok)throw new Error(result.error||'Checkout could not start.');if(!result.url)throw new Error('Stripe did not return a checkout link.');location.assign(result.url);}
-    catch(error){showMessage(error.message+' You may need to log in first.');buy.disabled=false;}
+    try{const r=await fetch(API+'/store/checkout',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({itemId:item.id})});const result=await r.json();if(r.status===401){requireLogin('Your login session expired. Log in again to view the Weebie Store.');return;}if(!r.ok)throw new Error(result.error||'Checkout could not start.');if(!result.url)throw new Error('Stripe did not return a checkout link.');location.assign(result.url);}
+    catch(error){showMessage(error.message||'Checkout could not start.');buy.disabled=false;}
    });
    card.append(image,title,price,stock,buy);grid.appendChild(card);
   }
