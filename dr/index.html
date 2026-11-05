@@ -3,20 +3,29 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tarot Deck</title>
+<title>Tarot</title>
 <style>
-body { background-color: #bcc8cc; color: #0007e6; text-align: center; font-family: Arial, sans-serif; }
-main { max-width: 500px; margin: 32px auto; padding: 0 12px; }
-button { font: inherit; }
+body{background-color:#bcc8cc;color:#0007e6;text-align:center;font-family:Arial,sans-serif}
+main{max-width:1000px;margin:24px auto;padding:0 10px}
+nav{margin:10px}nav a{margin:0 8px;color:#0007e6}
+button{font:inherit;color:#0007e6;cursor:pointer}
+#spread{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 8px;margin:20px auto;text-align:center}
+.pulled-card{min-width:0;padding:4px}
+.pulled-card img{display:block;width:64px;height:64px;object-fit:contain;margin:0 auto 5px}
+.pulled-card h2{font-size:.95rem;margin:4px 0}
+.pulled-card .position{font-size:.85rem;margin:3px 0}
+.pulled-card .meaning{font-size:.82rem;line-height:1.35;margin:4px 0}
+@media(max-width:500px){#spread{gap:12px 3px}.pulled-card h2{font-size:.78rem}.pulled-card .meaning{font-size:.7rem}.pulled-card .position{font-size:.72rem}.pulled-card img{width:52px;height:52px}}
 </style>
 </head>
 <body>
+<nav><a href="/account">Account</a><a href="/">Home</a></nav>
 <main>
-<h1>Tarot Deck</h1>
-<p>Click to draw one random card. There are 78 cards. Cards won’t repeat until you reshuffle.</p>
-<p><button id="draw" type="button">Draw a card</button></p>
-<p id="count">78 cards left</p>
-<div id="result" aria-live="polite"></div>
+<h1>Tarot</h1>
+<p>Click to pull a random card. Pulled cards stay out of the deck until you reshuffle.</p>
+<p><button id="draw" type="button">Pull a card</button></p>
+<p id="count" aria-live="polite"></p>
+<div id="spread" aria-live="polite"></div>
 <p><button id="shuffle" type="button">Reshuffle</button></p>
 </main>
 <script>
@@ -105,30 +114,14 @@ const cards = [
   ['Queen of Pentacles','Pentacles','◇','Practical care, resourcefulness, and comfort rooted in generosity.','Self-neglect, overwork, or worry about material security.'],
   ['King of Pentacles','Pentacles','◇','Stewardship, lasting achievement, and wise use of resources.','Materialism, stubbornness, or success without balance.']
 ];;
-let deck = [];
-function shuffle() {
-  deck = cards.map((_, index) => index);
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
-  }
-  document.getElementById('count').textContent = deck.length + ' cards left';
-  document.getElementById('result').textContent = '';
-}
-function draw() {
-  const result = document.getElementById('result');
-  if (!deck.length) {
-    result.textContent = 'All cards have been drawn. Reshuffle to draw again.';
-    return;
-  }
-  const card = cards[deck.pop()];
-  const reversed = Math.random() < 0.28;
-  result.textContent = card[0] + ' — ' + (reversed ? 'Reversed' : 'Upright') + '. ' + card[reversed ? 4 : 3];
-  document.getElementById('count').textContent = deck.length + ' cards left';
-}
-document.getElementById('draw').addEventListener('click', draw);
-document.getElementById('shuffle').addEventListener('click', shuffle);
-shuffle();
+let deck=[];
+let pulled=[];
+function slug(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function updateCount(){document.getElementById('count').textContent=deck.length+' cards left in deck; '+pulled.length+' pulled'}
+function renderSpread(){const spread=document.getElementById('spread');spread.replaceChildren();pulled.forEach(item=>{const card=cards[item.index];const article=document.createElement('article');article.className='pulled-card';const image=document.createElement('img');image.src='./cards/'+slug(card[0])+'.png';image.alt=card[0];image.width=64;image.height=64;const title=document.createElement('h2');title.textContent=card[0];const position=document.createElement('div');position.className='position';position.textContent=item.reversed?'Reversed':'Upright';const meaning=document.createElement('p');meaning.className='meaning';meaning.textContent=card[item.reversed?4:3];article.append(image,title,position,meaning);spread.appendChild(article)});updateCount()}
+function reshuffle(){deck=cards.map((_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}pulled=[];renderSpread();document.getElementById('draw').disabled=false}
+function draw(){if(!deck.length){document.getElementById('draw').disabled=true;return}pulled.push({index:deck.pop(),reversed:Math.random()<.28});renderSpread()}
+document.getElementById('draw').addEventListener('click',draw);document.getElementById('shuffle').addEventListener('click',reshuffle);reshuffle();
 </script>
 </body>
 </html>
