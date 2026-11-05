@@ -9,13 +9,21 @@ body{background-color:#bcc8cc;color:#0007e6;text-align:center;font-family:Arial,
 main{max-width:1000px;margin:24px auto;padding:0 10px}
 nav{margin:10px}nav a{margin:0 8px;color:#0007e6}
 button{font:inherit;color:#0007e6;cursor:pointer}
+#deck{display:block;margin:8px auto 12px;padding:0;border:0;background:none;line-height:0}
+#deck img{width:60px;height:85px;display:block}
 #spread{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 8px;margin:20px auto;text-align:center}
 .pulled-card{min-width:0;padding:4px}
-.pulled-card img{display:block;width:64px;height:64px;object-fit:contain;margin:0 auto 5px}
+.pulled-card.pending{visibility:hidden}
+.pulled-card img{display:block;width:60px;height:85px;object-fit:contain;margin:0 auto 5px}
 .pulled-card h2{font-size:.95rem;margin:4px 0}
 .pulled-card .position{font-size:.85rem;margin:3px 0}
 .pulled-card .meaning{font-size:.82rem;line-height:1.35;margin:4px 0}
-@media(max-width:500px){#spread{gap:12px 3px}.pulled-card h2{font-size:.78rem}.pulled-card .meaning{font-size:.7rem}.pulled-card .position{font-size:.72rem}.pulled-card img{width:52px;height:52px}}
+#flight{position:fixed;z-index:1000;pointer-events:none;perspective:700px}
+#flight-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d}
+#flight img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;backface-visibility:hidden}
+#flight .front{transform:rotateY(180deg)}
+@media(max-width:500px){#spread{gap:12px 3px}.pulled-card h2{font-size:.78rem}.pulled-card .meaning{font-size:.7rem}.pulled-card .position{font-size:.72rem}.pulled-card img{width:48px;height:68px}}
+@media(prefers-reduced-motion:reduce){#flight{animation-duration:1ms!important}}
 </style>
 </head>
 <body>
@@ -23,7 +31,8 @@ button{font:inherit;color:#0007e6;cursor:pointer}
 <main>
 <h1>Tarot</h1>
 <p>Click to pull a random card. Pulled cards stay out of the deck until you reshuffle.</p>
-<p><button id="draw" type="button">Pull a card</button></p>
+<p>Click the deck to pull a random card. Pulled cards stay out until you reshuffle.</p>
+<button id="draw" type="button" aria-label="Pull a card from the deck"><img src="./cards/back.png" alt="Face-down tarot deck"></button>
 <p id="count" aria-live="polite"></p>
 <div id="spread" aria-live="polite"></div>
 <p><button id="shuffle" type="button">Reshuffle</button></p>
@@ -116,12 +125,64 @@ const cards = [
 ];;
 let deck=[];
 let pulled=[];
+let animationBusy=false;
+const drawButton=document.getElementById('draw');
+const shuffleButton=document.getElementById('shuffle');
+const spread=document.getElementById('spread');
 function slug(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 function updateCount(){document.getElementById('count').textContent=deck.length+' cards left in deck; '+pulled.length+' pulled'}
-function renderSpread(){const spread=document.getElementById('spread');spread.replaceChildren();pulled.forEach(item=>{const card=cards[item.index];const article=document.createElement('article');article.className='pulled-card';const image=document.createElement('img');image.src='./cards/'+slug(card[0])+'.png';image.alt=card[0];image.width=64;image.height=64;const title=document.createElement('h2');title.textContent=card[0];const position=document.createElement('div');position.className='position';position.textContent=item.reversed?'Reversed':'Upright';const meaning=document.createElement('p');meaning.className='meaning';meaning.textContent=card[item.reversed?4:3];article.append(image,title,position,meaning);spread.appendChild(article)});updateCount()}
-function reshuffle(){deck=cards.map((_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}pulled=[];renderSpread();document.getElementById('draw').disabled=false}
-function draw(){if(!deck.length){document.getElementById('draw').disabled=true;return}pulled.push({index:deck.pop(),reversed:Math.random()<.28});renderSpread()}
-document.getElementById('draw').addEventListener('click',draw);document.getElementById('shuffle').addEventListener('click',reshuffle);reshuffle();
+function makeCard(item){
+  const card=cards[item.index];
+  const article=document.createElement('article');
+  article.className='pulled-card pending';
+  const image=document.createElement('img');
+  image.className='card-art';
+  image.src='./cards/'+slug(card[0])+'.png';
+  image.alt=card[0];
+  image.width=60; image.height=85;
+  const title=document.createElement('h2'); title.textContent=card[0];
+  const position=document.createElement('div'); position.className='position'; position.textContent=item.reversed?'Reversed':'Upright';
+  const meaning=document.createElement('p'); meaning.className='meaning'; meaning.textContent=card[item.reversed?4:3];
+  article.append(image,title,position,meaning);
+  return article;
+}
+function animateDraw(article){
+  const deckRect=drawButton.getBoundingClientRect();
+  const artRect=article.querySelector('.card-art').getBoundingClientRect();
+  const flight=document.createElement('div');
+  flight.id='flight';
+  flight.style.left=deckRect.left+'px'; flight.style.top=deckRect.top+'px';
+  flight.style.width=deckRect.width+'px'; flight.style.height=deckRect.height+'px';
+  const inner=document.createElement('div'); inner.id='flight-inner';
+  const back=document.createElement('img'); back.src='./cards/back.png'; back.alt='';
+  const front=document.createElement('img'); front.className='front'; front.src=article.querySelector('.card-art').src; front.alt='';
+  inner.append(back,front); flight.appendChild(inner); document.body.appendChild(flight);
+  const duration=window.matchMedia('(prefers-reduced-motion: reduce)').matches?1:650;
+  const move=flight.animate([
+    {left:deckRect.left+'px',top:deckRect.top+'px',width:deckRect.width+'px',height:deckRect.height+'px'},
+    {left:artRect.left+'px',top:artRect.top+'px',width:artRect.width+'px',height:artRect.height+'px'}
+  ],{duration,easing:'ease-in-out',fill:'forwards'});
+  const flip=inner.animate([{transform:'rotateY(0deg)'},{transform:'rotateY(180deg)'}],{duration,easing:'ease-in-out',fill:'forwards'});
+  Promise.all([move.finished,flip.finished]).finally(()=>{
+    flight.remove(); article.classList.remove('pending'); animationBusy=false;
+    drawButton.disabled=deck.length===0; shuffleButton.disabled=false;
+  });
+}
+function reshuffle(){
+  deck=cards.map((_,i)=>i);
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
+  pulled=[]; spread.replaceChildren(); updateCount(); drawButton.disabled=false;
+}
+function draw(){
+  if(animationBusy||!deck.length)return;
+  animationBusy=true; drawButton.disabled=true; shuffleButton.disabled=true;
+  const item={index:deck.pop(),reversed:Math.random()<.28}; pulled.push(item);
+  const article=makeCard(item); spread.appendChild(article); updateCount();
+  requestAnimationFrame(()=>animateDraw(article));
+}
+drawButton.addEventListener('click',draw);
+shuffleButton.addEventListener('click',reshuffle);
+reshuffle();
 </script>
 </body>
 </html>
