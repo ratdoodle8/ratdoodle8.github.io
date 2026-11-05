@@ -3,38 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#171326">
-<title>Ratdoodle Tarot — Draw a Card</title>
+<title>Tarot Deck</title>
 <style>
-:root{color-scheme:dark;--ink:#f7efdc;--muted:#c7b8d4;--gold:#f2c978;--violet:#b7a0e8;--panel:#211b31;--line:#65547b}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#49365c 0,#211a32 42%,#11101c 100%);color:var(--ink);font-family:Georgia,'Times New Roman',serif;display:flex;flex-direction:column;align-items:center;padding:30px 16px 48px}
-main{width:min(100%,980px);text-align:center}.eyebrow{font:700 .72rem/1.4 system-ui,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}h1{font-size:clamp(2.2rem,7vw,4.7rem);font-weight:400;letter-spacing:.025em;margin:.22em 0 .14em;text-shadow:0 0 28px #d6a7ff55}.intro{color:var(--muted);font-size:1.04rem;margin:0 auto 24px;max-width:560px;line-height:1.55}.stage{display:grid;grid-template-columns:1fr minmax(250px,340px) 1fr;align-items:center;gap:22px;min-height:440px}.side-note{font-size:.95rem;line-height:1.6;color:var(--muted);padding:16px}.deck-area{display:flex;flex-direction:column;align-items:center;gap:18px}.deck{position:relative;width:208px;height:318px;cursor:pointer;perspective:1000px;outline:none;filter:drop-shadow(0 16px 24px #08061199);transition:transform .2s,filter .2s}.deck:hover,.deck:focus-visible{transform:translateY(-6px) rotate(-1deg);filter:drop-shadow(0 22px 25px #080611bb)}.deck:active{transform:translateY(1px) scale(.98)}.back-card{position:absolute;inset:0;border:2px solid var(--gold);border-radius:14px;background:repeating-linear-gradient(45deg,transparent 0 10px,#e5c57e13 10px 12px),radial-gradient(ellipse,#51416d,#21192f 68%);box-shadow:inset 0 0 0 6px #21192f,inset 0 0 0 8px #d4b66d88;display:grid;place-items:center}.back-card:before,.back-card:after{content:'✦';position:absolute;color:var(--gold);font-size:1.4rem}.back-card:before{top:19px}.back-card:after{bottom:19px}.sigil{width:126px;height:190px;border:1px solid #e4c77e99;border-radius:50%;display:grid;place-items:center;font-size:4rem;color:#f2d993;text-shadow:0 0 18px #f2d99377;position:relative}.sigil:before,.sigil:after{content:'';position:absolute;border:1px solid #e4c77e66;border-radius:50%;inset:14px 7px;transform:rotate(45deg)}.sigil:after{transform:rotate(-45deg)}.deck-count{font:700 .85rem system-ui,sans-serif;color:var(--gold);letter-spacing:.12em}.hint{font: .86rem system-ui,sans-serif;color:var(--muted)}button{font:700 .9rem system-ui,sans-serif;letter-spacing:.03em;color:#21192f;background:var(--gold);border:0;border-radius:999px;padding:12px 20px;cursor:pointer;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:focus-visible,.deck:focus-visible{outline:3px solid white;outline-offset:5px}.result{width:min(100%,740px);margin:0 auto 26px;display:none;grid-template-columns:200px 1fr;gap:24px;align-items:center;text-align:left;padding:20px;background:#211b31c9;border:1px solid #786494;border-radius:18px;box-shadow:0 15px 40px #08061166;animation:arrive .45s ease both}.result.show{display:grid}@keyframes arrive{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}.face{min-height:260px;border:2px solid var(--gold);border-radius:12px;background:linear-gradient(155deg,#56466c,#282139 60%,#171326);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;box-shadow:inset 0 0 0 5px #21192f,inset 0 0 0 7px #d4b66d66}.face-symbol{font-size:4.1rem;color:#f4d88f;line-height:1.15;text-shadow:0 0 18px #f2d99366}.face-suit{font:700 .65rem system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:20px}.face-name{font-size:1.03rem;margin-top:7px}.reading-label{font:700 .7rem system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}.reading h2{font-size:clamp(1.65rem,4vw,2.5rem);font-weight:400;margin:8px 0 4px}.orientation{color:var(--violet);font:700 .8rem system-ui,sans-serif;letter-spacing:.13em;text-transform:uppercase}.meaning{font-size:1.04rem;line-height:1.7;color:#e6dbec;max-width:460px}.remaining{font: .8rem system-ui,sans-serif;color:var(--muted);margin-top:18px}.footer{font: .8rem system-ui,sans-serif;color:#9989a9;margin-top:24px}.spark{color:var(--gold)}
-@media(max-width:700px){body{padding-top:22px}.stage{grid-template-columns:1fr;gap:10px;min-height:0}.side-note{display:none}.deck-area{padding:8px 0 22px}.deck{width:176px;height:270px}.sigil{width:106px;height:160px}.result{grid-template-columns:1fr;max-width:390px;padding:14px;gap:16px}.face{min-height:205px}.face-symbol{font-size:3.5rem}.reading{text-align:center}.meaning{margin-left:auto;margin-right:auto}.intro{font-size:.98rem}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+body { background-color: #bcc8cc; color: #0007e6; text-align: center; font-family: Arial, sans-serif; }
+main { max-width: 500px; margin: 32px auto; padding: 0 12px; }
+button { font: inherit; }
 </style>
 </head>
 <body>
 <main>
-  <div class="eyebrow">A small moment for the unknown</div>
-  <h1>Ratdoodle Tarot</h1>
-  <p class="intro">Take a breath, hold a question in mind, then draw a card. Each deck contains all 78 cards; drawn cards stay out until you reshuffle.</p>
-  <section class="result" id="result" aria-live="polite" aria-atomic="true">
-    <div class="face" id="face"><div class="face-symbol" id="symbol">✦</div><div class="face-suit" id="suit"></div><div class="face-name" id="faceName"></div></div>
-    <div class="reading"><div class="reading-label">Your card</div><h2 id="cardName"></h2><div class="orientation" id="orientation"></div><p class="meaning" id="meaning"></p><div class="remaining" id="remaining"></div></div>
-  </section>
-  <section class="stage" aria-label="Tarot deck">
-    <p class="side-note"><span class="spark">✧</span><br>78 cards<br>One clear draw<br>Trust what catches your attention.</p>
-    <div class="deck-area">
-      <div class="deck" id="deck" role="button" tabindex="0" aria-label="Draw a random tarot card">
-        <div class="back-card"><div class="sigil">☾</div></div>
-      </div>
-      <div class="deck-count" id="deckCount">78 CARDS REMAINING</div>
-      <div class="hint">Click or press Enter to draw</div>
-      <button id="shuffle" type="button">Reshuffle the deck</button>
-    </div>
-    <p class="side-note"><span class="spark">✧</span><br>Major Arcana<br>Four suits<br>Upright or reversed.</p>
-  </section>
-  <div class="footer">A reflective reading for inspiration and play.</div>
+<h1>Tarot Deck</h1>
+<p>Click to draw one random card. There are 78 cards. Cards won’t repeat until you reshuffle.</p>
+<p><button id="draw" type="button">Draw a card</button></p>
+<p id="count">78 cards left</p>
+<div id="result" aria-live="polite"></div>
+<p><button id="shuffle" type="button">Reshuffle</button></p>
 </main>
 <script>
 const cards = [
@@ -121,12 +104,31 @@ const cards = [
   ['Knight of Pentacles','Pentacles','◇','Reliability, patience, and progress through consistent work.','Stagnation, stubborn routine, or taking on too much responsibility.'],
   ['Queen of Pentacles','Pentacles','◇','Practical care, resourcefulness, and comfort rooted in generosity.','Self-neglect, overwork, or worry about material security.'],
   ['King of Pentacles','Pentacles','◇','Stewardship, lasting achievement, and wise use of resources.','Materialism, stubbornness, or success without balance.']
-];
+];;
 let deck = [];
-const deckEl=document.getElementById('deck'), result=document.getElementById('result');
-function shuffleDeck(){deck=cards.map((_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}document.getElementById('deckCount').textContent=`${deck.length} CARDS REMAINING`;deckEl.setAttribute('aria-label','Draw a random tarot card');}
-function draw(){if(!deck.length){document.getElementById('deckCount').textContent='THE DECK IS EMPTY';document.getElementById('cardName').textContent='Every card has been drawn';document.getElementById('orientation').textContent='';document.getElementById('meaning').textContent='Reshuffle to begin a fresh reading.';result.classList.add('show');return}const c=cards[deck.pop()], reversed=Math.random()<.28;document.getElementById('cardName').textContent=c[0];document.getElementById('faceName').textContent=c[0];document.getElementById('suit').textContent=c[1];document.getElementById('symbol').textContent=c[2];document.getElementById('orientation').textContent=reversed?'Reversed':'Upright';document.getElementById('meaning').textContent=c[reversed?4:3];document.getElementById('remaining').textContent=`${deck.length} ${deck.length===1?'card':'cards'} left in this deck`;document.getElementById('deckCount').textContent=`${deck.length} ${deck.length===1?'CARD':'CARDS'} REMAINING`;result.classList.remove('show');requestAnimationFrame(()=>result.classList.add('show'));}
-deckEl.addEventListener('click',draw);deckEl.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();draw()}});document.getElementById('shuffle').addEventListener('click',()=>{shuffleDeck();result.classList.remove('show')});shuffleDeck();
+function shuffle() {
+  deck = cards.map((_, index) => index);
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  document.getElementById('count').textContent = deck.length + ' cards left';
+  document.getElementById('result').textContent = '';
+}
+function draw() {
+  const result = document.getElementById('result');
+  if (!deck.length) {
+    result.textContent = 'All cards have been drawn. Reshuffle to draw again.';
+    return;
+  }
+  const card = cards[deck.pop()];
+  const reversed = Math.random() < 0.28;
+  result.textContent = card[0] + ' — ' + (reversed ? 'Reversed' : 'Upright') + '. ' + card[reversed ? 4 : 3];
+  document.getElementById('count').textContent = deck.length + ' cards left';
+}
+document.getElementById('draw').addEventListener('click', draw);
+document.getElementById('shuffle').addEventListener('click', shuffle);
+shuffle();
 </script>
 </body>
 </html>
