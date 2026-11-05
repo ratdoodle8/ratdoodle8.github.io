@@ -10,11 +10,11 @@ main{max-width:1000px;margin:24px auto;padding:0 10px}
 nav{margin:10px}nav a{margin:0 8px;color:#0007e6}
 button{font:inherit;color:#0007e6;cursor:pointer}
 #deck{display:block;margin:8px auto 12px;padding:0;border:0;background:none;line-height:0}
-#deck img{width:60px;height:85px;display:block}
+#deck img{width:48px;height:68px;display:block}
 #spread{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 8px;margin:20px auto;text-align:center}
 .pulled-card{min-width:0;padding:4px}
 .pulled-card.pending{visibility:hidden}
-.pulled-card img{display:block;width:60px;height:85px;object-fit:contain;margin:0 auto 5px}
+.pulled-card img{display:block;width:48px;height:68px;object-fit:contain;margin:0 auto 5px}
 .pulled-card h2{font-size:.95rem;margin:4px 0}
 .pulled-card .position{font-size:.85rem;margin:3px 0}
 .pulled-card .meaning{font-size:.82rem;line-height:1.35;margin:4px 0}
@@ -129,7 +129,7 @@ let animationBusy=false;
 const drawButton=document.getElementById('draw');
 const shuffleButton=document.getElementById('shuffle');
 const spread=document.getElementById('spread');
-function slug(name){return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
+function cardCode(index){if(index<22)return 'MA'+String(index+1).padStart(2,'0');const prefix={Wands:'SW',Cups:'SC',Swords:'SS',Pentacles:'SP'};return prefix[cards[index][1]]+String((index-22)%14+1).padStart(2,'0')}
 function updateCount(){document.getElementById('count').textContent=deck.length+' cards left in deck; '+pulled.length+' pulled'}
 function makeCard(item){
   const card=cards[item.index];
@@ -137,7 +137,7 @@ function makeCard(item){
   article.className='pulled-card pending';
   const image=document.createElement('img');
   image.className='card-art';
-  image.src='./cards/'+slug(card[0])+'.png';
+  const code=cardCode(item.index);image.src='./cards/'+code+' - '+card[0]+'.png';
   image.alt=card[0];
   image.width=60; image.height=85;
   const title=document.createElement('h2'); title.textContent=card[0];
