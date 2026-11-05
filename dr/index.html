@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#171326">
+<title>Ratdoodle Tarot — Draw a Card</title>
+<style>
+:root{color-scheme:dark;--ink:#f7efdc;--muted:#c7b8d4;--gold:#f2c978;--violet:#b7a0e8;--panel:#211b31;--line:#65547b}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#49365c 0,#211a32 42%,#11101c 100%);color:var(--ink);font-family:Georgia,'Times New Roman',serif;display:flex;flex-direction:column;align-items:center;padding:30px 16px 48px}
+main{width:min(100%,980px);text-align:center}.eyebrow{font:700 .72rem/1.4 system-ui,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}h1{font-size:clamp(2.2rem,7vw,4.7rem);font-weight:400;letter-spacing:.025em;margin:.22em 0 .14em;text-shadow:0 0 28px #d6a7ff55}.intro{color:var(--muted);font-size:1.04rem;margin:0 auto 24px;max-width:560px;line-height:1.55}.stage{display:grid;grid-template-columns:1fr minmax(250px,340px) 1fr;align-items:center;gap:22px;min-height:440px}.side-note{font-size:.95rem;line-height:1.6;color:var(--muted);padding:16px}.deck-area{display:flex;flex-direction:column;align-items:center;gap:18px}.deck{position:relative;width:208px;height:318px;cursor:pointer;perspective:1000px;outline:none;filter:drop-shadow(0 16px 24px #08061199);transition:transform .2s,filter .2s}.deck:hover,.deck:focus-visible{transform:translateY(-6px) rotate(-1deg);filter:drop-shadow(0 22px 25px #080611bb)}.deck:active{transform:translateY(1px) scale(.98)}.back-card{position:absolute;inset:0;border:2px solid var(--gold);border-radius:14px;background:repeating-linear-gradient(45deg,transparent 0 10px,#e5c57e13 10px 12px),radial-gradient(ellipse,#51416d,#21192f 68%);box-shadow:inset 0 0 0 6px #21192f,inset 0 0 0 8px #d4b66d88;display:grid;place-items:center}.back-card:before,.back-card:after{content:'✦';position:absolute;color:var(--gold);font-size:1.4rem}.back-card:before{top:19px}.back-card:after{bottom:19px}.sigil{width:126px;height:190px;border:1px solid #e4c77e99;border-radius:50%;display:grid;place-items:center;font-size:4rem;color:#f2d993;text-shadow:0 0 18px #f2d99377;position:relative}.sigil:before,.sigil:after{content:'';position:absolute;border:1px solid #e4c77e66;border-radius:50%;inset:14px 7px;transform:rotate(45deg)}.sigil:after{transform:rotate(-45deg)}.deck-count{font:700 .85rem system-ui,sans-serif;color:var(--gold);letter-spacing:.12em}.hint{font: .86rem system-ui,sans-serif;color:var(--muted)}button{font:700 .9rem system-ui,sans-serif;letter-spacing:.03em;color:#21192f;background:var(--gold);border:0;border-radius:999px;padding:12px 20px;cursor:pointer;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:focus-visible,.deck:focus-visible{outline:3px solid white;outline-offset:5px}.result{width:min(100%,740px);margin:0 auto 26px;display:none;grid-template-columns:200px 1fr;gap:24px;align-items:center;text-align:left;padding:20px;background:#211b31c9;border:1px solid #786494;border-radius:18px;box-shadow:0 15px 40px #08061166;animation:arrive .45s ease both}.result.show{display:grid}@keyframes arrive{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}.face{min-height:260px;border:2px solid var(--gold);border-radius:12px;background:linear-gradient(155deg,#56466c,#282139 60%,#171326);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;box-shadow:inset 0 0 0 5px #21192f,inset 0 0 0 7px #d4b66d66}.face-symbol{font-size:4.1rem;color:#f4d88f;line-height:1.15;text-shadow:0 0 18px #f2d99366}.face-suit{font:700 .65rem system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:20px}.face-name{font-size:1.03rem;margin-top:7px}.reading-label{font:700 .7rem system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}.reading h2{font-size:clamp(1.65rem,4vw,2.5rem);font-weight:400;margin:8px 0 4px}.orientation{color:var(--violet);font:700 .8rem system-ui,sans-serif;letter-spacing:.13em;text-transform:uppercase}.meaning{font-size:1.04rem;line-height:1.7;color:#e6dbec;max-width:460px}.remaining{font: .8rem system-ui,sans-serif;color:var(--muted);margin-top:18px}.footer{font: .8rem system-ui,sans-serif;color:#9989a9;margin-top:24px}.spark{color:var(--gold)}
+@media(max-width:700px){body{padding-top:22px}.stage{grid-template-columns:1fr;gap:10px;min-height:0}.side-note{display:none}.deck-area{padding:8px 0 22px}.deck{width:176px;height:270px}.sigil{width:106px;height:160px}.result{grid-template-columns:1fr;max-width:390px;padding:14px;gap:16px}.face{min-height:205px}.face-symbol{font-size:3.5rem}.reading{text-align:center}.meaning{margin-left:auto;margin-right:auto}.intro{font-size:.98rem}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">A small moment for the unknown</div>
+  <h1>Ratdoodle Tarot</h1>
+  <p class="intro">Take a breath, hold a question in mind, then draw a card. Each deck contains all 78 cards; drawn cards stay out until you reshuffle.</p>
+  <section class="result" id="result" aria-live="polite" aria-atomic="true">
+    <div class="face" id="face"><div class="face-symbol" id="symbol">✦</div><div class="face-suit" id="suit"></div><div class="face-name" id="faceName"></div></div>
+    <div class="reading"><div class="reading-label">Your card</div><h2 id="cardName"></h2><div class="orientation" id="orientation"></div><p class="meaning" id="meaning"></p><div class="remaining" id="remaining"></div></div>
+  </section>
+  <section class="stage" aria-label="Tarot deck">
+    <p class="side-note"><span class="spark">✧</span><br>78 cards<br>One clear draw<br>Trust what catches your attention.</p>
+    <div class="deck-area">
+      <div class="deck" id="deck" role="button" tabindex="0" aria-label="Draw a random tarot card">
+        <div class="back-card"><div class="sigil">☾</div></div>
+      </div>
+      <div class="deck-count" id="deckCount">78 CARDS REMAINING</div>
+      <div class="hint">Click or press Enter to draw</div>
+      <button id="shuffle" type="button">Reshuffle the deck</button>
+    </div>
+    <p class="side-note"><span class="spark">✧</span><br>Major Arcana<br>Four suits<br>Upright or reversed.</p>
+  </section>
+  <div class="footer">A reflective reading for inspiration and play.</div>
+</main>
+<script>
+const cards = [
+  // Major Arcana
+  ['The Fool','Major Arcana','✧','A fresh start, open possibility, and the courage to begin.','A leap of faith, spontaneity, and new paths.'],
+  ['The Magician','Major Arcana','✦','Resourcefulness, focused will, and turning an idea into action.','Scattered energy, untapped skill, or a need to be honest about intent.'],
+  ['The High Priestess','Major Arcana','☾','Intuition, inner knowledge, and what is not yet spoken.','Secrets, ignored instincts, or information still hidden.'],
+  ['The Empress','Major Arcana','♧','Care, creativity, abundance, and letting something grow.','Overgiving, creative stagnation, or neglecting your own needs.'],
+  ['The Emperor','Major Arcana','♜','Structure, steady leadership, and clear boundaries.','Rigidity, control, or a lack of dependable structure.'],
+  ['The Hierophant','Major Arcana','☼','Shared wisdom, tradition, learning, and chosen beliefs.','Questioning convention, making your own rules, or feeling constrained.'],
+  ['The Lovers','Major Arcana','♡','Connection, aligned values, and a meaningful choice.','Misalignment, difficult choices, or a need for honest communication.'],
+  ['The Chariot','Major Arcana','➤','Determination, direction, and progress through focused effort.','A loss of direction, competing priorities, or forcing the pace.'],
+  ['Strength','Major Arcana','♌','Quiet courage, patience, and compassion guided by resilience.','Self-doubt, raw reactions, or needing gentleness with yourself.'],
+  ['The Hermit','Major Arcana','☷','Solitude, reflection, and seeking your own clear answer.','Isolation, avoiding connection, or overlooking inner guidance.'],
+  ['Wheel of Fortune','Major Arcana','☸','A turning point, changing cycles, and unexpected opportunity.','Resistance to change, a repeating pattern, or uncertain timing.'],
+  ['Justice','Major Arcana','⚖','Truth, accountability, fairness, and thoughtful decisions.','Unfairness, missing facts, or avoiding responsibility.'],
+  ['The Hanged Man','Major Arcana','⟡','A pause that brings a new perspective and willing surrender.','Stalling, needless sacrifice, or resisting a useful pause.'],
+  ['Death','Major Arcana','☥','An ending that clears space for transformation and renewal.','Clinging to what has ended, fear of change, or a delayed transition.'],
+  ['Temperance','Major Arcana','⚗','Balance, patience, and bringing different parts into harmony.','Imbalance, excess, or a need to adjust your approach.'],
+  ['The Devil','Major Arcana','⛓','Attachment, temptation, and noticing what has power over you.','Breaking a pattern, reclaiming choice, or facing what you avoid.'],
+  ['The Tower','Major Arcana','⚡','A sudden truth, disruption, and the clearing away of false supports.','Avoiding an inevitable change, fear of upheaval, or slow release.'],
+  ['The Star','Major Arcana','✶','Hope, healing, and renewed trust in the path ahead.','Discouragement, disconnection, or needing to restore faith in yourself.'],
+  ['The Moon','Major Arcana','☽','Dreams, uncertainty, and moving carefully through the unknown.','Confusion lifting, hidden fears, or seeing a situation more clearly.'],
+  ['The Sun','Major Arcana','☀','Joy, vitality, confidence, and warm clarity.','Temporary low energy, delayed joy, or a need to make room for play.'],
+  ['Judgement','Major Arcana','♧','A wake-up call, honest reflection, and answering a deeper purpose.','Self-criticism, hesitation, or resisting a call to change.'],
+  ['The World','Major Arcana','◎','Completion, integration, and a rewarding sense of wholeness.','An unfinished chapter, delays, or needing closure before moving on.'],
+  // Wands
+  ['Ace of Wands','Wands','♧','A spark of inspiration, bold beginnings, and creative energy.','A delayed start, fading enthusiasm, or an idea needing care.'],
+  ['Two of Wands','Wands','♧','Planning ahead and choosing how far you want to reach.','Playing small, fear of the unknown, or plans without action.'],
+  ['Three of Wands','Wands','♧','Expansion, looking ahead, and progress beginning to show.','Delays, limited horizons, or revising your expectations.'],
+  ['Four of Wands','Wands','♧','Celebration, belonging, and a stable place to enjoy progress.','A postponed gathering, tension at home, or shaky foundations.'],
+  ['Five of Wands','Wands','♧','Competition, lively friction, and testing ideas with others.','Avoiding conflict, needless rivalry, or finding common ground.'],
+  ['Six of Wands','Wands','♧','Recognition, confidence, and a visible achievement.','Unseen effort, self-doubt, or relying too much on approval.'],
+  ['Seven of Wands','Wands','♧','Standing your ground and protecting what matters to you.','Feeling overwhelmed, giving in too quickly, or choosing your battles.'],
+  ['Eight of Wands','Wands','♧','Fast movement, news, and momentum gathering.','Delays, mixed messages, or acting before you are ready.'],
+  ['Nine of Wands','Wands','♧','Persistence, guarded strength, and being near the finish.','Exhaustion, distrust, or needing rest before the next effort.'],
+  ['Ten of Wands','Wands','♧','A heavy responsibility and the need to finish or delegate.','Putting down a burden, asking for help, or avoiding overload.'],
+  ['Page of Wands','Wands','♧','Curiosity, adventurous ideas, and an eager new direction.','False starts, impatience, or an idea that needs grounding.'],
+  ['Knight of Wands','Wands','♧','Passion, bold action, and a spirited pursuit.','Rushing, inconsistency, or burning energy too quickly.'],
+  ['Queen of Wands','Wands','♧','Warm confidence, independence, and magnetic creativity.','Jealousy, insecurity, or hiding your own light.'],
+  ['King of Wands','Wands','♧','Vision, inspired leadership, and decisive creative direction.','Impulsiveness, unrealistic plans, or domineering behavior.'],
+  // Cups
+  ['Ace of Cups','Cups','♡','Emotional renewal, compassion, and a heart opening.','Blocked feelings, emotional depletion, or care turned inward.'],
+  ['Two of Cups','Cups','♡','Mutual respect, partnership, and a sincere meeting of hearts.','Misunderstanding, imbalance, or repairing a bond.'],
+  ['Three of Cups','Cups','♡','Friendship, shared joy, and celebrating together.','Social strain, overindulgence, or feeling outside the group.'],
+  ['Four of Cups','Cups','♡','Reflection, emotional pause, and noticing what is being offered.','Re-engagement, a fresh perspective, or moving past apathy.'],
+  ['Five of Cups','Cups','♡','Grief, disappointment, and honoring what has been lost.','Acceptance, support, and seeing what remains.'],
+  ['Six of Cups','Cups','♡','Nostalgia, kindness, and memories that shape the present.','Living in the past, growing beyond old patterns, or mixed memories.'],
+  ['Seven of Cups','Cups','♡','Many choices, vivid imagination, and sorting wishes from plans.','Clear priorities, fewer illusions, or a grounded decision.'],
+  ['Eight of Cups','Cups','♡','Leaving what no longer fulfills you to seek deeper meaning.','Fear of moving on, returning to an old situation, or unfinished feelings.'],
+  ['Nine of Cups','Cups','♡','Contentment, pleasure, and a wish coming within reach.','A hollow win, overindulgence, or a wish that needs rethinking.'],
+  ['Ten of Cups','Cups','♡','Emotional belonging, shared happiness, and lasting connection.','Tension beneath the surface, unmet expectations, or repairing home ties.'],
+  ['Page of Cups','Cups','♡','Tender curiosity, a heartfelt message, and creative dreaming.','Emotional immaturity, blocked inspiration, or a message overlooked.'],
+  ['Knight of Cups','Cups','♡','Romance, idealism, and following an emotional invitation.','Moodiness, unrealistic promises, or feelings without follow-through.'],
+  ['Queen of Cups','Cups','♡','Empathy, emotional wisdom, and caring without losing yourself.','Overwhelm, weak boundaries, or ignoring your own feelings.'],
+  ['King of Cups','Cups','♡','Emotional steadiness, compassion, and calm understanding.','Suppressed feelings, volatility, or emotional distance.'],
+  // Swords
+  ['Ace of Swords','Swords','⚔','A clear insight, honest conversation, and a decisive new idea.','Confusion, miscommunication, or truth that needs careful handling.'],
+  ['Two of Swords','Swords','⚔','A difficult choice, temporary stalemate, and gathering the facts.','Indecision breaking, information emerging, or avoidance becoming costly.'],
+  ['Three of Swords','Swords','⚔','Heartbreak, painful truth, and grief that deserves acknowledgement.','Healing, forgiveness, or slowly releasing sorrow.'],
+  ['Four of Swords','Swords','⚔','Rest, recovery, and giving your thoughts room to settle.','Returning too soon, restlessness, or a need for a real pause.'],
+  ['Five of Swords','Swords','⚔','Conflict, hollow victory, and considering the cost of being right.','Reconciliation, letting go of resentment, or ending a harmful contest.'],
+  ['Six of Swords','Swords','⚔','Transition, finding calmer waters, and carrying lessons forward.','Resistance to change, unresolved baggage, or a difficult passage.'],
+  ['Seven of Swords','Swords','⚔','Strategy, discretion, and noticing where honesty is needed.','A truth coming out, accountability, or dropping a deceptive plan.'],
+  ['Eight of Swords','Swords','⚔','Feeling trapped by fear or assumptions; options may be hidden.','A way out appearing, challenging limiting beliefs, or reclaiming agency.'],
+  ['Nine of Swords','Swords','⚔','Anxiety, sleepless thoughts, and worries growing in the dark.','Relief, seeking support, or facing a fear one step at a time.'],
+  ['Ten of Swords','Swords','⚔','A painful ending, hitting a limit, and the first light after it.','Recovery, accepting closure, or resisting an ending that has arrived.'],
+  ['Page of Swords','Swords','⚔','Curiosity, sharp questions, and learning to communicate clearly.','Gossip, scattered thinking, or speaking before checking the facts.'],
+  ['Knight of Swords','Swords','⚔','Fast decisions, direct action, and pursuing a clear idea.','Recklessness, harsh words, or slowing down to avoid mistakes.'],
+  ['Queen of Swords','Swords','⚔','Clear boundaries, discernment, and compassionate honesty.','Coldness, bitterness, or judging before listening.'],
+  ['King of Swords','Swords','⚔','Reason, sound judgment, and principled communication.','Rigid thinking, misuse of authority, or detachment from feeling.'],
+  // Pentacles
+  ['Ace of Pentacles','Pentacles','◇','A practical opportunity, material beginning, and seed of stability.','A missed chance, shaky planning, or an offer needing review.'],
+  ['Two of Pentacles','Pentacles','◇','Adaptability, balancing priorities, and managing change.','Overcommitment, disorganization, or needing to simplify.'],
+  ['Three of Pentacles','Pentacles','◇','Craft, collaboration, and building something with shared skill.','Poor teamwork, overlooked effort, or a need to learn the basics.'],
+  ['Four of Pentacles','Pentacles','◇','Security, careful stewardship, and holding on to what you value.','Scarcity fears, possessiveness, or opening up to change.'],
+  ['Five of Pentacles','Pentacles','◇','Hardship, feeling shut out, and recognizing where support exists.','Recovery, asking for help, and a gradual return to stability.'],
+  ['Six of Pentacles','Pentacles','◇','Generosity, fair exchange, and giving or receiving support.','Unequal terms, strings attached, or restoring balance.'],
+  ['Seven of Pentacles','Pentacles','◇','Patience, assessment, and tending work that takes time.','Impatience, poor returns, or changing what is not working.'],
+  ['Eight of Pentacles','Pentacles','◇','Practice, diligence, and skill growing through steady effort.','Perfectionism, disengagement, or work without learning.'],
+  ['Nine of Pentacles','Pentacles','◇','Self-reliance, earned comfort, and enjoying what you have cultivated.','Dependence, overspending, or success that feels isolating.'],
+  ['Ten of Pentacles','Pentacles','◇','Long-term security, shared legacy, and resources across generations.','Family tension, unstable foundations, or redefining success.'],
+  ['Page of Pentacles','Pentacles','◇','A practical learner, a useful offer, and a grounded new goal.','Procrastination, impractical plans, or lessons left unattended.'],
+  ['Knight of Pentacles','Pentacles','◇','Reliability, patience, and progress through consistent work.','Stagnation, stubborn routine, or taking on too much responsibility.'],
+  ['Queen of Pentacles','Pentacles','◇','Practical care, resourcefulness, and comfort rooted in generosity.','Self-neglect, overwork, or worry about material security.'],
+  ['King of Pentacles','Pentacles','◇','Stewardship, lasting achievement, and wise use of resources.','Materialism, stubbornness, or success without balance.']
+];
+let deck = [];
+const deckEl=document.getElementById('deck'), result=document.getElementById('result');
+function shuffleDeck(){deck=cards.map((_,i)=>i);for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}document.getElementById('deckCount').textContent=`${deck.length} CARDS REMAINING`;deckEl.setAttribute('aria-label','Draw a random tarot card');}
+function draw(){if(!deck.length){document.getElementById('deckCount').textContent='THE DECK IS EMPTY';document.getElementById('cardName').textContent='Every card has been drawn';document.getElementById('orientation').textContent='';document.getElementById('meaning').textContent='Reshuffle to begin a fresh reading.';result.classList.add('show');return}const c=cards[deck.pop()], reversed=Math.random()<.28;document.getElementById('cardName').textContent=c[0];document.getElementById('faceName').textContent=c[0];document.getElementById('suit').textContent=c[1];document.getElementById('symbol').textContent=c[2];document.getElementById('orientation').textContent=reversed?'Reversed':'Upright';document.getElementById('meaning').textContent=c[reversed?4:3];document.getElementById('remaining').textContent=`${deck.length} ${deck.length===1?'card':'cards'} left in this deck`;document.getElementById('deckCount').textContent=`${deck.length} ${deck.length===1?'CARD':'CARDS'} REMAINING`;result.classList.remove('show');requestAnimationFrame(()=>result.classList.add('show'));}
+deckEl.addEventListener('click',draw);deckEl.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();draw()}});document.getElementById('shuffle').addEventListener('click',()=>{shuffleDeck();result.classList.remove('show')});shuffleDeck();
+</script>
+</body>
+</html>
