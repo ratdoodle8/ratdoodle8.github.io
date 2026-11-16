@@ -107,6 +107,13 @@
       "body": "test3",
       "image": "/shared/reportimages/3.jpg",
       "date": "2026-10-23T19:24:47.087Z"
+    },
+    "4": {
+      "name": "Anonymous",
+      "reportedUsername": "",
+      "body": "Gangsters on the microphone",
+      "image": "/shared/reportimages/4.jpg",
+      "date": "2026-11-16T18:45:49.436Z"
     }
   }
 }
