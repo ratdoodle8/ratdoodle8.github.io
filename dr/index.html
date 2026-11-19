@@ -5,16 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tarot</title>
 <style>
+ :root{--deck-card-width:clamp(68px,14vw,92px);--deck-card-height:calc(var(--deck-card-width)*1.4166667);--pulled-card-width:calc(var(--deck-card-width)*1.4);--pulled-card-height:calc(var(--deck-card-height)*1.4)}
 body{background-color:#bcc8cc;color:#0007e6;text-align:center;font-family:Arial,sans-serif}
 main{max-width:1000px;margin:24px auto;padding:0 10px}
 nav{margin:10px}nav a{margin:0 8px;color:#0007e6}
 button{font:inherit;color:#0007e6;cursor:pointer}
-#deck{display:block;margin:8px auto 12px;padding:0;border:0;background:none;line-height:0}
-#deck img{width:48px;height:68px;display:block}
+#draw{display:block;margin:8px auto 12px;padding:0;border:0;background:none;line-height:0}
+#draw img{display:block;width:var(--deck-card-width);height:var(--deck-card-height);object-fit:fill}
 #spread{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 8px;margin:20px auto;text-align:center}
 .pulled-card{min-width:0;padding:4px}
 .pulled-card.pending{visibility:hidden}
-.pulled-card img{display:block;width:48px;height:68px;object-fit:contain;margin:0 auto 5px}
+.pulled-card img{display:block;width:var(--pulled-card-width);height:var(--pulled-card-height);object-fit:contain;margin:0 auto 5px}
 .pulled-card h2{font-size:.95rem;margin:4px 0}
 .pulled-card .position{font-size:.85rem;margin:3px 0}
 .pulled-card .meaning{font-size:.82rem;line-height:1.35;margin:4px 0}
@@ -22,7 +23,7 @@ button{font:inherit;color:#0007e6;cursor:pointer}
 #flight-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d}
 #flight img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;backface-visibility:hidden}
 #flight .front{transform:rotateY(180deg)}
-@media(max-width:500px){#spread{gap:12px 3px}.pulled-card h2{font-size:.78rem}.pulled-card .meaning{font-size:.7rem}.pulled-card .position{font-size:.72rem}.pulled-card img{width:48px;height:68px}}
+@media(max-width:600px){#spread{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 6px}.pulled-card h2{font-size:.78rem}.pulled-card .meaning{font-size:.7rem}.pulled-card .position{font-size:.72rem}}
 @media(prefers-reduced-motion:reduce){#flight{animation-duration:1ms!important}}
 </style>
 </head>
